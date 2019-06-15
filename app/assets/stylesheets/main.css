@@ -296,7 +296,7 @@ body {
   background-color: #161925;
   line-height: 20px;
   font-family: "Raleway", sans-serif;
-  background-image: url("../images/hex2.png");
+  background-image: url("/assets/hex2.png");
   background-repeat: repeat;
   background-position: right;
 }

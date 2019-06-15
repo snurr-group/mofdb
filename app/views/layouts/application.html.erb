@@ -18,7 +18,7 @@
   <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
 
-  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/jq-3.3.1/jszip-2.5.0/dt-1.10.18/af-2.3.2/b-1.5.4/b-colvis-1.5.4/b-flash-1.5.4/b-html5-1.5.4/b-print-1.5.4/cr-1.5.0/fc-3.2.5/fh-3.1.4/kt-2.5.0/r-2.2.2/rg-1.1.0/rr-1.2.4/sc-1.5.0/sl-1.2.6/datatables.min.css" defer>
+  <link rel="stylesheet" type="text/css" href="" defer>
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.5.2/css/buttons.dataTables.min.css" defer>
   <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" defer></script>
   <script src="https://cdn.datatables.net/rowreorder/1.2.5/js/dataTables.rowReorder.min.js" defer></script>
@@ -40,6 +40,13 @@
 </div>
 <div id="page">
   <%= yield %>
+
+  <div id="footer_grid">
+    <span>Built for the Snurr Research lab by<br/><a style='color:white;font-weight:500' target="_blank" href="https://n8ta.com">Nathaniel Tracy-Amoroso</a> in collaboration with<br/>Benjamin Buccior,<br/>Daniel Siderius,<br/> and Scotty Bobbitt
+    </span>
+    <br/>
+    <br/>
+  </div>
 </div>
 
 </body>

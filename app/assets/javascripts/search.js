@@ -5,12 +5,12 @@
 
 document.addEventListener("DOMContentLoaded", function(event) {
 
-    var pld = document.getElementById('pld_slider');
-    var lcd = document.getElementById('lcd_slider');
-    var vf = document.getElementById('vf_slider');
-    var sa_m2g = document.getElementById('sa_m2g_slider');
-    var sa_m2cm3 = document.getElementById('sa_m2cm3_slider');
-    var limit = document.getElementById('limit');
+    pld = document.getElementById('pld_slider');
+    lcd = document.getElementById('lcd_slider');
+    vf = document.getElementById('vf_slider');
+    sa_m2g = document.getElementById('sa_m2g_slider');
+    sa_m2cm3 = document.getElementById('sa_m2cm3_slider');
+    limit = document.getElementById('limit');
 
 
     noUiSlider.create(pld, {
@@ -160,16 +160,15 @@ document.addEventListener("DOMContentLoaded", function(event) {
         console.log("triggered by elements");
         refresh()
     });
+
+    set_table();
 });
 
 
 
-var cache = {}; // Caches search_keys so that we don't do multiple sql queries on the same args
-var latest_query = {}; // Stores the most recent query so the table doesn't get updated with old queries
-
 function set_table(data,loc) {
-    document.getElementById('table_inner').innerHTML = data ;
-    window.history.pushState("object or string", "MOFDB Search", loc);
+    // document.getElementById('table_inner').innerHTML = data ;
+    // window.history.pushState("object or string", "MOFDB Search", loc);
     $("#mof_table").DataTable(
         {
             "oLanguage": {
@@ -189,47 +188,94 @@ function set_table(data,loc) {
 };
 
 
-    //
-    // var vf_min = vf.noUiSlider.get()[0];
-    // var vf_max = vf.noUiSlider.get()[1];
-    //
-    // var pld_min = pld.noUiSlider.get()[0];
-    // var pld_max = pld.noUiSlider.get()[1];
-    //
-    // var lcd_min = lcd.noUiSlider.get()[0];
-    // var lcd_max = lcd.noUiSlider.get()[1];
-    //
-    // var sa_m2g_min = sa_m2g.noUiSlider.get()[0];
-    // var sa_m2g_max = sa_m2g.noUiSlider.get()[1];
-    //
-    // var sa_m2cm3_min = sa_m2cm3.noUiSlider.get()[0];
-    // var sa_m2cm3_max = sa_m2cm3.noUiSlider.get()[1];
-    //
-    //
-    // var name = document.getElementById("name").value;
-    // var N2 = document.getElementById("N2").checked;
-    // var X2 = document.getElementById("X2").checked;
-    // var Kr = document.getElementById("Kr").checked;
-    // var H2 = document.getElementById("H2").checked;
-    // var CO2 = document.getElementById("CO2").checked;
-    // var CH4 = document.getElementById("CH4").checked;
-    // var H2O = document.getElementById("H2O").checked;
-    //
-    // var doi = document.getElementById("doi_label").value;
-    //
-    // var limit = document.getElementById("limit").checked;
-    //
-    // // Get elements from select bar
-    // var elements_object = document.getElementById("elements_label").selectedOptions;
-    // var num_elements = elements_object.length;
-    // var elements = [];
-    // var i;
-    // for(i=0; i<num_elements; i++) {
-    //     elements[i] = elements_object[i].text;
-    // }
-    //
-    //
-    // var select_obj = document.getElementById("dbchoice");
-    // var db_choice = select_obj.options[select_obj.selectedIndex].value;
-    //
-    //
+function refresh() {
+
+    let vf_min = vf.noUiSlider.get()[0];
+    let vf_max = vf.noUiSlider.get()[1];
+
+    let pld_min = pld.noUiSlider.get()[0];
+    let pld_max = pld.noUiSlider.get()[1];
+
+    let lcd_min = lcd.noUiSlider.get()[0];
+    let lcd_max = lcd.noUiSlider.get()[1];
+
+    let sa_m2g_min = sa_m2g.noUiSlider.get()[0];
+    let sa_m2g_max = sa_m2g.noUiSlider.get()[1];
+
+    let sa_m2cm3_min = sa_m2cm3.noUiSlider.get()[0];
+    let sa_m2cm3_max = sa_m2cm3.noUiSlider.get()[1];
+
+
+    let name = document.getElementById("name").value;
+    let N2 = document.getElementById("N2").checked;
+    let X2 = document.getElementById("X2").checked;
+    let Kr = document.getElementById("Kr").checked;
+    let H2 = document.getElementById("H2").checked;
+    let CO2 = document.getElementById("CO2").checked;
+    let CH4 = document.getElementById("CH4").checked;
+    let H2O = document.getElementById("H2O").checked;
+
+    let doi = document.getElementById("doi_label").value;
+
+    let limit = document.getElementById("limit").checked;
+
+// Get elements from select bar
+    let elements_object = document.getElementById("elements_label").selectedOptions;
+    let num_elements = elements_object.length;
+    let elements = [];
+    let i;
+    for(i=0; i<num_elements; i++) {
+        elements[i] = elements_object[i].text;
+    }
+
+    let select_obj = document.getElementById("db_choice");
+    let db_choice = select_obj.options[select_obj.selectedIndex].value;
+
+    console.log(name,vf_min,vf_max);
+    console.log(sa_m2g_min,sa_m2g_max);
+    console.log(sa_m2cm3_min,sa_m2cm3_max);
+    console.log(pld_min,pld_max);
+    console.log(lcd_min,lcd_max);
+    console.log(db_choice);
+    console.log(doi);
+    console.log(elements);
+    console.log(limit);
+
+    $.get("/mofs.josn", {
+            "vf_min": vf_min,
+            "vf_max": vf_max,
+
+            "pld_min": pld_min,
+            "pld_max": pld_max,
+
+            "lcd_min": lcd_min,
+            "lcd_max": lcd_max,
+
+            "sa_m2g_min": sa_m2g_min,
+            "sa_m2g_max": sa_m2g_max,
+
+            "sa_m2cm3_min": sa_m2cm3_min,
+            "sa_m2cm3_max": sa_m2cm3_max,
+
+            "name": name,
+            "N2": N2,
+            "X2": X2,
+            "Kr": Kr,
+            "H2": H2,
+            "CO2": CO2,
+            "CH4": CH4,
+            "H2O": H2O,
+
+            "db_choice": db_choice,
+            "elements": elements,
+
+            "doi": doi,
+            "limit": limit,
+        }, function(data) {
+            console.log(data);
+        }
+    );
+
+
+}
+

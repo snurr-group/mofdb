@@ -3,7 +3,7 @@ class CreateMofs < ActiveRecord::Migration[5.2]
     create_table :mofs do |t|
       t.string :hashkey
       t.string :name
-      t.integer :db
+      t.bigint :database_id
       t.string :cif
       t.float :void_fraction
       t.float :surface_area_m2g

@@ -10,12 +10,84 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_14_235002) do
+ActiveRecord::Schema.define(version: 2019_06_15_030024) do
+
+  create_table "classifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "name"
+    t.float "data"
+    t.integer "source"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "databases", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "elements", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "number"
+    t.string "name"
+    t.string "symbol"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "elements_mofs", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.bigint "mof_id", null: false
+    t.bigint "element_id", null: false
+  end
+
+  create_table "forcefields", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "gas", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "inchikey"
+    t.string "name"
+    t.text "inchicode"
+    t.text "formula"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "gases", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "inchikey"
+    t.string "name"
+    t.text "inchicode"
+    t.text "formula"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "isotherms", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "doi"
+    t.string "digitizer"
+    t.float "temp"
+    t.text "simin"
+    t.bigint "database_id"
+    t.bigint "forcefield_id"
+    t.bigint "mof_id"
+    t.bigint "adsorption_units_id"
+    t.bigint "pressure_units_id"
+    t.bigint "composition_type_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["adsorption_units_id"], name: "index_isotherms_on_adsorption_units_id"
+    t.index ["composition_type_id"], name: "index_isotherms_on_composition_type_id"
+    t.index ["database_id"], name: "index_isotherms_on_database_id"
+    t.index ["forcefield_id"], name: "index_isotherms_on_forcefield_id"
+    t.index ["mof_id"], name: "index_isotherms_on_mof_id"
+    t.index ["pressure_units_id"], name: "index_isotherms_on_pressure_units_id"
+  end
 
   create_table "mofs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "hashkey"
     t.string "name"
-    t.integer "db"
+    t.bigint "database_id"
     t.string "cif"
     t.float "void_fraction"
     t.float "surface_area_m2g"
@@ -26,6 +98,13 @@ ActiveRecord::Schema.define(version: 2019_06_14_235002) do
     t.text "pore_size_distribution"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["database_id"], name: "fk_rails_42b2867304"
   end
 
+  add_foreign_key "isotherms", "classifications", column: "adsorption_units_id"
+  add_foreign_key "isotherms", "classifications", column: "composition_type_id"
+  add_foreign_key "isotherms", "classifications", column: "pressure_units_id"
+  add_foreign_key "isotherms", "forcefields"
+  add_foreign_key "isotherms", "mofs"
+  add_foreign_key "mofs", "databases"
 end
