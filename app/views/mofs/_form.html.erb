@@ -1,0 +1,72 @@
+<%= form_with(model: mof, local: true) do |form| %>
+  <% if mof.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(mof.errors.count, "error") %> prohibited this mof from being saved:</h2>
+
+      <ul>
+      <% mof.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :hashkey %>
+    <%= form.text_field :hashkey %>
+  </div>
+
+  <div class="field">
+    <%= form.label :name %>
+    <%= form.text_field :name %>
+  </div>
+
+  <div class="field">
+    <%= form.label :db %>
+    <%= form.number_field :db %>
+  </div>
+
+  <div class="field">
+    <%= form.label :cif %>
+    <%= form.text_field :cif %>
+  </div>
+
+  <div class="field">
+    <%= form.label :void_fraction %>
+    <%= form.text_field :void_fraction %>
+  </div>
+
+  <div class="field">
+    <%= form.label :surface_area_m2g %>
+    <%= form.text_field :surface_area_m2g %>
+  </div>
+
+  <div class="field">
+    <%= form.label :surface_area_m2cm3 %>
+    <%= form.text_field :surface_area_m2cm3 %>
+  </div>
+
+  <div class="field">
+    <%= form.label :pld %>
+    <%= form.text_field :pld %>
+  </div>
+
+  <div class="field">
+    <%= form.label :lcd %>
+    <%= form.text_field :lcd %>
+  </div>
+
+  <div class="field">
+    <%= form.label :pxrd %>
+    <%= form.text_area :pxrd %>
+  </div>
+
+  <div class="field">
+    <%= form.label :pore_size_distribution %>
+    <%= form.text_area :pore_size_distribution %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

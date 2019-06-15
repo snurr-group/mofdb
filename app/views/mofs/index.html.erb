@@ -1,0 +1,121 @@
+<div id="index_content">
+  <div id="search">
+    <a href="/" title="Reset your search">
+      <svg id='reset' xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 543.276 543.276" style="enable-background:new 0 0 543.276 543.276;" xml:space="preserve">
+        <g>
+          <path d="M479,265.166c0,57.977-25.452,112.68-69.818,150.09l-38.538-45.727c30.854-26.013,48.551-64.055,48.551-104.363   c0-72.504-56.885-131.795-128.352-136.009h-29.253l24.636,62.368c0.828,2.086,0.154,4.471-1.643,5.822   c-1.791,1.356-4.268,1.351-6.053-0.024l-122.498-94.185c-1.229-0.952-1.954-2.403-1.954-3.966c0-1.554,0.724-3.021,1.954-3.963   L278.542,1.029C279.434,0.337,280.504,0,281.58,0c1.063,0,2.122,0.331,3.015,1.005c1.797,1.348,2.465,3.742,1.643,5.828   l-24.636,62.358l21.185,0.062v-0.316c7.571,0,15.043,0.479,22.396,1.321c4.877,0.508,10.32,1.229,14.452,2.202   C410.257,89.761,479,169.562,479,265.166z M264.737,345.957c-1.779-1.377-4.262-1.383-6.053-0.023   c-1.791,1.354-2.461,3.736-1.64,5.828l24.636,62.365h-29.252c-71.452-4.221-128.346-63.518-128.346-136.014   c0-37.728,15.058-72.832,42.398-98.845l-41.231-43.326C85.93,173.36,64.276,223.844,64.276,278.113   c0,95.596,68.733,175.402,159.375,192.703c4.14,0.97,9.581,1.69,14.455,2.199c7.353,0.845,14.818,1.324,22.396,1.324v-0.319   l21.184,0.064l-24.636,62.358c-0.827,2.099-0.15,4.486,1.64,5.828c0.896,0.674,1.951,1.005,3.015,1.005   c1.079,0,2.143-0.337,3.044-1.028l122.492-94.188c1.229-0.94,1.956-2.406,1.956-3.961c0-1.561-0.727-3.014-1.956-3.96   L264.737,345.957z"/>
+        </g>
+      </svg>
+    </a>
+    <div>
+      <label class="slider_title">Name / Aliases</label>
+      <div class="hcon">
+        <input class="textbox" type="text" id="name" onkeypress="" onkeyup="" onkeydown=""/>
+      </div>
+    </div>
+    <div>
+      <label class="slider_title">Void Fraction</label>
+      <div class="hcon">
+        <div id="vf_slider" class="slider"></div>
+      </div>
+      <div class="slider_label">
+        <span id="vf_min">0</span>
+        <span id="vf_max">1</span>
+      </div>
+    </div>
+    <div>
+      <label class="slider_title">Surface Area [m2/g]</label>
+      <div class="hcon">
+        <div id="sa_m2g_slider" class="slider"></div>
+      </div>
+      <div class="slider_label">
+        <span id="sa_m2g_min">0</span>
+        <span id="sa_m2g_max">1</span>
+      </div>
+    </div>
+    <div>
+      <label class="slider_title">Surface Area [m2/cm3]</label>
+      <div class="hcon">
+        <div id="sa_m2cm3_slider" class="slider"></div>
+      </div>
+      <div class="slider_label">
+        <span id="sa_m2cm3_min">0</span>
+        <span id="sa_m2cm3_max">1</span>
+      </div>
+    </div>
+    <div>
+      <label class="slider_title">PLD</label>
+      <div class="hcon">
+        <div id="pld_slider" class="slider"></div>
+      </div>
+      <div class="slider_label">
+        <span id="pld_min">0</span>
+        <span id="pld_max">1</span>
+      </div>
+    </div>
+    <div>
+      <label class="slider_title">LCD</label>
+      <div class="hcon">
+        <div id="lcd_slider" class="slider"></div>
+      </div>
+      <div class="slider_label">
+        <span id="lcd_min">0</span>
+        <span id="lcd_max">1</span>
+      </div>
+    </div>
+    <div class='row hcon' style='justify-content: center' id="checkboxes">
+      <div class="vcon col-xs-6">
+        <% # TODO: Fill in adsorbates %>
+        <!--                                echo "<div class='hcon' style='justify-content: left'>";-->
+        <!--        echo "<input id='{$ads}' type='checkbox'/>";-->
+        <!--        echo "<label for='{$ads}'>{$ads}</label>";-->
+        <!--        echo "</div>";-->
+
+      </div>
+      <div class="col-xs-6">
+<!--                                echo "<div class='hcon' style='justify-content: left'>";-->
+        <!--      echo "<input id='{$ads}' type='checkbox'/>";-->
+        <!--      echo "<label for='{$ads}'>{$ads}</label>";-->
+        <!--      echo "</div>";-->
+
+      </div>
+    </div>
+    <div class="spacer"></div>
+    <p class="hcon slider_title">Database</p>
+    <div id="databases" class="hcon">
+      <select id="db_choice">
+        <option value="asdf">ASDF</option>
+        <option value="asdf">ASDF</option>
+        <option value="asdf">ASDF</option>
+      </select>
+    </div>
+    <div class="spacer"></div>
+    <p class="hcon slider_title">DOI</p>
+    <div class="hcon"><input list="doi" id="doi_label" name="doi"/></div>
+    <datalist id="doi">
+      <option value="dois">
+    </datalist>
+
+    <p class="hcon slider_title">Atoms in Framework:</p>
+    <div class="side-by-side clearfix hcon">
+      <select id="elements_label" data-placeholder="C Xe He N etc." multiple class="chosen-select">
+        <% array = ["H", "He", "Li", "Be"," B"," C"," N"," O"," F", "Ne", "Na", "Mg", "Al", "Si"," P"," S", "Cl", "Ar"," K", "Ca", "Sc", "Ti"," V", "Cr", "Mn", "Fe", "Co", "Ni", "Cu", "Zn", "Ga", "Ge", "As", "Se", "Br", "Kr", "Rb", "Sr"," Y", "Zr", "Nb", "Mo", "Tc", "Ru", "Rh", "Pd", "Ag", "Cd", "In", "Sn", "Sb", "Te"," I", "Xe", "Cs", "Ba", "La", "Ce", "Pr", "Nd", "Pm", "Sm", "Eu", "Gd", "Tb", "Dy", "Ho", "Er", "Tm", "Yb", "Lu", "Hf", "Ta"," W", "Re", "Os", "Ir", "Pt", "Au", "Hg", "Tl", "Pb", "Bi", "Po", "At", "Rn", "Fr", "Ra", "Ac", "Th", "Pa"," U", "Np", "Pu", "Am", "Cm", "Bk", "Cf", "Es", "Fm", "Md", "No", "Lr", "Rf", "Db", "Sg", "Bh", "Hs", "Mt", "Ds", "Rg", "Cn", "Nh", "Fl", "Mc", "Lv", "Ts", "Og"] %>
+        <% array.each do |adsorbate| %>
+          <option><%= adsorbate %></option>
+        <% end %>
+
+      </select>
+    </div>
+    <div class="spacer"></div>
+
+    <label class="slider_title" for="limit" title="Turning this off may slow things down a great deal">Limit to 100
+      results </label>
+    <div class="hcon"><input id='limit' name="limit" type='checkbox' checked checked=true/></div>
+
+
+  </div>
+  <div id="table_outer">
+    <div id="table_inner">
+    </div>
+  </div>
+</div>

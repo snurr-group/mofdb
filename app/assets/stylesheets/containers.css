@@ -1,0 +1,13 @@
+hcon {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+hcon {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/*# sourceMappingURL=containers.css.map */

@@ -1,0 +1,2 @@
+module MofsHelper
+end
