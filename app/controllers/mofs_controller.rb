@@ -49,22 +49,26 @@ class MofsController < ApplicationController
     end
 
     if params[:sa_m2cm3_max]
-      @mofs = @mofs.where("surface_area_m2cm3 < ?",params[:sa_m2cm3_min])
+      @mofs = @mofs.where("surface_area_m2cm3 < ?",params[:sa_m2cm3_max])
     end
 
     if params[:name]
       @mofs = @mofs.where("name LIKE ?", "%"+params[:name]+"%")
     end
 
-    # pld_min
-    # pld_max
-    # lcd_min
-    # lcd_max
-    # sa_m2g_min
-    # sa_m2g_max
-    # sa_m2cm3_min
-    # sa_m2cm3_max
-    # name
+    if params[:database] && params[:database] != "Any"
+      database = Database.find_by(name: params[:database])
+      @mofs = @mofs.where(database: database)
+    end
+
+    if params[:limit]
+      @mofs = @mofs.take(params[:limit])
+    end
+
+    if params[:n2] == "true"
+      @mofs = @mofs.select { |mf| mf.gases.pluck(:name).include?("Ammonia")}
+    end
+
     # N2
     # X2
     # Kr
@@ -75,8 +79,8 @@ class MofsController < ApplicationController
     # db_choice
     # elements
     # doi
-    # limit
-    #
+
+
   end
 
   # GET /mofs/1

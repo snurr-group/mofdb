@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_15_030024) do
+ActiveRecord::Schema.define(version: 2019_06_15_072126) do
 
   create_table "classifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name"
@@ -22,8 +22,6 @@ ActiveRecord::Schema.define(version: 2019_06_15_030024) do
 
   create_table "databases", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
   end
 
   create_table "elements", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -59,8 +57,16 @@ ActiveRecord::Schema.define(version: 2019_06_15_030024) do
     t.string "name"
     t.text "inchicode"
     t.text "formula"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+  end
+
+  create_table "isodata", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.bigint "isotherm_id"
+    t.bigint "gas_id"
+    t.float "pressure"
+    t.float "loading"
+    t.float "bulk_composition"
+    t.index ["gas_id"], name: "index_isodata_on_gas_id"
+    t.index ["isotherm_id"], name: "index_isodata_on_isotherm_id"
   end
 
   create_table "isotherms", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -68,7 +74,6 @@ ActiveRecord::Schema.define(version: 2019_06_15_030024) do
     t.string "digitizer"
     t.float "temp"
     t.text "simin"
-    t.bigint "database_id"
     t.bigint "forcefield_id"
     t.bigint "mof_id"
     t.bigint "adsorption_units_id"
@@ -78,7 +83,6 @@ ActiveRecord::Schema.define(version: 2019_06_15_030024) do
     t.datetime "updated_at", null: false
     t.index ["adsorption_units_id"], name: "index_isotherms_on_adsorption_units_id"
     t.index ["composition_type_id"], name: "index_isotherms_on_composition_type_id"
-    t.index ["database_id"], name: "index_isotherms_on_database_id"
     t.index ["forcefield_id"], name: "index_isotherms_on_forcefield_id"
     t.index ["mof_id"], name: "index_isotherms_on_mof_id"
     t.index ["pressure_units_id"], name: "index_isotherms_on_pressure_units_id"
@@ -101,6 +105,14 @@ ActiveRecord::Schema.define(version: 2019_06_15_030024) do
     t.index ["database_id"], name: "fk_rails_42b2867304"
   end
 
+  create_table "synonyms", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "name"
+    t.bigint "gas_id"
+    t.index ["gas_id"], name: "index_synonyms_on_gas_id"
+  end
+
+  add_foreign_key "isodata", "gases"
+  add_foreign_key "isodata", "isotherms"
   add_foreign_key "isotherms", "classifications", column: "adsorption_units_id"
   add_foreign_key "isotherms", "classifications", column: "composition_type_id"
   add_foreign_key "isotherms", "classifications", column: "pressure_units_id"

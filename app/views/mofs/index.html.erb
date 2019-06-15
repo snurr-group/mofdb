@@ -59,15 +59,15 @@
     <div class='row hcon' style='justify-content: center' id="checkboxes">
       <div class="vcon col-xs-6">
 
-        <% ['N2','X2','Kr','H2'].each do |ads| %>
+        <% ['N2', 'X2', 'Kr', 'H2'].each do |ads| %>
           <div class='hcon' style='justify-content: left'>
-                <input id='<%= ads %>' type='checkbox'/>
-                <label for='<%= ads %>'><%= ads %></label>
+            <input id='<%= ads %>' type='checkbox'/>
+            <label for='<%= ads %>'><%= ads %></label>
           </div>
         <% end %>
       </div>
       <div class="col-xs-6">
-        <% ['CO2','CH4','H2O'].each do |ads| %>
+        <% ['CO2', 'CH4', 'H2O'].each do |ads| %>
           <div class='hcon' style='justify-content: left'>
             <input id='<%= ads %>' type='checkbox'/>
             <label for='<%= ads %>'><%= ads %></label>
@@ -80,11 +80,10 @@
     <p class="hcon slider_title">Database</p>
     <div id="databases" class="hcon">
       <select id="db_choice">
-        <%=  %>
-        <option value="any">Any</option>
-        <option value="asdf">ASDF</option>
-        <option value="asdf">ASDF</option>
-        <option value="asdf">ASDF</option>
+        <option value="Any">Any</option>
+        <% Database.all.each do |db| %>
+          <option value="<%= db.name %>"> <%= db.name %> </option>
+        <% end %>
       </select>
     </div>
     <div class="spacer"></div>
@@ -93,7 +92,7 @@
     <datalist id="doi">
       <% Isotherm.all.pluck(:doi).each do |doi| %>
         <option value="<%= doi %>"> <%= doi %></option>
-        <% end %>
+      <% end %>
     </datalist>
 
     <p class="hcon slider_title">Atoms in Framework:</p>
@@ -131,31 +130,31 @@
         </tr>
         </thead>
         <tbody>
-          <tr>
-            <td title='$name_t'><a href='/mofs.php?mof=$hash_key'>$name</a></td>
-            <td title='$vf_t'>$vf</td>
-            <td title='$sa_m2cm3_t'>$sa_m2cm3</td>
-            <td title='$sa_m2g_t'>$sa_m2g</td>
-            <td title='$pld_t'>$pld</td>
-            <td title='$lcd_t'>$lcd</td>
-            <td>$gases</td>
-            <td>$db</td>
-            <td>$atoms</td>
-            <td><a href='/{$url}'>{$name}</a></td>
-          </tr>
-          <tr>
-            <td title='$name_t'><a href='/mofs.php?mof=$hash_key'>$name</a></td>
-            <td title='$vf_t'>$vf</td>
-            <td title='$sa_m2cm3_t'>$sa_m2cm3</td>
-            <td title='$sa_m2g_t'>$sa_m2g</td>
-            <td title='$pld_t'>$pld</td>
-            <td title='$lcd_t'>$lcd</td>
-            <td>$gases</td>
-            <td>$db</td>
-            <td>$atoms</td>
-            <td><a href='/{$url}'>{$name}</a></td>
-          </tr>
-          <tr>
+        <tr>
+          <td title='$name_t'><a href='/mofs.php?mof=$hash_key'>$name</a></td>
+          <td title='$vf_t'>$vf</td>
+          <td title='$sa_m2cm3_t'>$sa_m2cm3</td>
+          <td title='$sa_m2g_t'>$sa_m2g</td>
+          <td title='$pld_t'>$pld</td>
+          <td title='$lcd_t'>$lcd</td>
+          <td>$gases</td>
+          <td>$db</td>
+          <td>$atoms</td>
+          <td><a href='/{$url}'>{$name}</a></td>
+        </tr>
+        <tr>
+          <td title='$name_t'><a href='/mofs.php?mof=$hash_key'>$name</a></td>
+          <td title='$vf_t'>$vf</td>
+          <td title='$sa_m2cm3_t'>$sa_m2cm3</td>
+          <td title='$sa_m2g_t'>$sa_m2g</td>
+          <td title='$pld_t'>$pld</td>
+          <td title='$lcd_t'>$lcd</td>
+          <td>$gases</td>
+          <td>$db</td>
+          <td>$atoms</td>
+          <td><a href='/{$url}'>{$name}</a></td>
+        </tr>
+        <tr>
           <td title='$name_t'><a href='/mofs.php?mof=$hash_key'>$name</a></td>
           <td title='$vf_t'>$vf</td>
           <td title='$sa_m2cm3_t'>$sa_m2cm3</td>

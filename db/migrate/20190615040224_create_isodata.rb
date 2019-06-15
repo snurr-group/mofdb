@@ -6,8 +6,6 @@ class CreateIsodata < ActiveRecord::Migration[5.2]
       t.float :pressure
       t.float :loading
       t.float :bulk_composition
-
-      t.timestamps
     end
   end
 end

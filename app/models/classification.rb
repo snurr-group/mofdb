@@ -1,5 +1,4 @@
 class Classification < ApplicationRecord
-
   before_save :cleanup
 
   def cleanup

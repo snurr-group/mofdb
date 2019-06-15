@@ -6,7 +6,6 @@ class CreateIsotherms < ActiveRecord::Migration[5.2]
       t.float :temp
       t.text :simin
 
-      t.references :database
       t.references :forcefield, foreign_key: true
       t.references :mof, foreign_key: true
 

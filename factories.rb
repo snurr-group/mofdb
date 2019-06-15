@@ -14,7 +14,36 @@ FactoryBot.define do
     lcd { rand(100) }
     pxrd { "aSDFASDFASDFASDFASDF" }
     pore_size_distribution { "asdfasdfasdfasdfasdf" }
+  end
+end
 
+FactoryBot.define do
+  factory :isotherm do
+    doi { Faker::Alphanumeric.alpha 20 }
+    digitizer { Faker::Science::scientist  }
+    temp { rand(200) }
+    simin { Faker::Lorem.paragraph }
+    forcefield { Forcefield.all[rand(Forcefield.all.count)-1] }
+    mof { Mof.all[rand(Mof.all.count)-1] }
+    adsorption_units_id { Classification.all[rand(Classification.all.count)-1].id }
+    pressure_units_id { Classification.all[rand(Classification.all.count)-1].id }
+    composition_type_id { Classification.all[rand(Classification.all.count)-1].id }
+  end
+end
+
+
+FactoryBot.define do
+
+  factory :isodatum do
+
+    isotherm { Isotherm.all[rand(Isotherm.all.count)-1] }
+    gas { Gas.all[rand(Gas.all.count)-1] }
+    pressure { rand(1400) }
+    loading { rand(1000) }
+    bulk_composition { rand(100).to_f/100 }
 
   end
 end
+
+
+

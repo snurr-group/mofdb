@@ -5,8 +5,6 @@ class CreateGases < ActiveRecord::Migration[5.2]
       t.string :name
       t.text :inchicode
       t.text :formula
-
-      t.timestamps
     end
   end
 end

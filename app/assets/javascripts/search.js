@@ -214,10 +214,39 @@ function refresh() {
     let CO2 = document.getElementById("CO2").checked;
     let CH4 = document.getElementById("CH4").checked;
     let H2O = document.getElementById("H2O").checked;
+    let gases = [];
+
+    if (N2) {
+        gases = gases.concat("N2");
+    }
+    if (X2) {
+        gases = gases.concat("X2");
+    }
+    if (Kr) {
+        gases = gases.concat("Kr");
+    }
+    if (H2) {
+        gases = gases.concat("H2");
+    }
+    if (CO2) {
+        gases = gases.concat("CO2");
+    }
+    if (CH4) {
+        gases = gases.concat("CH4");
+    }
+    if (H2O) {
+        gases = gases.concat("H2O");
+    }
+    console.log("gases",gases);
 
     let doi = document.getElementById("doi_label").value;
 
     let limit = document.getElementById("limit").checked;
+    if (limit) {
+        limit = 100;
+    } else {
+        limit = 1000000000;
+    }
 
 // Get elements from select bar
     let elements_object = document.getElementById("elements_label").selectedOptions;
@@ -231,17 +260,17 @@ function refresh() {
     let select_obj = document.getElementById("db_choice");
     let db_choice = select_obj.options[select_obj.selectedIndex].value;
 
-    console.log(name,vf_min,vf_max);
-    console.log(sa_m2g_min,sa_m2g_max);
-    console.log(sa_m2cm3_min,sa_m2cm3_max);
-    console.log(pld_min,pld_max);
-    console.log(lcd_min,lcd_max);
-    console.log(db_choice);
-    console.log(doi);
-    console.log(elements);
-    console.log(limit);
+    // console.log(name,vf_min,vf_max);
+    // console.log(sa_m2g_min,sa_m2g_max);
+    // console.log(sa_m2cm3_min,sa_m2cm3_max);
+    // console.log(pld_min,pld_max);
+    // console.log(lcd_min,lcd_max);
+    // console.log(db_choice);
+    // console.log(doi);
+    // console.log(elements);
+    // console.log(limit);
 
-    $.get("/mofs.josn", {
+    $.get("/mofs.json", {
             "vf_min": vf_min,
             "vf_max": vf_max,
 
@@ -258,21 +287,14 @@ function refresh() {
             "sa_m2cm3_max": sa_m2cm3_max,
 
             "name": name,
-            "N2": N2,
-            "X2": X2,
-            "Kr": Kr,
-            "H2": H2,
-            "CO2": CO2,
-            "CH4": CH4,
-            "H2O": H2O,
+            "gases": gases,
 
-            "db_choice": db_choice,
+            "database": db_choice,
             "elements": elements,
 
             "doi": doi,
             "limit": limit,
         }, function(data) {
-            console.log(data);
         }
     );
 
