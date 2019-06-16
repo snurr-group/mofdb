@@ -1,7 +1,13 @@
 class IsothermsController < ApplicationController
 
+  before_action :set_isotherm, only: [:show]
   def index
-    @isotherms = Isotherm.all
+
+    if params[:mof_id]
+      @isotherms = Mof.find(params[:mof_id]).isotherms
+    else
+      @isotherms = Isotherm.all
+    end
   end
 
   def show

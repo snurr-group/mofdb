@@ -1,9 +1,8 @@
 // 4 Sliders to choose ranges
 
 
+$(document).on('turbolinks:load', function () {
 
-
-document.addEventListener("DOMContentLoaded", function(event) {
 
     pld = document.getElementById('pld_slider');
     lcd = document.getElementById('lcd_slider');
@@ -14,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
 
     noUiSlider.create(pld, {
-        start: [0,20],
+        start: [0, 20],
         step: .1,
         range: {
             'min': [0],
@@ -27,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
         })
     });
     noUiSlider.create(lcd, {
-        start: [0,100],
+        start: [0, 100],
         step: .1,
         range: {
             'min': [0],
@@ -40,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
         })
     });
     noUiSlider.create(vf, {
-        start: [0,1],
+        start: [0, 1],
         step: .01,
         mark: '.',
         range: {
@@ -54,7 +53,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
         })
     });
     noUiSlider.create(sa_m2g, {
-        start: [0,5000],
+        start: [0, 5000],
         step: 100,
         range: {
             'min': [0],
@@ -68,7 +67,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
     });
 
     noUiSlider.create(sa_m2cm3, {
-        start: [0,5000],
+        start: [0, 5000],
         step: 100,
         range: {
             'min': [0],
@@ -104,72 +103,78 @@ document.addEventListener("DOMContentLoaded", function(event) {
         document.getElementById("sa_m2cm3_max").innerHTML = values[1];
     });
 
-    $("#checkboxes").click(function() {
+    $("#checkboxes").click(function () {
         console.log("triggered by Checkboxes");
         refresh()
     });
-    $("#limit").click(function() {
+    $("#limit").click(function () {
         console.log("triggered by Limit");
         refresh()
     });
 
-    $("#dbchoice").change(function() {
+    $("#dbchoice").change(function () {
         console.log("triggered by database");
         refresh()
     });
 
-    pld.noUiSlider.on('end',function() {
+    pld.noUiSlider.on('end', function () {
         console.log("triggered by PLD");
         refresh()
     });
-    lcd.noUiSlider.on('end',function() {
+    lcd.noUiSlider.on('end', function () {
         console.log("triggered by LCD");
         refresh()
     });
-    vf.noUiSlider.on('end',function() {
+    vf.noUiSlider.on('end', function () {
         console.log("triggered by VF");
         refresh()
     });
-    sa_m2g.noUiSlider.on('end',function() {
+    sa_m2g.noUiSlider.on('end', function () {
         console.log("triggered by SA");
         refresh()
     });
-    sa_m2cm3.noUiSlider.on('end',function() {
+    sa_m2cm3.noUiSlider.on('end', function () {
         console.log("triggered by SA");
         refresh()
     });
 
-    $( '#name' ).bind('keypress', function(e){
-        if ( e.keyCode == 13 | e.keyCode == 9) {
+    $('#name').bind('keypress', function (e) {
+        if (e.keyCode == 13 | e.keyCode == 9) {
             console.log("triggered by enter key");
             refresh();
         }
     });
 
-    $("#checkboxes").keydown(function() {
+    $("#checkboxes").keydown(function () {
         console.log("triggered by checkboxes");
         refresh();
     });
 
-    $("#doi_label").keydown(function() {
+    $("#doi_label").keydown(function () {
         console.log("triggered by doi");
         refresh()
     });
 
-    $('.chosen-select').on('change', function(evt, params) {
+    $('.chosen-select').on('change', function (evt, params) {
         console.log("triggered by elements");
         refresh()
     });
 
+    $('#db_choice').on('change',function() {
+        console.log("triggered by db choice");
+        refresh();
+    });
+
     set_table();
+    refresh();
+
 });
 
 
 
-function set_table(data,loc) {
-    // document.getElementById('table_inner').innerHTML = data ;
-    // window.history.pushState("object or string", "MOFDB Search", loc);
-    $("#mof_table").DataTable(
+function set_table(data) {
+    console.log("creating table");
+    table = $("#mof_table").DataTable(
         {
             "oLanguage": {
                 "sSearch": "Filter results" // Less confusing than the defaut "Search" since it doesn't actually do a new search just filter the table
@@ -181,7 +186,7 @@ function set_table(data,loc) {
             ],
             "pageLength": 15,
             "columnDefs": [
-                { "width": "5%", "targets": 0 }
+                {"width": "5%", "targets": 0}
             ]
         }
     );
@@ -216,28 +221,28 @@ function refresh() {
     let H2O = document.getElementById("H2O").checked;
     let gases = [];
 
+
     if (N2) {
-        gases = gases.concat("N2");
+        gases = gases.concat("Nitrogen");
     }
     if (X2) {
-        gases = gases.concat("X2");
+        gases = gases.concat("Xenon");
     }
     if (Kr) {
-        gases = gases.concat("Kr");
+        gases = gases.concat("Krypton");
     }
     if (H2) {
-        gases = gases.concat("H2");
+        gases = gases.concat("Hydrogen");
     }
     if (CO2) {
-        gases = gases.concat("CO2");
+        gases = gases.concat("Carbon Dioxide");
     }
     if (CH4) {
-        gases = gases.concat("CH4");
+        gases = gases.concat("Methane");
     }
     if (H2O) {
-        gases = gases.concat("H2O");
+        gases = gases.concat("Water");
     }
-    console.log("gases",gases);
 
     let doi = document.getElementById("doi_label").value;
 
@@ -253,24 +258,14 @@ function refresh() {
     let num_elements = elements_object.length;
     let elements = [];
     let i;
-    for(i=0; i<num_elements; i++) {
+    for (i = 0; i < num_elements; i++) {
         elements[i] = elements_object[i].text;
     }
 
     let select_obj = document.getElementById("db_choice");
     let db_choice = select_obj.options[select_obj.selectedIndex].value;
 
-    // console.log(name,vf_min,vf_max);
-    // console.log(sa_m2g_min,sa_m2g_max);
-    // console.log(sa_m2cm3_min,sa_m2cm3_max);
-    // console.log(pld_min,pld_max);
-    // console.log(lcd_min,lcd_max);
-    // console.log(db_choice);
-    // console.log(doi);
-    // console.log(elements);
-    // console.log(limit);
-
-    $.get("/mofs.json", {
+    $.get("/mofs/search", {
             "vf_min": vf_min,
             "vf_max": vf_max,
 
@@ -294,7 +289,14 @@ function refresh() {
 
             "doi": doi,
             "limit": limit,
-        }, function(data) {
+
+            "html": true, // request pre rendered html not json
+
+        }, function (data) {
+            table.destroy();
+            document.getElementById('mof_tbody').innerHTML = data;
+            set_table();
+
         }
     );
 

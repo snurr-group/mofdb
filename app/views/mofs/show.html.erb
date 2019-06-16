@@ -1,25 +1,39 @@
 <div id="mof-page">
   <div id="left">
     <table id="mof_specific">
-      <div class="lead">ASDF</div>
+      <div class="lead"><%= @mof.name %></div>
       <tbody>
-      <tr class="top"><td>Key</td><td>ASDF</td></tr>
-      <tr><td>Database</td><td>ASDF></td></tr>
-      <tr><td>Void Fraction</td><td>ASDF</td></tr>
-      <tr><td>ASA m2/g</td><td>ASDF</td></tr>
-      <tr><td>ASA m2/cm3</td><td>ASDF</td></tr>
-      <tr><td>PLD</td><td>ASDF</td></tr>
-      <tr><td>LCD</td><td>ASDF</td></tr>
-      <tr><td>Atoms in MOF</td><td>ASDF</td></tr>
+      <tr class="top"><td>Key</td><td><%= @mof.hashkey %></td></tr>
+      <tr><td>Database</td><td><%= @mof.database.name %></td></tr>
+      <tr><td title="<%= @mof.void_fraction %>">Void Fraction</td><td><%= @mof.void_fraction %></td></tr>
+      <tr><td title="<%= @mof.surface_area_m2g %>">ASA m2/g</td><td><%= @mof.surface_area_m2g  %></td></tr>
+      <tr><td title="<%= @mof.surface_area_m2cm3 %>">ASA m2/cm3</td><td><%= @mof.surface_area_m2cm3  %></td></tr>
+      <tr><td title="<%= @mof.pld%>">PLD</td><td><%= @mof.pld %></td></tr>
+      <tr><td title="<%= @mof.lcd %>">LCD</td><td> <%= @mof.lcd %></td></tr>
+      <tr><td>Atoms in MOF</td><td><%= @mof.elements.pluck(:symbol).join(", ") %></td></tr>
       </tbody>
     </table>
+    <div id='viewport' style='width:100%; min-height:450px;'></div>
 
-    <div id='viewport' style='width:100%; min-height:450px;'></div>"
+    <% if @mof.database != "CSD" %>
+      <script>
+          document.addEventListener("DOMContentLoaded", function () {
+          var stage = new NGL.Stage("viewport");
+          var path_to_cif = "/assets/mof.cif";
+          stage.loadFile(path_to_cif, {defaultRepresentation: true}).then( function( o ){
+              o.addRepresentation( "unitcell" );
+              o.stage.setParameters( {backgroundColor: "white"} );
+              o.autoView();
+          });
+          });
+      </script>
+    <% else %>
+    <br/><p>Preview not available for CSD</p>
+    <% end %>
 
   </div>
   <div id="right">
-    <div class="lead">Isotherms</div>
+    <div class="lead">Isotherms <%= link_to "<button>View JSON</button>".html_safe, mof_path(@mof, format: :json) %></div>
     <div class="spacer"></div>
-  </div>
   </div>
 </div>

@@ -12,7 +12,6 @@ class CreateIsotherms < ActiveRecord::Migration[5.2]
       t.references :adsorption_units
       t.references :pressure_units
       t.references :composition_type
-
       t.timestamps
     end
     add_foreign_key :isotherms, :classifications, column: "adsorption_units_id"

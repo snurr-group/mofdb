@@ -2929,17 +2929,20 @@ synonyms.each do | syn |
   syns += 1
 end
 
-for x in 0..60
-  FactoryBot.create(:mof)
+for x in 0..10
+  mof = FactoryBot.create(:mof)
+  mof.elements << Element.all[rand(Element.all.count-1)]
+  mof.elements << Element.all[rand(Element.all.count-1)]
+  mof.elements << Element.all[rand(Element.all.count-1)]
   puts x.to_s
 end
 
-for x in 0..120
+for x in 0..400
   FactoryBot.create(:isotherm)
   puts x.to_s
 end
 
-for x in 0..1200
+for x in 0..800
   FactoryBot.create(:isodatum)
   puts x.to_s
 end

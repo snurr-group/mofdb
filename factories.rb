@@ -37,8 +37,8 @@ FactoryBot.define do
   factory :isodatum do
 
     isotherm { Isotherm.all[rand(Isotherm.all.count)-1] }
-    gas { Gas.all[rand(Gas.all.count)-1] }
-    pressure { rand(1400) }
+    gas { [Gas.find_by(name: "Nitrogen"), Gas.find_by(name: "Water"), Gas.find_by(name: "Carbon Dioxide")][rand(2)] }
+    pressure { [0,10,20][rand(2)] }
     loading { rand(1000) }
     bulk_composition { rand(100).to_f/100 }
 

@@ -1,0 +1,14 @@
+<% @mofs.each do |mof|  %>
+  <tr>
+    <td title="<%= mof.name %>"><%= link_to mof.name[0..15], mof %></td>
+    <td title="<%= mof.void_fraction %>"><%= mof.void_fraction %></td>
+    <td title="<%= mof.surface_area_m2cm3 %>"><%= mof.surface_area_m2cm3 %></td>
+    <td title="<%= mof.surface_area_m2g %>"><%= mof.surface_area_m2g %></td>
+    <td title="<%= mof.pld %>"><%= mof.pld %></td>
+    <td title="<%= mof.lcd %>"><%= mof.lcd %></td>
+    <td><%= mof.gases.pluck(:formula).join(", ") %></td>
+    <td><%= mof.database.name %></td>
+    <td><%= mof.elements.pluck(:symbol).join(", ") %></td>
+    <td><%= link_to "More info...", mof_url(mof.id) %></td>
+  </tr>
+<% end %>
