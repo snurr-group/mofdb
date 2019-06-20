@@ -12,7 +12,7 @@
   <!-- JQUERY -->
   <!-- <script src="js/jquery.min.js" ></script> -->
   <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-  <% console %>
+  <%# console %>
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>
   <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
@@ -30,13 +30,14 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js" defer></script>
   <script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js" defer></script>
   <script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.print.min.js" defer></script>
-  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 
 <body>
 
 <div id="nav">
-  <h1><a href="index.php"><span id="mof">MOF</span><span id="db">DB</span></a></h1>
+  <h1><a href="/"><span id="mof">MOF</span><span id="db">DB</span></a>
+    <span id="nav_api"><a href="/api">API</a></span>
+    <span id="nav_database"><a href="/databases">Databases</a></span></h1>
 </div>
 <div id="page">
   <%= yield %>

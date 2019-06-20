@@ -3,4 +3,6 @@ class Mof < ApplicationRecord
   has_many :isotherms
   has_many :gases, through: :isotherms
   has_and_belongs_to_many :elements
+
+
 end

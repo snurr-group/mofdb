@@ -1,0 +1,11 @@
+<div id="generic_page">
+  <h1>Download Databases</h1>
+  <ul>
+
+    <% Database.all.each do |db| %>
+      <li><a href="/mofs.json?database=<%=db.name %>"><%= db.name %> </a >MOFs + Isotherms</li>
+      <li><a href="/mofs.json?cifs=true&database=<%=db.name %>"><%= db.name %> </a >CIFs</li><br/>
+    <% end %>
+
+  </ul>
+</div>

@@ -11,6 +11,11 @@ json.url mof_url(mof, format: :json)
 json.adsorbates gases
 
 json.isotherms(mof.isotherms) do |isotherm|
+
+
+  json.adsorbates isotherm.gases.uniq
+
+
   json.extract! isotherm, :id, :doi, :digitizer, :simin
   json.date isotherm.created_at.strftime("%Y-%M-%d")
   json.temperature isotherm.temp

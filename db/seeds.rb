@@ -7,6 +7,7 @@ Mof.destroy_all
 Classification.destroy_all
 Gas.destroy_all
 Synonym.destroy_all
+Database.destroy_all
 
 ### Classifications
 Classification.new(name: "% Volume Adsorbed            ", data:               0 ,source: " adsorptionUnits    ").save!
@@ -2928,23 +2929,23 @@ synonyms.each do | syn |
   end
   syns += 1
 end
-
-for x in 0..10
-  mof = FactoryBot.create(:mof)
-  mof.elements << Element.all[rand(Element.all.count-1)]
-  mof.elements << Element.all[rand(Element.all.count-1)]
-  mof.elements << Element.all[rand(Element.all.count-1)]
-  puts x.to_s
-end
-
-for x in 0..400
-  FactoryBot.create(:isotherm)
-  puts x.to_s
-end
-
-for x in 0..800
-  FactoryBot.create(:isodatum)
-  puts x.to_s
-end
+#
+# for x in 0..10
+#   mof = FactoryBot.create(:mof)
+#   mof.elements << Element.all[rand(Element.all.count-1)]
+#   mof.elements << Element.all[rand(Element.all.count-1)]
+#   mof.elements << Element.all[rand(Element.all.count-1)]
+#   puts x.to_s
+# end
+#
+# for x in 0..400
+#   FactoryBot.create(:isotherm)
+#   puts x.to_s
+# end
+#
+# for x in 0..800
+#   FactoryBot.create(:isodatum)
+#   puts x.to_s
+# end
 
 puts "Done seeding gases, elements, and forcefields"

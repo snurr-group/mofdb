@@ -1,4 +1,5 @@
 json.extract! isotherm, :id, :doi, :digitizer, :simin
+json.adsorbates isotherm.gases.uniq
 json.date isotherm.created_at.strftime("%Y-%M-%d")
 json.temperature isotherm.temp
 json.forcefield isotherm.forcefield.name
@@ -35,6 +36,7 @@ json.isotherm_data(points) do |pressure, point|
   json.species_data(point['entries']) do |subpoint|
     json.inchikey subpoint[:InChIKey]
     json.name Gas.find_by(inchikey: subpoint[:InChIKey]).name
+
     json.composition subpoint[:composition]
     json.adsorption subpoint[:adsorption]
   end
