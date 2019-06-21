@@ -5,10 +5,6 @@ class MofsController < ApplicationController
   # GET /mofs.json
   def index
     @mofs = Mof.all
-
-    puts "In INDEX"
-    puts params
-
     filter_mofs
     if params[:html]
       render partial: 'mofs/rows'
@@ -20,7 +16,7 @@ class MofsController < ApplicationController
     hashkey = params[:hashkey]
     @mof = Mof.find_by(hashkey: hashkey)
     if @mof.nil?
-
+      elements   = JSON.parse(params[:atoms]).map { |atm| Element.find_by(symbol: atm)}
       @mof = Mof.new(name: params[:name],
                      hashkey: params[:hashkey],
                      database: Database.find_by(name: params[:db]),
@@ -31,7 +27,8 @@ class MofsController < ApplicationController
                      pld: params[:pld],
                      lcd: params[:lcd],
                      pxrd: params[:pxrd],
-                     pore_size_distribution: params[:pore_size_distribution])
+                     pore_size_distribution: params[:pore_size_distribution],
+                     elements: elements)
       @mof.save!
     end
     render 'show.json'

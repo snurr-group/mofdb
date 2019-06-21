@@ -6,7 +6,11 @@ Rails.application.routes.draw do
       post '/upload' => 'mofs#upload', as: 'upload'
     end
   end
-  resources :isotherms, format: :json
+  resources :isotherms, format: :json do
+    collection do
+      post '/upload' => 'isotherms#upload', as: "upload"
+    end
+  end
   root 'mofs#index'
   get '/api' => 'mofs#api', as: 'api'
   get '/databases' => 'mofs#databases', as: 'databases'
