@@ -59,7 +59,7 @@ ActiveRecord::Schema.define(version: 2019_06_15_072126) do
     t.text "formula"
   end
 
-  create_table "isodata", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    create_table "isodata", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.bigint "isotherm_id"
     t.bigint "gas_id"
     t.float "pressure"
@@ -92,7 +92,7 @@ ActiveRecord::Schema.define(version: 2019_06_15_072126) do
     t.string "hashkey"
     t.string "name"
     t.bigint "database_id"
-    t.string "cif"
+    t.text "cif"
     t.float "void_fraction"
     t.float "surface_area_m2g"
     t.float "surface_area_m2cm3"

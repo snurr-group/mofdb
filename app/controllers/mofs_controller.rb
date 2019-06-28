@@ -1,6 +1,10 @@
+require 'zip'
+
 class MofsController < ApplicationController
-  before_action :set_mof, only: [:show, :edit, :update, :destroy]
+  before_action :set_mof, only: [:show, :edit, :update, :destroy, :cif]
   skip_forgery_protection only: [:upload]
+  before_action :verify_access, only: [:upload]
+
   # GET /mofs
   # GET /mofs.json
   def index
@@ -10,26 +14,55 @@ class MofsController < ApplicationController
       render partial: 'mofs/rows'
       return
     end
+    if params[:cifs] && params[:cifs] == "true" && @mofs.any?
+
+      temp_name = "mof-dl-#{SecureRandom.hex(8)}.zip"
+      temp_path = Rails.root.join(Rails.root.join("tmp"), temp_name)
+
+      Zip::OutputStream.open(temp_path) do |io|
+        @mofs.each do |mof|
+          io.put_next_entry(mof.name)
+          io.write(mof.cif)
+        end
+      end
+
+      File.open(temp_path, 'r') do |file|
+        send_data file.read, :type => 'application/zip', :filename => temp_name
+      end
+      File.delete(temp_path)
+
+
+    end
   end
 
   def upload
     hashkey = params[:hashkey]
     @mof = Mof.find_by(hashkey: hashkey)
+
+    begin
+      elements = JSON.parse(params[:atoms]).map {|atm| Element.find_by(symbol: atm)}
+    rescue
+      elements = nil
+    end
+    mof_params = {name: params[:name],
+                  hashkey: params[:hashkey],
+                  database: Database.find_by(name: params[:db]),
+                  cif: params[:cif],
+                  void_fraction: params[:void_fraction],
+                  surface_area_m2g: params[:surface_area_m2g],
+                  surface_area_m2cm3: params[:surface_area_m2cm3],
+                  pld: params[:pld],
+                  lcd: params[:lcd],
+                  pxrd: params[:pxrd],
+                  pore_size_distribution: params[:pore_size_distribution],
+                  elements: elements}
+
+
     if @mof.nil?
-      elements   = JSON.parse(params[:atoms]).map { |atm| Element.find_by(symbol: atm)}
-      @mof = Mof.new(name: params[:name],
-                     hashkey: params[:hashkey],
-                     database: Database.find_by(name: params[:db]),
-                     cif: params[:cif],
-                     void_fraction: params[:void_fraction],
-                     surface_area_m2g: params[:surface_area_m2g],
-                     surface_area_m2cm3: params[:surface_area_m2cm3],
-                     pld: params[:pld],
-                     lcd: params[:lcd],
-                     pxrd: params[:pxrd],
-                     pore_size_distribution: params[:pore_size_distribution],
-                     elements: elements)
+      @mof = Mof.new(mof_params)
       @mof.save!
+    else
+      @mof.update(mof_params)
     end
     render 'show.json'
   end
@@ -37,6 +70,20 @@ class MofsController < ApplicationController
   # GET /mofs/1
   # GET /mofs/1.json
   def show
+  end
+
+  # GET /mofs/1/cif
+  def cif
+
+    temp_name = "cif-#{SecureRandom.hex(8)}.cif"
+    temp_path = Rails.root.join(Rails.root.join("tmp"), temp_name)
+
+    File.open(temp_path, 'w+') do |file|
+      file.write(@mof.cif)
+    end
+    send_data(temp_path.read, filename: @mof.name+".cif")
+
+    File.delete(temp_path)
   end
 
   # GET /api
@@ -89,11 +136,11 @@ class MofsController < ApplicationController
     end
 
     ### SA M2G
-    if params[:sa_m2cm3_min] && !params[:sa_m2cm3_min].empty?  && params[:sa_m2cm3_min].to_f != 0
+    if params[:sa_m2cm3_min] && !params[:sa_m2cm3_min].empty? && params[:sa_m2cm3_min].to_f != 0
       @mofs = @mofs.where("surface_area_m2cm3 >= ?", params[:sa_m2cm3_min])
     end
 
-    if params[:sa_m2cm3_max] && !params[:sa_m2cm3_max].empty?  && params[:sa_m2cm3_max].to_f != 5000
+    if params[:sa_m2cm3_max] && !params[:sa_m2cm3_max].empty? && params[:sa_m2cm3_max].to_f != 5000
       @mofs = @mofs.where("surface_area_m2cm3 <= ?", params[:sa_m2cm3_max])
     end
 

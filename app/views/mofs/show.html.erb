@@ -3,37 +3,68 @@
     <table id="mof_specific">
       <div class="lead"><%= @mof.name %></div>
       <tbody>
-      <tr class="top"><td>Key</td><td><%= @mof.hashkey %></td></tr>
-      <tr><td>Database</td><td><%= @mof.database.name %></td></tr>
-      <tr><td title="<%= @mof.void_fraction %>">Void Fraction</td><td><%= @mof.void_fraction %></td></tr>
-      <tr><td title="<%= @mof.surface_area_m2g %>">ASA m2/g</td><td><%= @mof.surface_area_m2g  %></td></tr>
-      <tr><td title="<%= @mof.surface_area_m2cm3 %>">ASA m2/cm3</td><td><%= @mof.surface_area_m2cm3  %></td></tr>
-      <tr><td title="<%= @mof.pld%>">PLD</td><td><%= @mof.pld %></td></tr>
-      <tr><td title="<%= @mof.lcd %>">LCD</td><td> <%= @mof.lcd %></td></tr>
-      <tr><td>Atoms in MOF</td><td><%= @mof.elements.pluck(:symbol).join(", ") %></td></tr>
+      <tr class="top">
+        <td>Key</td>
+        <td><%= @mof.hashkey %></td>
+      </tr>
+      <tr>
+        <td>Database</td>
+        <td><%= @mof.database.name %></td>
+      </tr>
+      <tr>
+        <td title="<%= @mof.void_fraction %>">Void Fraction</td>
+        <td><%= @mof.void_fraction %></td>
+      </tr>
+      <tr>
+        <td title="<%= @mof.surface_area_m2g %>">ASA m2/g</td>
+        <td><%= @mof.surface_area_m2g %></td>
+      </tr>
+      <tr>
+        <td title="<%= @mof.surface_area_m2cm3 %>">ASA m2/cm3</td>
+        <td><%= @mof.surface_area_m2cm3 %></td>
+      </tr>
+      <tr>
+        <td title="<%= @mof.pld %>">PLD</td>
+        <td><%= @mof.pld %></td>
+      </tr>
+      <tr>
+        <td title="<%= @mof.lcd %>">LCD</td>
+        <td> <%= @mof.lcd %></td>
+      </tr>
+      <tr>
+        <td>Atoms in MOF</td>
+        <td><%= @mof.elements.pluck(:symbol).join(", ") %></td>
+      </tr>
       </tbody>
     </table>
-    <div id='viewport' style='width:100%; min-height:450px;'></div>
+    <div id='viewport' style='width:100%;height:20rem;'></div>
 
     <% if @mof.database != "CSD" %>
       <script>
-          document.addEventListener("DOMContentLoaded", function () {
-          var stage = new NGL.Stage("viewport");
-          var path_to_cif = "/assets/mof.cif";
-          stage.loadFile(path_to_cif, {defaultRepresentation: true}).then( function( o ){
-              o.addRepresentation( "unitcell" );
-              o.stage.setParameters( {backgroundColor: "white"} );
-              o.autoView();
+          document.addEventListener("turbolinks:load", function () {
+              var stage = new NGL.Stage("viewport");
+              var path_to_cif = "<%= request.original_url.to_s+"/cif.cif" %>";
+              stage.loadFile(path_to_cif, {defaultRepresentation: true}).then(function (o) {
+                  o.addRepresentation("unitcell");
+                  //console.log(o);
+                  o.stage.setParameters({backgroundColor: "white"}); /* See class documentation at http://nglviewer.org/ngl/api/class/src/stage/stage.js~Stage.html */
+                  o.autoView();
+              });
           });
-          });
+
       </script>
     <% else %>
-    <br/><p>Preview not available for CSD</p>
+      <br/>
+      <p>Preview not available for CSD</p>
     <% end %>
 
   </div>
   <div id="right">
+    <% if @mof.isotherms.any? %>
     <div class="lead">Isotherms <%= link_to "<button>View JSON</button>".html_safe, mof_path(@mof, format: :json) %></div>
+    <% else@mof.isotherms.any? %>
+      <p class="lead">This mof has no isotherms</p>
+      <% end %>
     <div class="spacer"></div>
   </div>
 </div>

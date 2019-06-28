@@ -160,7 +160,7 @@ $(document).on('turbolinks:load', function () {
         refresh()
     });
 
-    $('#db_choice').on('change',function() {
+    $('#db_choice').on('change', function () {
         console.log("triggered by db choice");
         refresh();
     });
@@ -169,7 +169,6 @@ $(document).on('turbolinks:load', function () {
     refresh();
 
 });
-
 
 
 function set_table(data) {
@@ -192,6 +191,11 @@ function set_table(data) {
     );
 };
 
+
+function set_link(url) {
+    let link = document.getElementById('download_cifs');
+    link.href = "/mofs.json?"+url;
+}
 
 function refresh() {
 
@@ -265,38 +269,55 @@ function refresh() {
     let select_obj = document.getElementById("db_choice");
     let db_choice = select_obj.options[select_obj.selectedIndex].value;
 
-    $.get("/mofs/search", {
-            "vf_min": vf_min,
-            "vf_max": vf_max,
+    let url_params = {
+        "vf_min": vf_min,
+        "vf_max": vf_max,
 
-            "pld_min": pld_min,
-            "pld_max": pld_max,
+        "pld_min": pld_min,
+        "pld_max": pld_max,
 
-            "lcd_min": lcd_min,
-            "lcd_max": lcd_max,
+        "lcd_min": lcd_min,
+        "lcd_max": lcd_max,
 
-            "sa_m2g_min": sa_m2g_min,
-            "sa_m2g_max": sa_m2g_max,
+        "sa_m2g_min": sa_m2g_min,
+        "sa_m2g_max": sa_m2g_max,
 
-            "sa_m2cm3_min": sa_m2cm3_min,
-            "sa_m2cm3_max": sa_m2cm3_max,
+        "sa_m2cm3_min": sa_m2cm3_min,
+        "sa_m2cm3_max": sa_m2cm3_max,
 
-            "name": name,
-            "gases": gases,
+        "name": name,
+        "gases": gases,
 
-            "database": db_choice,
-            "elements": elements,
+        "database": db_choice,
+        "elements": elements,
 
-            "doi": doi,
-            "limit": limit,
+        "doi": doi,
+        "limit": limit,
+    };
 
-            "html": true, // request pre rendered html not json
 
-        }, function (data) {
+    let html_params = Object.assign({}, url_params); // Copy params to html_params and add the flag so the api returns table rows
+    html_params['html'] = true;
+
+
+    url_params['cifs'] = true; // The link "Downlod Cifs" needs to return a zip so add this flag
+    set_link(dictToURI(url_params));
+
+
+        function dictToURI(dict) {
+        var str = [];
+        for(var p in dict){
+            str.push(encodeURIComponent(p) + "=" + encodeURIComponent(dict[p]));
+        }
+        return str.join("&");
+    }
+
+    $.get("/mofs/search", html_params
+
+        , function (data) {
             table.destroy();
             document.getElementById('mof_tbody').innerHTML = data;
             set_table();
-
         }
     );
 

@@ -5,6 +5,9 @@ Rails.application.routes.draw do
       get '/search' => 'mofs#index', as: "search"
       post '/upload' => 'mofs#upload', as: 'upload'
     end
+    member do
+      get '/cif' => 'mofs#cif', as: "cif"
+    end
   end
   resources :isotherms, format: :json do
     collection do

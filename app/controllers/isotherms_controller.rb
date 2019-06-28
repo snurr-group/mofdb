@@ -1,6 +1,7 @@
 class IsothermsController < ApplicationController
   skip_forgery_protection only: [:upload]
   before_action :set_isotherm, only: [:show]
+  before_action :verify_access, only: [:upload]
 
   def index
 
@@ -15,9 +16,6 @@ class IsothermsController < ApplicationController
   end
 
   def upload
-    puts "-------------------------"
-    puts "-------------------------"
-    puts "-------------------------"
     @mof = Mof.find params[:mof_id].to_i
 
     @isotherm = Isotherm.new(mof: @mof,
@@ -52,6 +50,11 @@ class IsothermsController < ApplicationController
           bulk_composition: isodatum[3])
       datum.save!
     end
+
+    @isotherm.destroy! if @isotherm.isodata.count == 0 or @isotherm.is_duplicate
+
+
+
 
 
   end
