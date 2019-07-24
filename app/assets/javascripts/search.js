@@ -1,5 +1,25 @@
 // 4 Sliders to choose ranges
 
+document.addEventListener("turbolinks:before-cache", function () {
+    pld = document.getElementById('pld_slider');
+    lcd = document.getElementById('lcd_slider');
+    vf = document.getElementById('vf_slider');
+    sa_m2g = document.getElementById('sa_m2g_slider');
+    sa_m2cm3 = document.getElementById('sa_m2cm3_slider');
+    limit = document.getElementById('limit');
+    if (pld == undefined) {
+        return
+    } else {
+        pld.noUiSlider.destroy();
+        lcd.noUiSlider.destroy();
+        vf.noUiSlider.destroy();
+        sa_m2g.noUiSlider.destroy();
+        sa_m2cm3.noUiSlider.destroy();
+        limit.noUiSlider.destroy();
+    }
+
+});
+
 
 $(document).on('turbolinks:load', function () {
 
@@ -194,7 +214,7 @@ function set_table(data) {
 
 function set_link(url) {
     let link = document.getElementById('download_cifs');
-    link.href = "/mofs.json?"+url;
+    link.href = "/mofs.json?" + url;
 }
 
 function refresh() {
@@ -304,9 +324,9 @@ function refresh() {
     set_link(dictToURI(url_params));
 
 
-        function dictToURI(dict) {
+    function dictToURI(dict) {
         var str = [];
-        for(var p in dict){
+        for (var p in dict) {
             str.push(encodeURIComponent(p) + "=" + encodeURIComponent(dict[p]));
         }
         return str.join("&");

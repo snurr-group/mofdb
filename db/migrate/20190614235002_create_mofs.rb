@@ -4,7 +4,7 @@ class CreateMofs < ActiveRecord::Migration[5.2]
       t.string :hashkey
       t.string :name
       t.bigint :database_id
-      t.text :cif
+      t.text :cif, limit: 16.megabytes - 1
       t.float :void_fraction
       t.float :surface_area_m2g
       t.float :surface_area_m2cm3

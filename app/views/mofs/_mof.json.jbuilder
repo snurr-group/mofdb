@@ -10,6 +10,13 @@ gases.uniq
 json.url mof_url(mof, format: :json)
 json.adsorbates gases
 
+json.heats(mof.heats) do |heat|
+  json.pressure heat.pressure
+  json.value heat.value
+  json.pressure_units Classification.find(heat.pressure_units_ids).name
+  json.value_units Classification.find(heat.value_units_id).name
+end
+
 json.isotherms(mof.isotherms) do |isotherm|
 
 
@@ -19,7 +26,8 @@ json.isotherms(mof.isotherms) do |isotherm|
   json.extract! isotherm, :id, :doi, :digitizer, :simin
   json.date isotherm.created_at.strftime("%Y-%M-%d")
   json.temperature isotherm.temp
-  json.forcefield isotherm.forcefield.name
+  json.adsorbate_forcefield isotherm.adsorbate_forcefield.name
+  json.molecule_forcefield isotherm.molecule_forcefield.name
   json.adsorbent do
     json.id isotherm.mof.id
     json.name isotherm.mof.name

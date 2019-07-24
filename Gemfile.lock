@@ -91,6 +91,8 @@ GEM
     nio4r (2.3.1)
     nokogiri (1.10.3)
       mini_portile2 (~> 2.4.0)
+    nouislider-rails (8.2.1)
+      railties (>= 3.1)
     rack (2.0.7)
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
@@ -177,6 +179,7 @@ DEPENDENCIES
   jbuilder (~> 2.5)
   listen (>= 3.0.5, < 3.2)
   mysql2 (>= 0.4.4, < 0.6.0)
+  nouislider-rails
   rails (~> 5.2.3)
   rubyzip (= 1)
   sass-rails (~> 5.0)

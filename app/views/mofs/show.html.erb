@@ -37,22 +37,11 @@
       </tr>
       </tbody>
     </table>
-    <div id='viewport' style='width:100%;height:20rem;'></div>
 
     <% if @mof.database != "CSD" %>
-      <script>
-          document.addEventListener("turbolinks:load", function () {
-              var stage = new NGL.Stage("viewport");
-              var path_to_cif = "<%= request.original_url.to_s+"/cif.cif" %>";
-              stage.loadFile(path_to_cif, {defaultRepresentation: true}).then(function (o) {
-                  o.addRepresentation("unitcell");
-                  //console.log(o);
-                  o.stage.setParameters({backgroundColor: "white"}); /* See class documentation at http://nglviewer.org/ngl/api/class/src/stage/stage.js~Stage.html */
-                  o.autoView();
-              });
-          });
-
-      </script>
+      <div id="viewport-holder">
+      <div id='viewport' data-url="<%= request.original_url.to_s+"/cif.cif"%>" style='width:100%;height:20rem;'></div>
+      </div>
     <% else %>
       <br/>
       <p>Preview not available for CSD</p>
@@ -61,10 +50,11 @@
   </div>
   <div id="right">
     <% if @mof.isotherms.any? %>
-    <div class="lead">Isotherms <%= link_to "<button>View JSON</button>".html_safe, mof_path(@mof, format: :json) %></div>
-    <% else@mof.isotherms.any? %>
+      <div class="lead">Isotherms <%= link_to "<button>View JSON</button>".html_safe, mof_path(@mof, format: :json) %></div>
+    <% else
+         @mof.isotherms.any? %>
       <p class="lead">This mof has no isotherms</p>
-      <% end %>
+    <% end %>
     <div class="spacer"></div>
   </div>
 </div>

@@ -52,5 +52,5 @@ test:
 production:
   <<: *default
   database: mofdb2_production
-  username: mofdb2
+  username: mofdb
   password: <%= ENV['MOFDB2_DATABASE_PASSWORD'] %>

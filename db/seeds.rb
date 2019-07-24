@@ -520,6 +520,10 @@ Element.new(number:  40, name: "Zirconiu ", symbol: "Zr").save!
 
 Forcefield.new(name: "UFF").save!
 Forcefield.new(name: "TraPPE").save!
+Forcefield.new(name: "Michels-Degraaff-Tenseldam with Darkrim-Levesque partial charges").save!
+Forcefield.new(name: "Darkrim-Levesque").save!
+Forcefield.new(name: "Hirschfelder, Molecular Theory of Gases and Liquids & Talu, Colloids Surf., A, 2001, 187.188, 83.93").save!
+Forcefield.new(name: "Talu et al., Colloids Surf A 2001 187-188, 83").save!
 
 Database.new(name: "CSD").save!
 Database.new(name: "Tobacco").save!

@@ -1,5 +1,6 @@
 class Isotherm < ApplicationRecord
-  belongs_to :forcefield
+  belongs_to :adsorbate_forcefield, class_name: 'Forcefield'
+  belongs_to :molecule_forcefield, class_name: 'Forcefield'
   belongs_to :mof
   has_many :isodata, dependent: :delete_all
   has_many :gases, through: :isodata
@@ -9,7 +10,7 @@ class Isotherm < ApplicationRecord
     is_dupe = false
     my_points  = self.isodatum_set # Set of points in this isotherm
 
-    Isotherm.where(mof: self.mof, temp: self.temp).each do |iso|
+    Isotherm.where(mof: self.mof, temp: self.temp).where.not(id: self.id).each do |iso|
       is_dupe = true if iso.isodatum_set == my_points
     end
 

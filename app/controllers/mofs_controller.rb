@@ -40,7 +40,10 @@ class MofsController < ApplicationController
     @mof = Mof.find_by(hashkey: hashkey)
 
     begin
-      elements = JSON.parse(params[:atoms]).map {|atm| Element.find_by(symbol: atm)}
+      puts "elements"
+      puts JSON.parse(params[:atoms])
+      elements = JSON.parse(params[:atoms]).map {|atm| Element.find_by(symbol: atm == "x" ? "Xe" : atm)
+      }
     rescue
       elements = nil
     end
@@ -57,8 +60,18 @@ class MofsController < ApplicationController
                   pore_size_distribution: params[:pore_size_distribution],
                   elements: elements}
 
+    puts "DB:"
+    puts mof_params.inspect
+    puts params[:db]
+     if params[:db] == "hMOFs"
+       mof_params[:database] = Database.find_by(name: "hMOF")
+       puts "fixing mof_params"
+       puts mof_params.inspect
+     end
 
     if @mof.nil?
+      puts "elements:"
+      puts mof_params[:elements].inspect
       @mof = Mof.new(mof_params)
       @mof.save!
     else
@@ -160,10 +173,6 @@ class MofsController < ApplicationController
       @mofs = @mofs.where(hashkey: params[:hashkey])
     end
 
-    if params[:limit] && !params[:limit].empty?
-      @mofs = @mofs.take(params[:limit])
-    end
-
     if params[:gases] && !params[:gases].empty?
       @mofs = @mofs.select {|mf| (mf.gases.pluck(:name) & params[:gases]).any?}
     end
@@ -171,6 +180,13 @@ class MofsController < ApplicationController
     if params[:doi] && !params[:doi].empty?
       @mofs = @mofs.select {|mf| mf.isotherms.pluck(:doi).include?(params[:doi])}
     end
+
+    if params[:limit] && !params[:limit].empty?
+      @mofs = @mofs.take(params[:limit].to_i)
+    else
+      @mofs = @mofs.take(100)
+    end
+
   end
 
   # Use callbacks to share common setup or constraints between actions.

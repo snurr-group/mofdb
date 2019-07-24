@@ -2,7 +2,8 @@ json.extract! isotherm, :id, :doi, :digitizer, :simin
 json.adsorbates isotherm.gases.uniq
 json.date isotherm.created_at.strftime("%Y-%M-%d")
 json.temperature isotherm.temp
-json.forcefield isotherm.forcefield.name
+json.adsorbate_forcefield isotherm.adsorbate_forcefield.name
+json.molecule_forcefield isotherm.molecule_forcefield.name
 json.adsorbent do
   json.id isotherm.mof.id
   json.name isotherm.mof.name
