@@ -21,6 +21,7 @@ Rails.application.configure do
   # Disable serving static files from the `/public` folder by default since
   # Apache or NGINX already handles this.
   config.serve_static_assets = true
+  config.assets.compile = true
   config.public_file_server.enabled = ENV['RAILS_SERVE_STATIC_FILES'].present?
 
 
@@ -28,9 +29,6 @@ Rails.application.configure do
   # Compress JavaScripts and CSS.
   config.assets.js_compressor = Uglifier.new(:harmony => true)
   # config.assets.css_compressor = :sass
-
-  # Do not fallback to assets pipeline if a precompiled asset is missed.
-  config.assets.compile = false
 
   # `config.assets.precompile` and `config.assets.version` have moved to config/initializers/assets.rb
 
