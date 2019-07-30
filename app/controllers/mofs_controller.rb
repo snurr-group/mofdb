@@ -87,15 +87,12 @@ class MofsController < ApplicationController
 
   # GET /mofs/1/cif
   def cif
-
     temp_name = "cif-#{SecureRandom.hex(8)}.cif"
     temp_path = Rails.root.join(Rails.root.join("tmp"), temp_name)
-
     File.open(temp_path, 'w+') do |file|
       file.write(@mof.cif)
     end
     send_data(temp_path.read, filename: @mof.name+".cif")
-
     File.delete(temp_path)
   end
 

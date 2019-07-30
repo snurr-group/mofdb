@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_17_042648) do
+ActiveRecord::Schema.define(version: 2019_07_30_145341) do
 
   create_table "classifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name"
@@ -18,6 +18,7 @@ ActiveRecord::Schema.define(version: 2019_07_17_042648) do
     t.integer "source"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_classifications_on_name"
   end
 
   create_table "databases", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -118,6 +119,7 @@ ActiveRecord::Schema.define(version: 2019_07_17_042648) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["database_id"], name: "fk_rails_42b2867304"
+    t.index ["hashkey"], name: "index_mofs_on_hashkey"
   end
 
   create_table "synonyms", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
