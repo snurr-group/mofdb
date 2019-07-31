@@ -94,7 +94,7 @@ class IsothermsController < ApplicationController
 
     Isodatum.import points
     render :json => {id: @isotherm.id}
-    @isotherm.destroy! if point.size == 0 or @isotherm.is_duplicate
+    @isotherm.destroy! if points.size == 0 or @isotherm.is_duplicate
   end
 
   private
