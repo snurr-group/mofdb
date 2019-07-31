@@ -54,5 +54,5 @@ production:
   database: mofdb2_production
   username: mofdb
   password: <%= ENV['MOFDB2_DATABASE_PASSWORD'] %>
-  socket: /var/run/mysqld/mysqld.sock
+  socket: <%= ENV['SOCKET'] %>
 
