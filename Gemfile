@@ -1,9 +1,8 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-
-
 gem 'spring'
+gem 'activerecord-import'
 gem "passenger", ">= 5.3.2", require: "phusion_passenger/rack_handler"
 gem 'rubyzip', '1'
 gem 'rails', '~> 5.2.3'
