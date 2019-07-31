@@ -90,7 +90,7 @@
     <p class="hcon slider_title">DOI</p>
     <div class="hcon"><input list="doi" id="doi_label" name="doi"/></div>
     <datalist id="doi">
-      <% Isotherm.all.limit(100).pluck(:doi).each do |doi| %>
+      <% Isotherm.all.limit(10).pluck(:doi).each do |doi| %>
         <option value="<%= doi %>"> <%= doi %></option>
       <% end %>
     </datalist>

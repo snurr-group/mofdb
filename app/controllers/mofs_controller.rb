@@ -40,8 +40,6 @@ class MofsController < ApplicationController
     @mof = Mof.find_by(hashkey: hashkey)
 
     begin
-      puts "elements"
-      puts JSON.parse(params[:atoms])
       elements = JSON.parse(params[:atoms]).map {|atm| Element.find_by(symbol: atm == "x" ? "Xe" : atm)
       }
     rescue

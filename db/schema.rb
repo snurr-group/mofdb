@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_30_145341) do
+ActiveRecord::Schema.define(version: 2019_07_31_184633) do
 
   create_table "classifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name"
@@ -31,6 +31,9 @@ ActiveRecord::Schema.define(version: 2019_07_30_145341) do
     t.string "symbol"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_elements_on_name"
+    t.index ["number"], name: "index_elements_on_number"
+    t.index ["symbol"], name: "index_elements_on_symbol"
   end
 
   create_table "elements_mofs", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -56,8 +59,12 @@ ActiveRecord::Schema.define(version: 2019_07_30_145341) do
   create_table "gases", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "inchikey"
     t.string "name"
-    t.text "inchicode"
-    t.text "formula"
+    t.string "inchicode", limit: 500
+    t.string "formula", limit: 500
+    t.index ["formula"], name: "index_gases_on_formula"
+    t.index ["inchicode"], name: "index_gases_on_inchicode"
+    t.index ["inchikey"], name: "index_gases_on_inchikey"
+    t.index ["name"], name: "index_gases_on_name"
   end
 
   create_table "heats", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
