@@ -18,37 +18,70 @@ class IsothermsController < ApplicationController
   def upload
     @mof = Mof.find params[:mof_id].to_i
 
+    def classification_cache(name)
+      key = "classification-" + name
+      if Rails.cache.exist?(key)
+        return Rails.cache.fetch(key)
+      else
+        ans = Classification.find_by(name: name).id
+        Rails.cache.write(key, ans, expires_in: 1.hours)
+        return ans
+      end
+    end
+
+    def ff_cache(name)
+      key = "ff-" + name
+      if Rails.cache.exist?(key)
+        return Rails.cache.fetch(key)
+      else
+        ans = Forcefield.find_by(name: name)
+        Rails.cache.write(key, ans, expires_in: 1.hours)
+        return ans
+      end
+    end
+
+    def gas_cache(name)
+      key = "gas-" + name
+      if Rails.cache.exist?(key)
+        return Rails.cache.fetch(key)
+      else
+        gas = Gas.find_by(name: name)
+        if gas.nil?
+          gas = Gas.find_by(formula: name)
+        end
+        if gas.nil?
+          syn = Synonym.find_by(name: name)
+          gas = syn.gas unless syn.nil?
+        end
+        if gas.nil?
+          gas = Gas.find_by(inchikey: name)
+        end
+        if gas.nil?
+          gas = Gas.find_by(inchicode: name)
+        end
+        Rails.cache.write(key, gas, expires_in: 1.hours)
+        return gas
+      end
+    end
+
     @isotherm = Isotherm.new(mof: @mof,
                              doi: params[:doi],
                              digitizer: params[:digitizer],
                              temp: params[:temp],
                              simin: params[:simin],
-                             adsorbate_forcefield: Forcefield.find_by(name: params[:adsorbate_forcefield]),
-                             molecule_forcefield: Forcefield.find_by(name: params[:molecule_forcefield]),
-                             adsorption_units_id: Classification.find_by(name: params[:adsorption_units]).id,
-                             pressure_units_id: Classification.find_by(name: params[:pressure_units]).id,
-                             composition_type_id: Classification.find_by(name: params[:composition_type]).id)
+                             adsorbate_forcefield: ff_cache(params[:adsorbate_forcefield]),
+                             molecule_forcefield: ff_cache(params[:molecule_forcefield]),
+                             adsorption_units_id: classification_cache(params[:adsorption_units]),
+                             pressure_units_id: classification_cache(params[:pressure_units]),
+                             composition_type_id: classification_cache(params[:composition_type]))
 
     @isotherm.save!
 
     # points [inchikey, pressure, loading, bulk_comp]
     JSON.parse(params[:points]).each do |isodatum|
       gas_name = isodatum[0]
-      gas = Gas.find_by(formula: gas_name)
 
-      if gas.nil?
-        syn = Synonym.find_by(name: gas_name)
-        gas = syn.gas unless syn.nil?
-      end
-      if gas.nil?
-        gas = Gas.find_by(name: gas_name)
-      end
-      if gas.nil?
-        gas = Gas.find_by(inchikey: gas_name)
-      end
-      if gas.nil?
-        gas = Gas.find_by(inchicode: gas_name)
-      end
+      gas = gas_cache(gas_name)
 
       datum = Isodatum.new(
           isotherm: @isotherm,

@@ -4,12 +4,16 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 
 gem 'spring'
-gem 'puma'
-
 gem "passenger", ">= 5.3.2", require: "phusion_passenger/rack_handler"
 gem 'rubyzip', '1'
 gem 'rails', '~> 5.2.3'
 gem 'mysql2', '>= 0.4.4', '< 0.6.0'
+
+gem 'rack-mini-profiler'
+gem 'memory_profiler'
+gem 'flamegraph'
+gem 'stackprof'
+
 gem 'sass-rails', '~> 5.0'
 gem 'uglifier', '>= 1.3.0'
 
@@ -25,6 +29,7 @@ group :development, :test do
 end
 
 group :development do
+  gem 'bullet'
   gem 'web-console', '>= 3.3.0'
   gem 'factory_bot_rails'
   gem 'faker'

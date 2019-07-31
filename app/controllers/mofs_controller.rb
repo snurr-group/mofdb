@@ -8,7 +8,12 @@ class MofsController < ApplicationController
   # GET /mofs
   # GET /mofs.json
   def index
-    @mofs = Mof.all
+    if params[:html]
+      @mofs = Mof.all.includes(:database)
+    else
+      @mofs = Mof.all
+    end
+
     filter_mofs
     if params[:html]
       render partial: 'mofs/rows'
@@ -45,9 +50,10 @@ class MofsController < ApplicationController
     rescue
       elements = nil
     end
+
     mof_params = {name: params[:name],
                   hashkey: params[:hashkey],
-                  database: Database.find_by(name: params[:db]),
+
                   cif: params[:cif],
                   void_fraction: params[:void_fraction],
                   surface_area_m2g: params[:surface_area_m2g],
@@ -58,9 +64,12 @@ class MofsController < ApplicationController
                   pore_size_distribution: params[:pore_size_distribution],
                   elements: elements}
 
-     if params[:db] == "hMOFs"
-       mof_params[:database] = Database.find_by(name: "hMOF")
-     end
+    if params[:db] == "hMOFs"
+      mof_params[:database] = Database.find_by(name: "hMOF")
+    else
+      mof_params[:database] = Database.find_by(name: params[:db])
+    end
+
 
     if @mof.nil?
       @mof = Mof.new(mof_params)
@@ -68,7 +77,10 @@ class MofsController < ApplicationController
     else
       @mof.update(mof_params)
     end
-    render 'show.json'
+
+
+    render status: 200, json: @mof.id.to_json
+
   end
 
   # GET /mofs/1
