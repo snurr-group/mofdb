@@ -20,6 +20,7 @@ Classification.new(name: "atoms/unit cell              ", data:               0 
 Classification.new(name: "author                       ", data:               0 ,source: " extResource        ").save!
 Classification.new(name: "bar                          ", data:               1 ,source: " pressureUnits      ").save!
 Classification.new(name: "biblio                       ", data:               0 ,source: " extResource        ").save!
+Classification.new(name: "cm3/cm3                 ", data:               0 ,source: " adsorptionUnits    ").save!
 Classification.new(name: "cm3(STP)/cm3                 ", data:               0 ,source: " adsorptionUnits    ").save!
 Classification.new(name: "cm3(STP)/g                   ", data:               0 ,source: " adsorptionUnits    ").save!
 Classification.new(name: "cm3(STP)/m2                  ", data:               0 ,source: " adsorptionUnits    ").save!
@@ -42,6 +43,7 @@ Classification.new(name: "Guest molecules per Cu ion   ", data:               0 
 Classification.new(name: "isotherm                     ", data:               0 ,source: " extResource        ").save!
 Classification.new(name: "journal                      ", data:               0 ,source: " extResource        ").save!
 Classification.new(name: "kg/mol                       ", data:               0 ,source: " adsorptionUnits    ").save!
+Classification.new(name: "kj/mol                       ", data:               0 ,source: " adsorptionUnits    ").save!
 Classification.new(name: "kmol/m3                      ", data:               0 ,source: " adsorptionUnits    ").save!
 Classification.new(name: "kPa                          ", data:            0.01 ,source: " pressureUnits      ").save!
 Classification.new(name: "m3(STP)/kg                   ", data:               0 ,source: " adsorptionUnits    ").save!
@@ -59,6 +61,7 @@ Classification.new(name: "mmol adsorbed                ", data:               0 
 Classification.new(name: "mmol/cm3                     ", data:               0 ,source: " adsorptionUnits    ").save!
 Classification.new(name: "mmol/g                       ", data:               0 ,source: " adsorptionUnits    ").save!
 Classification.new(name: "mmol/kg                      ", data:               0 ,source: " adsorptionUnits    ").save!
+Classification.new(name: "mol/kg                      ", data:               0 ,source: " adsorptionUnits    ").save!
 Classification.new(name: "mmol/m2                      ", data:               0 ,source: " adsorptionUnits    ").save!
 Classification.new(name: "mod                          ", data:               0 ,source: " category           ").save!
 Classification.new(name: "mol gas/mol Ni               ", data:               0 ,source: " adsorptionUnits    ").save!

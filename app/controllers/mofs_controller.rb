@@ -9,7 +9,7 @@ class MofsController < ApplicationController
   # GET /mofs.json
   def index
     if params[:html]
-      @mofs = Mof.all.includes(:database)
+      @mofs = Mof.all.includes(:database, :elements)
     else
       @mofs = Mof.all
     end
@@ -183,7 +183,7 @@ class MofsController < ApplicationController
     if params[:limit] && !params[:limit].empty?
       @mofs = @mofs.take(params[:limit].to_i)
     else
-      @mofs = @mofs.take(100)
+      @mofs = @mofs.take(30)
     end
 
   end

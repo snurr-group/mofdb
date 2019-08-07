@@ -5,7 +5,7 @@ gases = []
 mof.isotherms.each do |iso|
   gases.concat(iso.gases)
 end
-gases.uniq
+gases = gases.uniq
 
 json.url mof_url(mof, format: :json)
 json.adsorbates gases

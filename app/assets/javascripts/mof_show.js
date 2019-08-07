@@ -1,4 +1,4 @@
-document.addEventListener("turbolinks:before-cache", function () {
+window.onbeforeunload = function () {
     let mof_page = document.getElementById('mof-page');
 
     if (mof_page == undefined) {
@@ -9,9 +9,9 @@ document.addEventListener("turbolinks:before-cache", function () {
     let vp = document.getElementById('viewport');
     vp.parentElement.removeChild(vp);
 
-});
+};
 
-$(document).on('turbolinks:load', function () {
+$(document).on('DOMContentLoaded', function () {
 
 
     let mof_page = document.getElementById('mof-page');

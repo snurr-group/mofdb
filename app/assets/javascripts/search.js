@@ -1,6 +1,6 @@
 // 4 Sliders to choose ranges
 
-document.addEventListener("turbolinks:before-cache", function () {
+window.onbeforeunload = function () {
     pld = document.getElementById('pld_slider');
     lcd = document.getElementById('lcd_slider');
     vf = document.getElementById('vf_slider');
@@ -18,10 +18,10 @@ document.addEventListener("turbolinks:before-cache", function () {
         limit.noUiSlider.destroy();
     }
 
-});
+};
 
 
-$(document).on('turbolinks:load', function () {
+$(document).on('DOMContentLoaded', function () {
 
 
     pld = document.getElementById('pld_slider');
@@ -190,10 +190,23 @@ $(document).on('turbolinks:load', function () {
 
 });
 
-
+table = undefined;
 function set_table(data) {
-    console.log("creating table");
+    console.log("setting up table");
+
+    if (table != undefined) {
+        console.log('destroying table');
+        table.destroy();
+    };
+
+    if (data != undefined) {
+        document.getElementById('mof_tbody').innerHTML = data;
+    } else {
+        document.getElementById('mof_tbody').innerHTML = "   Loading..."
+    }
+
     table = $("#mof_table").DataTable(
+
         {
             "oLanguage": {
                 "sSearch": "Filter results" // Less confusing than the defaut "Search" since it doesn't actually do a new search just filter the table
@@ -335,9 +348,7 @@ function refresh() {
     $.get("/mofs/search", html_params
 
         , function (data) {
-            table.destroy();
-            document.getElementById('mof_tbody').innerHTML = data;
-            set_table();
+            set_table(data);
         }
     );
 
