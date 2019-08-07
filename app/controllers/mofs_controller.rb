@@ -61,8 +61,11 @@ class MofsController < ApplicationController
                   pld: params[:pld],
                   lcd: params[:lcd],
                   pxrd: params[:pxrd],
-                  pore_size_distribution: params[:pore_size_distribution],
-                  elements: elements}
+                  pore_size_distribution: params[:pore_size_distribution]}
+
+    unless elements.nil?
+      mof_params["elements"] = elements
+    end
 
     if params[:db] == "hMOFs"
       mof_params[:database] = Database.find_by(name: "hMOF")
