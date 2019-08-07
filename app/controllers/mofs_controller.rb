@@ -45,15 +45,13 @@ class MofsController < ApplicationController
     @mof = Mof.find_by(hashkey: hashkey)
 
     begin
-      elements = JSON.parse(params[:atoms]).map {|atm| Element.find_by(symbol: atm == "x" ? "Xe" : atm)
-      }
+      elements = JSON.parse(params[:atoms]).map {|atm| Element.find_by(symbol: atm == "x" ? "Xe" : atm)}
+      mof_params[:elements] = elements
     rescue
-      elements = nil
     end
 
     mof_params = {name: params[:name],
                   hashkey: params[:hashkey],
-
                   cif: params[:cif],
                   void_fraction: params[:void_fraction],
                   surface_area_m2g: params[:surface_area_m2g],
@@ -63,10 +61,6 @@ class MofsController < ApplicationController
                   pxrd: params[:pxrd],
                   pore_size_distribution: params[:pore_size_distribution]}
 
-    unless elements.nil?
-      mof_params["elements"] = elements
-    end
-
     if params[:db] == "hMOFs"
       mof_params[:database] = Database.find_by(name: "hMOF")
     else
@@ -75,6 +69,8 @@ class MofsController < ApplicationController
 
 
     if @mof.nil?
+      puts "Elements is:"
+      puts mof_params[:elements]
       @mof = Mof.new(mof_params)
       @mof.save!
     else
