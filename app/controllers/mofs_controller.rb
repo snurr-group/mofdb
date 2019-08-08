@@ -26,7 +26,7 @@ class MofsController < ApplicationController
 
       Zip::OutputStream.open(temp_path) do |io|
         @mofs.each do |mof|
-          io.put_next_entry(mof.name)
+          io.put_next_entry(mof.name + ".cif" )
           io.write(mof.cif)
         end
       end
