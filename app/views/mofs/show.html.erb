@@ -37,14 +37,20 @@
       </tr>
       <Tr>
         <td>Cif:</td>
-        <td><%= @mof.database.name == "CSD" ? link_to "Downoad", cif_mof_path(@mof) : "Not avaialble for CSD" %></td>
+        <td>
+          <% if @mof.database.name == "CSD" %>
+            Not avaialble for CSD
+          <% else %>
+            <% link_to("Download", cif_mof_path(@mof)) %>
+          <% end %>
+        </td>
       </Tr>
       </tbody>
     </table>
 
     <% if @mof.database.name != "CSD" %>
       <div id="viewport-holder">
-      <div id='viewport' data-url="<%= request.original_url.to_s+"/cif.cif"%>" style='width:100%;height:20rem;'></div>
+        <div id='viewport' data-url="<%= request.original_url.to_s + "/cif.cif" %>" style='width:100%;height:20rem;'></div>
       </div>
     <% else %>
       <br/>
