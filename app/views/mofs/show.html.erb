@@ -37,7 +37,7 @@
       </tr>
       <Tr>
         <td>Cif:</td>
-        <td><%= link_to "Downoad", cif_mof_path(@mof) %></td>
+        <td><%= @mof.database.name == "CSD" ? link_to "Downoad", cif_mof_path(@mof) : "Not avaialble for CSD" %></td>
       </Tr>
       </tbody>
     </table>
