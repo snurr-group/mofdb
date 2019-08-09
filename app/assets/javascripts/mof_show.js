@@ -18,7 +18,7 @@ $(document).on('DOMContentLoaded', function () {
     console.log("start");
     if (mof_page == undefined) {
         return
-        console.log("undefined")
+        console.log("undefined"
     }
     console.log("defined2");
 
