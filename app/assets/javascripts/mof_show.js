@@ -15,18 +15,17 @@ $(document).on('DOMContentLoaded', function () {
 
     let mof_page = document.getElementById('mof-page');
 
+    console.log("start");
     if (mof_page == undefined) {
         return
+        console.log("undefined")
     }
+    console.log("defined");
 
 
 
     var stage = new NGL.Stage("viewport");
     let vp = document.getElementById('viewport');
-
-    if (vp == undefined) {
-
-    }
 
     var path_to_cif = vp.dataset['url'];
     stage.loadFile(path_to_cif, {defaultRepresentation: true}).then(function (o) {
