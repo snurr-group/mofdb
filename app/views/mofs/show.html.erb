@@ -35,10 +35,14 @@
         <td>Atoms in MOF</td>
         <td><%= @mof.elements.pluck(:symbol).join(", ") %></td>
       </tr>
+      <Tr>
+        <td>Cif:</td>
+        <td><%= link_to "Downoad", cif_mof_path(@mof) %></td>
+      </Tr>
       </tbody>
     </table>
 
-    <% if @mof.database != "CSD" %>
+    <% if @mof.database.name != "CSD" %>
       <div id="viewport-holder">
       <div id='viewport' data-url="<%= request.original_url.to_s+"/cif.cif"%>" style='width:100%;height:20rem;'></div>
       </div>

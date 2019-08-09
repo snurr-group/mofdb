@@ -90,6 +90,9 @@ class MofsController < ApplicationController
 
   # GET /mofs/1/cif
   def cif
+    if @mof.database.name == "CSD"
+      return render status: 403, json: "Unavailable for CSD cifs, see: https://www.ccdc.cam.ac.uk/solutions/csd-system/components/csd/".to_json
+    end
     temp_name = "cif-#{SecureRandom.hex(8)}.cif"
     temp_path = Rails.root.join(Rails.root.join("tmp"), temp_name)
     File.open(temp_path, 'w+') do |file|
