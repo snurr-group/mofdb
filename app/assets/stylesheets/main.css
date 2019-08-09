@@ -66,7 +66,7 @@
 }
 
 #nav_api a, #nav_database a {
-    margin-left: 15px;
+    margin-left: 5px;
     color: rgba(195,196,194,.5);
     font-size: .9em;
 }
@@ -356,10 +356,9 @@ body {
 #nav h1 {
     grid-area: nav_txt;
     margin: 0;
-    padding: 0.5em;
     padding-bottom: 0.3em;
-    padding-left: 0;
-    margin-left: 0;
+    padding-left: .3em;
+    line-height: .9em;
     padding-top: 16px;
     transition: padding 0.3s;
 }

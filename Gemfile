@@ -6,6 +6,8 @@ gem 'activerecord-import'
 gem "passenger", ">= 5.3.2", require: "phusion_passenger/rack_handler"
 gem 'rubyzip', '1'
 gem 'rails', '~> 5.2.3'
+
+gem 'rails-erd', group: :development
 gem 'mysql2', '>= 0.4.4', '< 0.6.0'
 
 gem 'rack-mini-profiler'

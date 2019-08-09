@@ -9,6 +9,7 @@ development:
   database: mofdb2_development
   password: rootrootroot
   username: root
+  socket: <%= ENV['SOCKET'] %>
 
 production:
   <<: *default

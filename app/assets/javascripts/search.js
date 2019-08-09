@@ -6,7 +6,6 @@ window.onbeforeunload = function () {
     vf = document.getElementById('vf_slider');
     sa_m2g = document.getElementById('sa_m2g_slider');
     sa_m2cm3 = document.getElementById('sa_m2cm3_slider');
-    limit = document.getElementById('limit');
     if (pld == undefined) {
         return
     } else {
@@ -16,7 +15,6 @@ window.onbeforeunload = function () {
         vf.noUiSlider.destroy();
         sa_m2g.noUiSlider.destroy();
         sa_m2cm3.noUiSlider.destroy();
-        limit.noUiSlider.destroy();
     }
 
 };
@@ -25,7 +23,12 @@ window.onbeforeunload = function () {
 $(document).on('DOMContentLoaded', function () {
 
 
+
     pld = document.getElementById('pld_slider');
+
+    if (pld == undefined) {
+        return
+    }
     lcd = document.getElementById('lcd_slider');
     vf = document.getElementById('vf_slider');
     sa_m2g = document.getElementById('sa_m2g_slider');

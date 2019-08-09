@@ -2,7 +2,6 @@ window.onbeforeunload = function () {
     let mof_page = document.getElementById('mof-page');
 
     if (mof_page == undefined) {
-        console.log('wrong page');
         return
     }
 
@@ -17,12 +16,10 @@ $(document).on('DOMContentLoaded', function () {
     let mof_page = document.getElementById('mof-page');
 
     if (mof_page == undefined) {
-        console.log('wrong page');
         return
     }
 
 
-    console.log('added');
 
     var stage = new NGL.Stage("viewport");
     let vp = document.getElementById('viewport');
@@ -34,7 +31,6 @@ $(document).on('DOMContentLoaded', function () {
     var path_to_cif = vp.dataset['url'];
     stage.loadFile(path_to_cif, {defaultRepresentation: true}).then(function (o) {
         o.addRepresentation("unitcell");
-        console.log(o);
         o.stage.setParameters({backgroundColor: "white"});
         o.autoView();
     });
@@ -55,7 +51,6 @@ $(document).on('DOMContentLoaded', function () {
         child.setAttribute('class', "isotherm_graph");
         right.appendChild(child);
 
-        console.log(json);
 
         let loading_label = "Loading [" + json['adsorption_units'] + "]";
         let pressure_label = "Pressure [" + json['pressure_units'] + "]";
@@ -101,7 +96,6 @@ $(document).on('DOMContentLoaded', function () {
             let pressure = pressure_pt['pressure'];
             for (let j = 0; j < pressure_pt['species_data'].length; j++) {
                 let isodata = pressure_pt['species_data'][j];
-                console.log(isodata, "ASDFASDF");
                 if (gases[isodata['name']]) {
                     gases[isodata['name']]['x'].push(pressure);
                     gases[isodata['name']]['y'].push(isodata['adsorption'])
@@ -120,7 +114,6 @@ $(document).on('DOMContentLoaded', function () {
             traces.push(gases[key_i]);
         });
 
-        console.log('traces:',traces)
         Plotly.plot(child, traces, layout,
             {
                 responsive: true, modeBarButtonsToRemove:
