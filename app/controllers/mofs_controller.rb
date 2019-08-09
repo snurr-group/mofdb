@@ -8,7 +8,7 @@ class MofsController < ApplicationController
   # GET /mofs
   # GET /mofs.json
   def index
-    if params[:html]
+    if params[:html] or params[:cifs]
       @mofs = Mof.all.includes(:database, :elements)
     else
       @mofs = Mof.all
