@@ -16,6 +16,7 @@ $(document).on('DOMContentLoaded', function () {
     let mof_page = document.getElementById('mof-page');
 
     if (mof_page == undefined) {
+        alert('happened');
         return
     }
 
