@@ -4,9 +4,9 @@
 
     <% Database.all.each do |db| %>
       <br/>
-      <li><a href="/mofs.json?database=<%=db.name %>"><%= db.name %> </a >MOFs + Isotherms</li>
+      <li><a href="/mofs.json?limit=1000000000&database=<%=db.name %>"><%= db.name %> </a >MOFs + Isotherms</li>
       <% next if db.name == "CSD" %>
-      <li><a href="/mofs.json?cifs=true&database=<%=db.name %>"><%= db.name %> </a >CIFs</li>
+      <li><a href="/mofs.json?limit=1000000000&cifs=true&database=<%=db.name %>"><%= db.name %> </a >CIFs</li>
     <% end %>
 
   </ul>
