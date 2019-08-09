@@ -20,11 +20,14 @@ $(document).on('DOMContentLoaded', function () {
         return
         console.log("undefined")
     }
-    console.log("defined");
+    console.log("defined2");
 
 
 
     var stage = new NGL.Stage("viewport");
+
+
+    console.log('stage');
     let vp = document.getElementById('viewport');
 
     console.log("stage and vp");
