@@ -20,7 +20,8 @@ class MofsController < ApplicationController
       return
     end
     if params[:cifs] && params[:cifs] == "true" && @mofs.any?
-      @mofs = @mofs.where(:database != Database.find_by(name: "CSD"))
+      csd = Database.find_by(name: "CSD")
+      @mofs = @mofs.select {|mof| mof.database != csd)
       temp_name = "mof-dl-#{SecureRandom.hex(8)}.zip"
       temp_path = Rails.root.join(Rails.root.join("tmp"), temp_name)
 
