@@ -10,7 +10,14 @@ class IsothermsController < ApplicationController
     else
       @isotherms = Isotherm.all
     end
+
+    if params[:limit]
+      @isotherms = @isotherms.take(100)
+    else
+      @isotherms = @isotherms.take(params[:limit].to_i)
+    end
   end
+
 
   def show
   end
