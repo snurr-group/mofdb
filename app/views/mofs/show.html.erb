@@ -50,7 +50,11 @@
 
     <% if @mof.database.name != "CSD" %>
       <div id="viewport-holder">
-        <div id='viewport' data-url="<%= request.original_url.to_s + "/cif.cif" %>" style='width:100%;height:20rem;'></div>
+        <% if Rails.env == "production" %>
+          <div id='viewport' data-url="<%= (request.original_url.to_s + "/cif.cif").gsub(/http\:/, 'https\:') %>" style='width:100%;height:20rem;'></div>
+        <% else %>
+          <div id='viewport' data-url="<%= request.original_url.to_s + "/cif.cif" %>" style='width:100%;height:20rem;'></div>
+        <% end %>
       </div>
     <% else %>
       <br/>
