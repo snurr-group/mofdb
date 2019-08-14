@@ -10,7 +10,7 @@ class IsothermsController < ApplicationController
     elsif params[:mof_hashkey]
       @isotherms = Mof.find_by(hashkey: params[:mof_hashkey]).isotherms
     else
-      if params[:limit]
+      if params[:limit] && params[:limit] != 0 && params[:limit] != nil
         @isotherms = Isotherm.all.take(100)
       else
         @isotherms = Isotherm.all.take(params[:limit].to_i)
