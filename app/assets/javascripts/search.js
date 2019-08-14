@@ -9,7 +9,6 @@ window.onbeforeunload = function () {
     if (pld == undefined) {
         return
     } else {
-        alert('destroy')
         pld.noUiSlider.destroy();
         lcd.noUiSlider.destroy();
         vf.noUiSlider.destroy();
