@@ -26,11 +26,9 @@ Rails.application.configure do
 
 
 
-  config.assets.debug = true
-
   # Compress JavaScripts and CSS.
-  # config.assets.js_compressor = Uglifier.new(:harmony => true)
-  # config.assets.css_compressor = :sass
+  config.assets.js_compressor = Uglifier.new(:harmony => true)
+  config.assets.css_compressor = :sass
 
   # `config.assets.precompile` and `config.assets.version` have moved to config/initializers/assets.rb
 
