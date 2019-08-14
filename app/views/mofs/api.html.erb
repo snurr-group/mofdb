@@ -3,7 +3,6 @@
   <ul>
 
     <li>/mofs.json
-
       <table class="api_table">
         <tr>
           <th>Param Name</th>
@@ -101,7 +100,7 @@
         <tr>
           <td>limit</td>
           <td>integer
-          <td></td>
+          <td>default is 100, if you want to see all results set a very high limit (page load may take a long time for hundreds of thousands of mofs)</td>
         </tr>
         <tr>
           <td>gases</td>
@@ -123,6 +122,26 @@
     </li>
     <li>/mofs/#.json</li>
     <li>/isotherms.json</li>
+
+    <table class="api_table">
+      <tr>
+        <td>limit</td>
+        <td>integer
+        <td>default is 100, if you want to see all results set a very high limit (page load may take a long time for hundreds of thousands of mofs)</td>
+      </tr>
+      <tr>
+        <td>mof_id</td>
+        <td>integer
+        <td>?mof_id=123</td>
+      </tr>
+      <tr>
+        <td>mof_hashkey</td>
+        <td>string
+        <td>?hashkey=123...abc (50 characters exactly)</td>
+      </tr>
+    </table>
+
+
     <li>/isotherms/#.json</li>
   </ul>
 </div>
