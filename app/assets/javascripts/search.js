@@ -29,7 +29,6 @@ $(document).on('DOMContentLoaded', function () {
     if (pld == undefined) {
         return
     }
-
     lcd = document.getElementById('lcd_slider');
     vf = document.getElementById('vf_slider');
     sa_m2g = document.getElementById('sa_m2g_slider');
