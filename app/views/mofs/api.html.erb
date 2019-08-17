@@ -2,8 +2,7 @@
   <h1>API Routes</h1>
   <ul>
 
-    <li>/mofs.json
-
+    <li><h3>/mofs.json</h3></li>
       <table class="api_table">
         <tr>
           <th>Param Name</th>
@@ -101,7 +100,7 @@
         <tr>
           <td>limit</td>
           <td>integer
-          <td></td>
+          <td>default is 100, if you want to see all results set a  high limit <br>Load times will increase linearly with # of mofs*isotherms</td>
         </tr>
         <tr>
           <td>gases</td>
@@ -121,8 +120,34 @@
 
       </table>
     </li>
-    <li>/mofs/#.json</li>
-    <li>/isotherms.json</li>
-    <li>/isotherms/#.json</li>
+    <li><h3>/mofs/#.json</h3></li>
+    <li><h3>/isotherms.json</h3></li>
+
+    <table class="api_table">
+      <tr>
+        <th>Param Name</th>
+        <th>Type</th>
+        <th>Example</th>
+      </tr>
+
+      <tr>
+        <td>limit</td>
+        <td>integer
+        <td>default is 100, if you want to see all results set a  high limit <br>Load times will increase linearly with # of isotherms</td>
+      </tr>
+      <tr>
+        <td>mof_id</td>
+        <td>integer
+        <td>?mof_id=123</td>
+      </tr>
+      <tr>
+        <td>mof_hashkey</td>
+        <td>string
+        <td>?hashkey=123...abc (50 characters exactly)</td>
+      </tr>
+    </table>
+
+
+    <li><h3>/isotherms/#.json</h3></li>
   </ul>
 </div>
