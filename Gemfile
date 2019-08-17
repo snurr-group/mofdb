@@ -10,7 +10,6 @@ gem 'rails', '~> 5.2.3'
 gem 'rails-erd', group: :development
 gem 'mysql2', '>= 0.4.4', '< 0.6.0'
 
-gem 'yui-compressor'
 gem 'rack-mini-profiler'
 gem 'memory_profiler'
 gem 'flamegraph'

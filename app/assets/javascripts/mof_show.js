@@ -15,22 +15,18 @@ $(document).on('DOMContentLoaded', function () {
 
     let mof_page = document.getElementById('mof-page');
 
-    console.log("start");
     if (mof_page == undefined) {
         return
-        console.log("undefined")
     }
-    console.log("defined2");
 
 
 
     var stage = new NGL.Stage("viewport");
-
-
-    console.log('stage');
     let vp = document.getElementById('viewport');
 
-    console.log("stage and vp");
+    if (vp == undefined) {
+
+    }
 
     var path_to_cif = vp.dataset['url'];
     stage.loadFile(path_to_cif, {defaultRepresentation: true}).then(function (o) {
@@ -39,22 +35,16 @@ $(document).on('DOMContentLoaded', function () {
         o.autoView();
     });
 
-    console.log("setup stage");
-
     let right = document.getElementById('right');
     let id = window.location.toString().split("/mofs/")[1].split("/")[0];
-    console.log("pre fetch")
     $.get("/mofs/" + id + ".json", function (data) {
-        console.log('post fetch')
         for (let i = 0; i < data['isotherms'].length; i++) {
             create_isotherm(data['isotherms'][i])
         }
     });
 
 
-
     function create_isotherm(json) {
-        console.log('creat iso: ', json);
         let child = document.createElement('div');
         let id = 'isotherm_graph_' + json.id;
         child.setAttribute('id', id);
