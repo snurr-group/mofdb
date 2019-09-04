@@ -10,8 +10,6 @@ gem 'rails-erd', group: :development
 gem 'mysql2', '>= 0.4.4', '< 0.6.0'
 
 gem 'rack-mini-profiler'
-gem "oj"
-gem "multi_json"
 gem 'puma'
 gem 'memory_profiler'
 gem 'flamegraph'
