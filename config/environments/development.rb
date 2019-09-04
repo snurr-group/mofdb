@@ -15,15 +15,14 @@ Rails.application.configure do
 
   # Enable/disable caching. By default caching is disabled.
   # Run rails dev:cache to toggle caching.
+  config.action_controller.perform_caching = true
   if Rails.root.join('tmp', 'caching-dev.txt').exist?
-    config.action_controller.perform_caching = true
 
-    config.cache_store = :memory_store
+    config.cache_store = :memory_store, { size: 1024.megabytes }
     config.public_file_server.headers = {
       'Cache-Control' => "public, max-age=#{2.days.to_i}"
     }
   else
-    config.action_controller.perform_caching = false
 
     config.cache_store = :null_store
   end
@@ -65,7 +64,6 @@ Rails.application.configure do
     Bullet.alert = true
     Bullet.bullet_logger = true
     Bullet.console = true
-    Bullet.rails_logger = true
     Bullet.add_footer = true
   end
 end

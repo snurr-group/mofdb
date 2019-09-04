@@ -10,9 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_31_185747) do
+ActiveRecord::Schema.define(version: 2019_09_04_053716) do
 
-  create_table "classifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "classifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name"
     t.float "data"
     t.integer "source"
@@ -22,12 +22,12 @@ ActiveRecord::Schema.define(version: 2019_07_31_185747) do
     t.index ["source"], name: "index_classifications_on_source"
   end
 
-  create_table "databases", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "databases", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name"
     t.index ["name"], name: "index_databases_on_name"
   end
 
-  create_table "elements", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "elements", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "number"
     t.string "name"
     t.string "symbol"
@@ -38,18 +38,18 @@ ActiveRecord::Schema.define(version: 2019_07_31_185747) do
     t.index ["symbol"], name: "index_elements_on_symbol"
   end
 
-  create_table "elements_mofs", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "elements_mofs", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.bigint "mof_id", null: false
     t.bigint "element_id", null: false
   end
 
-  create_table "forcefields", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "forcefields", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "gas", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "gas", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "inchikey"
     t.string "name"
     t.text "inchicode"
@@ -58,7 +58,7 @@ ActiveRecord::Schema.define(version: 2019_07_31_185747) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "gases", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "gases", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "inchikey"
     t.string "name"
     t.string "inchicode", limit: 500
@@ -69,7 +69,7 @@ ActiveRecord::Schema.define(version: 2019_07_31_185747) do
     t.index ["name"], name: "index_gases_on_name"
   end
 
-  create_table "heats", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "heats", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.float "pressure"
     t.float "value"
     t.bigint "gas_id"
@@ -82,7 +82,7 @@ ActiveRecord::Schema.define(version: 2019_07_31_185747) do
     t.index ["value_units_id"], name: "index_heats_on_value_units_id"
   end
 
-  create_table "isodata", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "isodata", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.bigint "isotherm_id"
     t.bigint "gas_id"
     t.float "pressure"
@@ -92,7 +92,7 @@ ActiveRecord::Schema.define(version: 2019_07_31_185747) do
     t.index ["isotherm_id"], name: "index_isodata_on_isotherm_id"
   end
 
-  create_table "isotherms", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "isotherms", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "doi"
     t.string "digitizer"
     t.float "temp"
@@ -113,7 +113,7 @@ ActiveRecord::Schema.define(version: 2019_07_31_185747) do
     t.index ["pressure_units_id"], name: "index_isotherms_on_pressure_units_id"
   end
 
-  create_table "mofs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "mofs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "hashkey"
     t.string "name"
     t.bigint "database_id"
@@ -127,11 +127,12 @@ ActiveRecord::Schema.define(version: 2019_07_31_185747) do
     t.text "pore_size_distribution"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.json "pregen_json"
     t.index ["database_id"], name: "fk_rails_42b2867304"
     t.index ["hashkey"], name: "index_mofs_on_hashkey"
   end
 
-  create_table "synonyms", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "synonyms", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name"
     t.bigint "gas_id"
     t.index ["gas_id"], name: "index_synonyms_on_gas_id"

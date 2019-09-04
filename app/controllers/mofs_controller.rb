@@ -11,23 +11,33 @@ class MofsController < ApplicationController
     if params[:html] or params[:cifs]
       @mofs = Mof.all.includes(:database, :elements)
     else
-      @mofs = Mof.all
+      respond_to do |format|
+        format.html {
+          @mofs = Mof.all.includes(:database)
+        }
+        format.json {
+          @mofs = Mof.all.includes(:database, :isotherms, :heats, :isodata, :gases)
+        }
+      end
     end
 
+
     filter_mofs
+
     if params[:html]
       render partial: 'mofs/rows'
       return
     end
+
     if params[:cifs] && params[:cifs] == "true" && @mofs.any?
       csd = Database.find_by(name: "CSD")
-      @mofs = @mofs.select {|mof| mof.database != csd }
+      @mofs = @mofs.select {|mof| mof.database != csd}
       temp_name = "mof-dl-#{SecureRandom.hex(8)}.zip"
       temp_path = Rails.root.join(Rails.root.join("tmp"), temp_name)
 
       Zip::OutputStream.open(temp_path) do |io|
         @mofs.each do |mof|
-          io.put_next_entry(mof.name + ".cif" )
+          io.put_next_entry(mof.name + ".cif")
           io.write(mof.cif)
         end
       end
@@ -36,9 +46,16 @@ class MofsController < ApplicationController
         send_data file.read, :type => 'application/zip', :filename => temp_name
       end
       File.delete(temp_path)
-
-
     end
+
+    respond_to do |format|
+      format.html {
+      }
+      format.json {
+        render :json => @mofs.pluck(:pregen_json)
+      }
+    end
+
   end
 
   def upload
@@ -98,7 +115,7 @@ class MofsController < ApplicationController
     File.open(temp_path, 'w+') do |file|
       file.write(@mof.cif)
     end
-    send_data(temp_path.read, filename: @mof.name+".cif")
+    send_data(temp_path.read, filename: @mof.name + ".cif")
     File.delete(temp_path)
   end
 
