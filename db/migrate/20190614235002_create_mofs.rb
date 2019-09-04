@@ -12,7 +12,6 @@ class CreateMofs < ActiveRecord::Migration[5.2]
       t.float :lcd
       t.text :pxrd
       t.text :pore_size_distribution
-
       t.timestamps
     end
   end
