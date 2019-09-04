@@ -16,7 +16,7 @@ class MofsController < ApplicationController
           @mofs = Mof.all.includes(:database)
         }
         format.json {
-          @mofs = Mof.all.includes(:database, :isotherms, :heats, :isodata, :gases)
+          @mofs = Mof.all
         }
       end
     end
