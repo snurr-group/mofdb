@@ -3,8 +3,8 @@ namespace :pregen do
   desc "TODO"
   task all: :environment do
     i = 0
-    size = 10000
-    Mof.all.take(100).each do |mof|
+    size = Mof.all.size
+    Mof.all.each do |mof|
       i = i + 1
       puts i.to_f/size.to_f
       json = ApplicationController.render(template: 'mofs/_mof.json.jbuilder', locals: {mof: mof}, format: :json, assigns: { mof: mof })
