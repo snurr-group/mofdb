@@ -11,4 +11,23 @@ class Gas < ApplicationRecord
     self.formula = formula.split(" ").join("") unless formula .nil?
   end
 
+  def self.find_gas(name)
+    gas = Gas.find_by(name: name)
+    if gas.nil?
+      gas = Gas.find_by(formula: name)
+    end
+    if gas.nil?
+      syn = Synonym.find_by(name: name)
+      gas = syn.gas unless syn.nil?
+    end
+    if gas.nil?
+      gas = Gas.find_by(inchikey: name)
+    end
+    if gas.nil?
+      gas = Gas.find_by(inchicode: name)
+    end
+    return gas
+
+  end
+
 end

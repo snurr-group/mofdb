@@ -276,7 +276,7 @@ function refresh() {
         gases = gases.concat("Hydrogen");
     }
     if (CO2) {
-        gases = gases.concat("Carbon Dioxide");
+        gases = gases.concat("CarbonDioxide");
     }
     if (CH4) {
         gases = gases.concat("Methane");

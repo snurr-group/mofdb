@@ -9,7 +9,7 @@ class MofsController < ApplicationController
   # GET /mofs.json
   def index
     if params[:gases]
-      @mofs = Gas.find_by(name: params[:gases]).mofs
+      @mofs = Gas.find_gas(params[:gases]).mofs
     else
       if params[:html] or params[:cifs]
         @mofs = Mof.all.includes(:database, :elements)

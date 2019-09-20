@@ -53,22 +53,8 @@ class IsothermsController < ApplicationController
       if Rails.cache.exist?(key)
         return Rails.cache.fetch(key)
       else
-        gas = Gas.find_by(name: name)
-        if gas.nil?
-          gas = Gas.find_by(formula: name)
-        end
-        if gas.nil?
-          syn = Synonym.find_by(name: name)
-          gas = syn.gas unless syn.nil?
-        end
-        if gas.nil?
-          gas = Gas.find_by(inchikey: name)
-        end
-        if gas.nil?
-          gas = Gas.find_by(inchicode: name)
-        end
+        gas = Gas.find_gas(name)
         Rails.cache.write(key, gas, expires_in: 1.hours)
-        return gas
       end
     end
 
