@@ -8,16 +8,20 @@ class MofsController < ApplicationController
   # GET /mofs
   # GET /mofs.json
   def index
-    if params[:html] or params[:cifs]
-      @mofs = Mof.all.includes(:database, :elements)
+    if params[:gases]
+      @mofs = Gas.find_by(name: params[:gases]).mofs
     else
-      respond_to do |format|
-        format.html {
-          @mofs = Mof.all.includes(:database)
-        }
-        format.json {
-          @mofs = Mof.all
-        }
+      if params[:html] or params[:cifs]
+        @mofs = Mof.all.includes(:database, :elements)
+      else
+        respond_to do |format|
+          format.html {
+            @mofs = Mof.all.includes(:database)
+          }
+          format.json {
+            @mofs = Mof.all
+          }
+        end
       end
     end
 
@@ -46,6 +50,7 @@ class MofsController < ApplicationController
         send_data file.read, :type => 'application/zip', :filename => temp_name
       end
       File.delete(temp_path)
+      return
     end
 
     respond_to do |format|
@@ -185,7 +190,7 @@ class MofsController < ApplicationController
     # DB
     if params[:database] && params[:database] != "Any" && !params[:database].empty?
       database = Database.find_by(name: params[:database])
-      @mofs = @mofs.where(database: database)
+        @mofs = @mofs.where(database: database)
     end
 
     # Hashkey
@@ -193,9 +198,9 @@ class MofsController < ApplicationController
       @mofs = @mofs.where(hashkey: params[:hashkey])
     end
 
-    if params[:gases] && !params[:gases].empty?
-      @mofs = @mofs.select {|mf| (mf.gases.pluck(:name) & params[:gases]).any?}
-    end
+    # if params[:gases] && !params[:gases].empty?
+    #   @mofs = @mofs.select {|mf| (mf.gases.pluck(:name) & params[:gases]).any?}
+    # end
 
     if params[:doi] && !params[:doi].empty?
       @mofs = @mofs.select {|mf| mf.isotherms.pluck(:doi).include?(params[:doi])}

@@ -7,10 +7,7 @@ namespace :pregen do
     Mof.all.includes(:gases,:isodata,:isotherms, :elements).where(pregen_json: nil).find_each do |mof|
       i = i + 1
       puts i.to_f/size.to_f
-      json = ApplicationController.render(template: 'mofs/_mof.json.jbuilder', locals: {mof: mof}, format: :json, assigns: { mof: mof })
-      json = JSON.load(json)
-      mof.pregen_json = json
-      mof.save
+      mof.regen_json
     end
   end
 end

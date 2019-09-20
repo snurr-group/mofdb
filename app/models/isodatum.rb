@@ -5,4 +5,6 @@ class Isodatum < ApplicationRecord
   validates :bulk_composition, presence: true
   validates :loading, presence: true
   validates :pressure, presence: true
+
+
 end

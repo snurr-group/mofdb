@@ -6,5 +6,10 @@ class Mof < ApplicationRecord
   has_and_belongs_to_many :elements
   has_many :heats
 
-
+  def regen_json
+    json = ApplicationController.render(template: 'mofs/_mof.json.jbuilder', locals: {mof: mof}, format: :json, assigns: { mof: mof })
+    json = JSON.load(json)
+    self.pregen_json = json
+    self.save
+  end
 end
