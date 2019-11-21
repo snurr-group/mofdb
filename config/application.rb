@@ -22,6 +22,10 @@ module Mofdb2
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 5.2
 
+    Raven.configure do |config|
+      config.dsn = 'https://25089bbc81df4bf1bb44fa71f8e29faa:4eaaa398ad8f4baa8145a7a50a68f76f@sentry.io/1828682'
+    end
+
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded after loading
