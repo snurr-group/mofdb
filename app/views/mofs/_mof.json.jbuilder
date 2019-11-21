@@ -61,5 +61,5 @@ json.isotherms(mof.isotherms) do |isotherm|
       json.adsorption subpoint[:adsorption]
     end
   end
-  json.isotherm_url isotherm_url(isotherm.id, format: :json)
+  json.isotherm_url "/isotherms/"+isotherm.id.to_s+".json"
 end

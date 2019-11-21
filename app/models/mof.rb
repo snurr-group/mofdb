@@ -7,7 +7,10 @@ class Mof < ApplicationRecord
   has_many :heats
 
   def regen_json
-    json = ApplicationController.render(template: 'mofs/_mof.json.jbuilder', locals: {mof: mof}, format: :json, assigns: { mof: mof })
+    json = ApplicationController.render(template: 'mofs/_mof.json.jbuilder',
+                                        locals: {mof: self},
+                                        format: :json,
+                                        assigns: {mof: self})
     json = JSON.load(json)
     self.pregen_json = json
     self.save
