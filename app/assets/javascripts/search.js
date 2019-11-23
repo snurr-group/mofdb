@@ -287,12 +287,6 @@ function refresh() {
 
     let doi = document.getElementById("doi_label").value;
 
-    let limit = document.getElementById("limit").checked;
-    if (limit) {
-        limit = 100;
-    } else {
-        limit = 1000000000;
-    }
 
 // Get elements from select bar
     let elements_object = document.getElementById("elements_label").selectedOptions;
@@ -328,8 +322,7 @@ function refresh() {
         "database": db_choice,
         "elements": elements,
 
-        "doi": doi,
-        "limit": limit,
+        "doi": doi
     };
 
 

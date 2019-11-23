@@ -190,7 +190,7 @@ class MofsController < ApplicationController
     # DB
     if params[:database] && params[:database] != "Any" && !params[:database].empty?
       database = Database.find_by(name: params[:database])
-        @mofs = @mofs.where(database: database)
+      @mofs = @mofs.where(database: database)
     end
 
     # Hashkey
@@ -206,12 +206,18 @@ class MofsController < ApplicationController
       @mofs = @mofs.select {|mf| mf.isotherms.pluck(:doi).include?(params[:doi])}
     end
 
-    if params[:limit] && !params[:limit].empty?
-      @mofs = @mofs.take(params[:limit].to_i)
-    else
-      @mofs = @mofs.take(30)
-    end
 
+    respond_to do |format|
+      format.html {
+        @mofs = @mofs.take(100)
+
+      }
+      format.json {
+        page = params['page'].to_i # nil -> 0
+        page = 1 if page == 0
+        @mofs = @mofs.offset(ENV['PAGE_SIZE'] * (page-1)).take(ENV['PAGE_SIZE'])
+      }
+    end
   end
 
   # Use callbacks to share common setup or constraints between actions.

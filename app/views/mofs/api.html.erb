@@ -1,13 +1,19 @@
 <div id="generic_page">
   <h1>API Routes</h1>
-  <ul>
 
+  <ul>
     <li><h3>/mofs.json</h3></li>
+    <p>Returns at most <%= ENV['PAGE_SIZE'] %> MOFs</p>
       <table class="api_table">
         <tr>
           <th>Param Name</th>
           <th>Type</th>
           <th>Example</th>
+        </tr>
+        <tr>
+          <td>page</td>
+          <td>integer
+          <td>default is 1, if you want to see the next <%= ENV['PAGE_SIZE'] %> results increment the page</td>
         </tr>
         <tr>
           <td>vf_min</td>
@@ -98,11 +104,6 @@
           <td>(50 characters exactly)</td>
         </tr>
         <tr>
-          <td>limit</td>
-          <td>integer
-          <td>default is 100, if you want to see all results set a  high limit <br>Load times will increase linearly with # of mofs*isotherms</td>
-        </tr>
-        <tr>
           <td>gases</td>
           <td>array</td>
           <td>eg. mofs.json?gases[]=Nitrogen&gases[]=Carbon+Dioxide</td>
@@ -122,6 +123,7 @@
     </li>
     <li><h3>/mofs/#.json</h3></li>
     <li><h3>/isotherms.json</h3></li>
+    <p>Returns at most <%= ENV['PAGE_SIZE'] %> isotherms</p>
 
     <table class="api_table">
       <tr>
@@ -129,11 +131,10 @@
         <th>Type</th>
         <th>Example</th>
       </tr>
-
       <tr>
-        <td>limit</td>
+        <td>page</td>
         <td>integer
-        <td>default is 100, if you want to see all results set a  high limit <br>Load times will increase linearly with # of isotherms</td>
+        <td>default is 1, if you want to see the next <%= ENV['PAGE_SIZE'] %> results increment the page</td>
       </tr>
       <tr>
         <td>mof_id</td>
