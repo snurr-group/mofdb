@@ -8,6 +8,7 @@ class MofsController < ApplicationController
   # GET /mofs
   # GET /mofs.json
   def index
+
     if params[:gases]
       @mofs = Gas.find_gas(params[:gases]).mofs
     else
@@ -24,6 +25,7 @@ class MofsController < ApplicationController
         end
       end
     end
+
 
 
     filter_mofs
@@ -212,10 +214,13 @@ class MofsController < ApplicationController
         @mofs = @mofs.take(100)
 
       }
+
       format.json {
         page = params['page'].to_i # nil -> 0
         page = 1 if page == 0
-        @mofs = @mofs.offset(ENV['PAGE_SIZE'] * (page-1)).take(ENV['PAGE_SIZE'])
+        offset = (ENV['PAGE_SIZE'].to_i)*(page-1)
+        raise("Page # too large") if offset > @mofs.size
+        @mofs = @mofs.offset(offset).take(ENV['PAGE_SIZE'])
       }
     end
   end
