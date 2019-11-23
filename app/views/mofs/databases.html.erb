@@ -4,7 +4,7 @@
 
     <% Database.all.each do |db| %>
       <br/>
-      <li><a href="/mofs.json?limit=1000000000&database=<%=db.name %>"><%= db.name %> </a >MOFs + Isotherms <em>( SLOW )</em></li>
+      <li><a href="/mofs.json?database=<%=db.name %>"><%= db.name %> </a >MOFs + Isotherms <em>( SLOW )</em></li>
       <% next if db.name == "CSD" %>
       <% # These zips are now from the API they are static becuase generating them on the fly was incredibly slow %>
       <% # they will need to be created in the /public/DB/ directory by hand for new databases %>
