@@ -1,0 +1,2 @@
+class PageTooLarge < StandardError
+end

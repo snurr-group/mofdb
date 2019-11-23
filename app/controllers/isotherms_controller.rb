@@ -10,11 +10,13 @@ class IsothermsController < ApplicationController
     elsif params[:mof_hashkey]
       @isotherms = Mof.find_by(hashkey: params[:mof_hashkey]).isotherms
     else
-
+      @isotherms = Isotherm.all
       page = params['page'].to_i # nil -> 0
       page = 1 if page == 0
       offset = (ENV['PAGE_SIZE'].to_i)*(page-1)
-      raise("Page # too large") if offset > @mofs.size
+      if offset > @isotherms.size
+        return render :json => {"error": "Page number too large"}, status: 400
+      end
       @isotherms = @isotherms.offset(offset).take(ENV['PAGE_SIZE'])
     end
   end

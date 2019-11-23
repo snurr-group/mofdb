@@ -13,7 +13,7 @@
         <tr>
           <td>page</td>
           <td>integer
-          <td>default is 1, if you want to see the next <%= ENV['PAGE_SIZE'] %> results increment the page</td>
+          <td>default is 1, if you want to see the next <%= ENV['PAGE_SIZE'] %> results increment the page, (400 error if page # too lage)</td>
         </tr>
         <tr>
           <td>vf_min</td>
@@ -134,7 +134,7 @@
       <tr>
         <td>page</td>
         <td>integer
-        <td>default is 1, if you want to see the next <%= ENV['PAGE_SIZE'] %> results increment the page</td>
+        <td>default is 1, if you want to see the next <%= ENV['PAGE_SIZE'] %> results increment the page, (400 error if page # too lage)</td>
       </tr>
       <tr>
         <td>mof_id</td>

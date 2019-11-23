@@ -27,8 +27,11 @@ class MofsController < ApplicationController
     end
 
 
-
-    filter_mofs
+    begin
+      filter_mofs
+    rescue PageTooLarge
+      return render :json => {"error": "Page number too large"}, status: 400
+    end
 
     if params[:html]
       render partial: 'mofs/rows'
@@ -218,8 +221,8 @@ class MofsController < ApplicationController
       format.json {
         page = params['page'].to_i # nil -> 0
         page = 1 if page == 0
-        offset = (ENV['PAGE_SIZE'].to_i)*(page-1)
-        raise("Page # too large") if offset > @mofs.size
+        offset = (ENV['PAGE_SIZE'].to_i) * (page - 1)
+        raise PageTooLarge if offset > @mofs.size
         @mofs = @mofs.offset(offset).take(ENV['PAGE_SIZE'])
       }
     end
