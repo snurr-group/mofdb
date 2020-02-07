@@ -10,27 +10,26 @@ class MofsController < ApplicationController
   def index
 
     # In this if block we change how we load the Mof.all object depending on the query
+    # 0. Filtering by gases requires a couple joins we do this up here before we apply the simple where filters. Explanation below.
     # 1. if we are sorting by gases we start with the gases and load the mofs via has_many
     # 2. If we are loading html (<tr></tr>) rows that get inserted into the homepage table we need to include the database/elements so we preload them
     # 3. Preload database for homepage via
     # 4. Preload nothing for json since we will just the pregen_json column on the mofs.
 
     if params[:gases]
-      @gases = params[:gases].map {|gas_name| Gas.find_gas(gas_name).id }.uniq
-      # We join mofs to isotherms then isodata so we can filter mofs by what
-      # gases are present in the individual data points (isodata) of their isotherms
-      @mofs = Mof.joins("INNER JOIN isotherms on isotherms.mof_id = mofs.id").joins("INNER JOIN isodata on isodata.isotherm_id = isotherms.id").where("isodata.gas_id in (?)", @gases).distinct
+      gas_ids = params[:gases].map {|gas_name| Gas.find_gas(gas_name).id}.uniq
+      # 0.
+      # We join mofs to isotherms then isotherms to isodata and then filter isodata by gas
+      @mofs = Mof.joins("INNER JOIN isotherms on isotherms.mof_id = mofs.id").joins("INNER JOIN isodata on isodata.isotherm_id = isotherms.id").where("isodata.gas_id in (?)", gas_ids).distinct
     else
       if params[:html] or params[:cifs] # 2.
         @mofs = Mof.all.includes(:database, :elements)
       else
         respond_to do |format|
-          format.html {
-            @mofs = Mof.all.includes(:database) # 3.
-          }
-          format.json {
-            @mofs = Mof.all # 4.
-          }
+          # 3.
+          format.html {@mofs = Mof.all.includes(:database)}
+          # 4.
+          format.json {@mofs = Mof.all}
         end
       end
     end
@@ -47,6 +46,8 @@ class MofsController < ApplicationController
       return
     end
 
+    # If params[:cifs] is set it means we're going to serve a zip file instead of an HTML page
+    # we exclude all CSD mofs since those cifs are prviate.
     if params[:cifs] && params[:cifs] == "true" && @mofs.any?
       csd = Database.find_by(name: "CSD")
       @mofs = @mofs.select {|mof| mof.database != csd}
@@ -69,8 +70,10 @@ class MofsController < ApplicationController
 
     respond_to do |format|
       format.html {
+        # Render the index.html.erb template
       }
       format.json {
+        # Instead of generating json on the fly we store it in a pre-generated column and just concat those columns
         render :json => @mofs.pluck(:pregen_json)
       }
     end
@@ -78,6 +81,7 @@ class MofsController < ApplicationController
   end
 
   def upload
+    # Used by the mofdb_upload (on github) to add a new mof
     hashkey = params[:hashkey]
     @mof = Mof.find_by(hashkey: hashkey)
 
@@ -113,10 +117,7 @@ class MofsController < ApplicationController
     else
       @mof.update(mof_params)
     end
-
-
     render status: 200, json: @mof.id.to_json
-
   end
 
   # GET /mofs/1
@@ -217,16 +218,21 @@ class MofsController < ApplicationController
     # end
 
     if params[:doi] && !params[:doi].empty?
-      @mofs = @mofs.select {|mf| mf.isotherms.pluck(:doi).include?(params[:doi])}
+      puts "finding dois..."
+      @mofs = Isotherm.where(doi: params[:doi]).limit(500)
+      puts "mapping to mofs..."
+      @mofs = @mofs.map {|iso| iso.mof}
+      puts "flattening ..."
+      @mofs = @mofs.flatten
+      puts "unique only ..."
+      @mofs = @mofs.uniq
     end
 
 
     respond_to do |format|
       format.html {
         @mofs = @mofs.take(100)
-
       }
-
       format.json {
         page = params['page'].to_i # nil -> 0
         page = 1 if page == 0

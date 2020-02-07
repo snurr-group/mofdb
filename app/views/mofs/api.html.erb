@@ -4,122 +4,130 @@
   <ul>
     <li><h3>/mofs.json</h3></li>
     <p>Returns at most <%= ENV['PAGE_SIZE'] %> MOFs</p>
-      <table class="api_table">
-        <tr>
-          <th>Param Name</th>
-          <th>Type</th>
-          <th>Example</th>
-        </tr>
-        <tr>
-          <td>page</td>
-          <td>integer
-          <td>default is 1, if you want to see the next <%= ENV['PAGE_SIZE'] %> results increment the page, (400 error if page # too lage)</td>
-        </tr>
-        <tr>
-          <td>vf_min</td>
-          <td>float
-          </td>
-          </td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>vf_max</td>
-          <td>float
-          </td>
-          </td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>lcd_min</td>
-          <td>float
-          </td>
-          </td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>lcd_max</td>
-          <td>float
-          </td>
-          </td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>pld_min</td>
-          <td>float
-          </td>
-          </td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>pld_max</td>
-          <td>float
-          </td>
-          </td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>sa_m2g_min</td>
-          <td>float
-          </td>
-          </td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>sa_m2g_max</td>
-          <td>float
-          </td>
-          </td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>sa_m2cm3_min</td>
-          <td>float
-          </td>
-          </td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>sa_m2cm3_max</td>
-          <td>float
-          </td>
-          </td>
-          <td></td>
-        </tr>
+    <table class="api_table">
+      <tr>
+        <th>Param Name</th>
+        <th>Type</th>
+        <th>Example</th>
+      </tr>
+      <tr>
+        <td>page</td>
+        <td>integer
+        <td>default is 1, if you want to see the next <%= ENV['PAGE_SIZE'] %> results increment the page, (400 error if
+          page # too lage)
+        </td>
+      </tr>
+      <tr>
+        <td>vf_min</td>
+        <td>float
+        </td>
+        </td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>vf_max</td>
+        <td>float
+        </td>
+        </td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>lcd_min</td>
+        <td>float
+        </td>
+        </td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>lcd_max</td>
+        <td>float
+        </td>
+        </td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>pld_min</td>
+        <td>float
+        </td>
+        </td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>pld_max</td>
+        <td>float
+        </td>
+        </td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>sa_m2g_min</td>
+        <td>float
+        </td>
+        </td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>sa_m2g_max</td>
+        <td>float
+        </td>
+        </td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>sa_m2cm3_min</td>
+        <td>float
+        </td>
+        </td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>sa_m2cm3_max</td>
+        <td>float
+        </td>
+        </td>
+        <td></td>
+      </tr>
 
-        <tr>
-          <td>name</td>
-          <td>string
-          </td>
-          </td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>database</td>
-          <td>enum</td>
-          <td>database: <%= Database.all.pluck(:name).join(", ") %></td>
-        </tr>
-        <tr>
-          <td>hashkey</td>
-          <td>string</td>
-          <td>(50 characters exactly)</td>
-        </tr>
-        <tr>
-          <td>gases</td>
-          <td>array</td>
-          <td>eg. mofs.json?gases[]=Nitrogen&gases[]=Carbon+Dioxide</td>
-        </tr>
-        <tr>
-          <td>doi</td>
-          <td>stringt</td>
-          <td>(any mof whose doi includes the string given)</td>
-        </tr>
-        <tr>
-          <td>cifs</td>
-          <td>boolean</td>
-          <td>?cifs=true, Return a zip of the cifs satisfying the other params</td>
-        </tr>
+      <tr>
+        <td>name</td>
+        <td>string
+        </td>
+        </td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>database</td>
+        <td>enum</td>
+        <td>database: <%= Database.all.pluck(:name).join(", ") %></td>
+      </tr>
+      <tr>
+        <td>hashkey</td>
+        <td>string</td>
+        <td>(50 characters exactly)</td>
+      </tr>
+      <tr>
+        <td>gases</td>
+        <td>array</td>
+        <td>eg. mofs.json?gases[]=Nitrogen&gases[]=Carbon+Dioxide</td>
+      </tr>
+      <tr>
+        <td>doi</td>
+        <td>string</td>
+        <td>Any mof whose isotherm's mof whose doi <em>EXACTLY</em> matches the given string.
+          <ul>
+            <li>When searching by doi <strong>all other filters are ignored</strong></li>
+            <li>Returns a max of 500 mofs non paginated.</li>
+          </ul>
+          If you want to download all of a database use the <%= link_to "databases page", databases_path %> instead of a doi search. (Matching strings is a slow operation!)
+        </td>
+      </tr>
+      <tr>
+        <td>cifs</td>
+        <td>boolean</td>
+        <td>?cifs=true, Return a zip of the cifs satisfying the other params</td>
+      </tr>
 
-      </table>
+    </table>
     </li>
     <li><h3>/mofs/#.json</h3></li>
     <li><h3>/isotherms.json</h3></li>
@@ -134,7 +142,9 @@
       <tr>
         <td>page</td>
         <td>integer
-        <td>default is 1, if you want to see the next <%= ENV['PAGE_SIZE'] %> results increment the page, (400 error if page # too lage)</td>
+        <td>default is 1, if you want to see the next <%= ENV['PAGE_SIZE'] %> results increment the page, (400 error if
+          page # too lage)
+        </td>
       </tr>
       <tr>
         <td>mof_id</td>
