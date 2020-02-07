@@ -9,18 +9,27 @@ class MofsController < ApplicationController
   # GET /mofs.json
   def index
 
+    # In this if block we change how we load the Mof.all object depending on the query
+    # 1. if we are sorting by gases we start with the gases and load the mofs via has_many
+    # 2. If we are loading html (<tr></tr>) rows that get inserted into the homepage table we need to include the database/elements so we preload them
+    # 3. Preload database for homepage via
+    # 4. Preload nothing for json since we will just the pregen_json column on the mofs.
+
     if params[:gases]
-      @mofs = Gas.find_gas(params[:gases]).mofs
+      @gases = params[:gases].map {|gas_name| Gas.find_gas(gas_name).id }.uniq
+      # We join mofs to isotherms then isodata so we can filter mofs by what
+      # gases are present in the individual data points (isodata) of their isotherms
+      @mofs = Mof.joins("INNER JOIN isotherms on isotherms.mof_id = mofs.id").joins("INNER JOIN isodata on isodata.isotherm_id = isotherms.id").where("isodata.gas_id in (?)", @gases).distinct
     else
-      if params[:html] or params[:cifs]
+      if params[:html] or params[:cifs] # 2.
         @mofs = Mof.all.includes(:database, :elements)
       else
         respond_to do |format|
           format.html {
-            @mofs = Mof.all.includes(:database)
+            @mofs = Mof.all.includes(:database) # 3.
           }
           format.json {
-            @mofs = Mof.all
+            @mofs = Mof.all # 4.
           }
         end
       end
