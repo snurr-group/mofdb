@@ -1,7 +1,14 @@
 # README
 
-This is the database + frontend for the MOF database of the Snurr Research Group at Northwestern university. The website aims to make high throughput simulation data easily searchable and reproducible. The isotherm format used here is compatiblle with the one used by the [NIST adsorption database](https://adsorption.nist.gov/). However the schema used here has additional fields that are specific to simualted results. 
+This is the database + frontend for the MOF database of the Snurr Research Group at Northwestern university. The website aims to make high throughput simulation data easily searchable and reproducible. The isotherm format used here is compatiblle with the one used by the [NIST adsorption database](https://adsorption.nist.gov/). However, the schema used here has additional fields that are specific to simualted results. 
 [mof.tech.northwestern.edu](https://mof.tech.northwestern.edu)
+
+# Citation
+If you use this work place cite the MofDB/MofID publication. It will be placed after here after publication.
+
+# Current Developer:
+Nate Tracy-Amoroso (Northwestern University)
+[github.com/n8ta](https://github.com/n8ta)
 
 # Future Developers:
 
