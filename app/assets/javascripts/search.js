@@ -196,7 +196,7 @@ $(document).on('DOMContentLoaded', function () {
 function start_loading() {
 
     // turn on loading svg and turn off table
-    document.getElementById('table_wrap').style.opacity = '0.5';
+    document.getElementById('table_wrap').style.opacity = '0.2';
     document.getElementById('loading').style.display = 'unset'
 }
 
