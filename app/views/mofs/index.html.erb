@@ -108,27 +108,31 @@
 
   </div>
   <div id="table_outer">
+
     <div id="table_inner">
-      <table class="display nowrap" style='width:100%' id='mof_table'>
-        <thead>
-        <tr>
-          <td>Name</td>
-          <td>Void Fraction</td>
-          <td>ASA m2/cm3</td>
-          <td>ASA m2/g</td>
-          <td>PLD</td>
-          <td>LCD</td>
-          <td>Isotherms</td>
-          <td>Database</td>
-          <td>Atoms in MOF</td>
-          <td>More Information</td>
-        </tr>
-        </thead>
-        <tbody id="mof_tbody">
-        </tbody>
-        <tfoot></tfoot>
-      </table>
-      <a id="download_cifs" href="/mofs.json?cifs=true" target="_blank"> Download Cifs</a>
+      <%= render :partial => "loading.svg" %>
+      <div id="table_wrap">
+        <table class="display nowrap" style='width:100%' id='mof_table'>
+          <thead>
+          <tr>
+            <td>Name</td>
+            <td>Void Fraction</td>
+            <td>ASA m2/cm3</td>
+            <td>ASA m2/g</td>
+            <td>PLD</td>
+            <td>LCD</td>
+            <td>Isotherms</td>
+            <td>Database</td>
+            <td>Atoms in MOF</td>
+            <td>More Information</td>
+          </tr>
+          </thead>
+          <tbody id="mof_tbody">
+          </tbody>
+          <tfoot></tfoot>
+        </table>
+        <a id="download_cifs" href="/mofs.json?cifs=true" target="_blank"> Download Cifs</a>
+      </div>
     </div>
   </div>
 </div>

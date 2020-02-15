@@ -8,32 +8,25 @@ class MofsController < ApplicationController
   # GET /mofs
   # GET /mofs.json
   def index
-
-    # In this if block we change how we load the Mof.all object depending on the query
-    # 0. Filtering by gases requires a couple joins we do this up here before we apply the simple where filters. Explanation below.
-    # 1. if we are sorting by gases we start with the gases and load the mofs via has_many
-    # 2. If we are loading html (<tr></tr>) rows that get inserted into the homepage table we need to include the database/elements so we preload them
-    # 3. Preload database for homepage via
-    # 4. Preload nothing for json since we will just the pregen_json column on the mofs.
-
-    if params[:gases]
+    if params[:gases] && !params[:gases].empty?
       gas_ids = params[:gases].map {|gas_name| Gas.find_gas(gas_name).id}.uniq
-      # 0.
       # We join mofs to isotherms then isotherms to isodata and then filter isodata by gas
       @mofs = Mof.joins("INNER JOIN isotherms on isotherms.mof_id = mofs.id").joins("INNER JOIN isodata on isodata.isotherm_id = isotherms.id").where("isodata.gas_id in (?)", gas_ids).distinct
     else
-      if params[:html] or params[:cifs] # 2.
+      if params[:html]
+        # Preload data for html view
         @mofs = Mof.all.includes(:database, :elements)
+      elsif params[:cifs]
+        # No CSD for cif download
+        @mofs = Mof.all.where.not(database: Database.find_by(name: "CSD"))
       else
+        # Fallback
         respond_to do |format|
-          # 3.
           format.html {@mofs = Mof.all.includes(:database)}
-          # 4.
           format.json {@mofs = Mof.all}
         end
       end
     end
-
 
     begin
       filter_mofs
@@ -49,10 +42,9 @@ class MofsController < ApplicationController
     # If params[:cifs] is set it means we're going to serve a zip file instead of an HTML page
     # we exclude all CSD mofs since those cifs are prviate.
     if params[:cifs] && params[:cifs] == "true" && @mofs.any?
-      csd = Database.find_by(name: "CSD")
-      @mofs = @mofs.select {|mof| mof.database != csd}
       temp_name = "mof-dl-#{SecureRandom.hex(8)}.zip"
       temp_path = Rails.root.join(Rails.root.join("tmp"), temp_name)
+
 
       Zip::OutputStream.open(temp_path) do |io|
         @mofs.each do |mof|
@@ -61,10 +53,12 @@ class MofsController < ApplicationController
         end
       end
 
+
       File.open(temp_path, 'r') do |file|
         send_data file.read, :type => 'application/zip', :filename => temp_name
       end
-      File.delete(temp_path)
+      # raise
+      # File.delete(temp_path)
       return
     end
 
@@ -84,7 +78,6 @@ class MofsController < ApplicationController
     # Used by the mofdb_upload (on github) to add a new mof
     hashkey = params[:hashkey]
     @mof = Mof.find_by(hashkey: hashkey)
-
     begin
       elements = JSON.parse(params[:atoms]).map {|atm| Element.find_by(symbol: atm == "x" ? "Xe" : atm)}
       mof_params[:elements] = elements

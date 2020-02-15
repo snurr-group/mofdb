@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-git_source(:github) { |repo| "https://github.com/#{repo}.git" }
+git_source(:github) {|repo| "https://github.com/#{repo}.git"}
 
 gem 'activerecord-import'
 gem "passenger", ">= 5.3.2", require: "phusion_passenger/rack_handler"
@@ -21,7 +21,10 @@ gem 'jbuilder', '~> 2.5'
 gem 'bootsnap', '>= 1.1.0', require: false
 gem 'dotenv-rails'
 gem 'nouislider-rails'
-gem "sentry-raven"
+
+group :production do
+  gem "sentry-raven"
+end
 
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]

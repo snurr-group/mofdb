@@ -20,9 +20,7 @@ window.onbeforeunload = function () {
 
 
 $(document).on('DOMContentLoaded', function () {
-
-
-
+    // Prepare Sliders
     pld = document.getElementById('pld_slider');
 
     if (pld == undefined) {
@@ -141,23 +139,23 @@ $(document).on('DOMContentLoaded', function () {
         refresh()
     });
 
-    pld.noUiSlider.on('end', function () {
+    pld.noUiSlider.on('set', function () {
         console.log("triggered by PLD");
         refresh()
     });
-    lcd.noUiSlider.on('end', function () {
+    lcd.noUiSlider.on('set', function () {
         console.log("triggered by LCD");
         refresh()
     });
-    vf.noUiSlider.on('end', function () {
+    vf.noUiSlider.on('set', function () {
         console.log("triggered by VF");
         refresh()
     });
-    sa_m2g.noUiSlider.on('end', function () {
+    sa_m2g.noUiSlider.on('set', function () {
         console.log("triggered by SA");
         refresh()
     });
-    sa_m2cm3.noUiSlider.on('end', function () {
+    sa_m2cm3.noUiSlider.on('set', function () {
         console.log("triggered by SA");
         refresh()
     });
@@ -189,19 +187,36 @@ $(document).on('DOMContentLoaded', function () {
         refresh();
     });
 
+    start_loading();
     set_table();
     refresh();
 
 });
 
+function start_loading() {
+
+    // turn on loading svg and turn off table
+    document.getElementById('table_wrap').style.display = 'none';
+    document.getElementById('loading').style.display = 'unset'
+}
+
+function finish_loading() {
+    // turn off loading svg turn on table
+    document.getElementById('table_wrap').style.display = 'unset';
+    document.getElementById('loading').style.display = 'none'
+}
+
 table = undefined;
+
 function set_table(data) {
+    // Setup data table with data in the form of a "string" containing <tr>s
     console.log("setting up table");
 
     if (table != undefined) {
         console.log('destroying table');
         table.destroy();
-    };
+    }
+    ;
 
     if (data != undefined) {
         document.getElementById('mof_tbody').innerHTML = data;
@@ -210,7 +225,6 @@ function set_table(data) {
     }
 
     table = $("#mof_table").DataTable(
-
         {
             "oLanguage": {
                 "sSearch": "Filter results" // Less confusing than the defaut "Search" since it doesn't actually do a new search just filter the table
@@ -234,7 +248,12 @@ function set_link(url) {
     link.href = "/mofs.json?" + url;
 }
 
+
+search_cache = {};
+
 function refresh() {
+
+    start_loading();
 
     let vf_min = vf.noUiSlider.get()[0];
     let vf_max = vf.noUiSlider.get()[1];
@@ -324,14 +343,24 @@ function refresh() {
 
         "doi": doi
     };
-
-
     let html_params = Object.assign({}, url_params); // Copy params to html_params and add the flag so the api returns table rows
     html_params['html'] = true;
-
-
     url_params['cifs'] = true; // The link "Downlod Cifs" needs to return a zip so add this flag
-    set_link(dictToURI(url_params));
+    let url_params_as_string = dictToURI(url_params);
+    set_link(url_params_as_string);
+
+    function finish_search(data) {
+        search_cache[url_params_as_string] = data;
+        finish_loading();
+        set_table(data);
+    }
+
+    if (search_cache[url_params_as_string]) {
+        console.log("cache hit");
+        finish_search (search_cache[url_params_as_string]);
+        return
+    }
+    console.log("cache miss");
 
 
     function dictToURI(dict) {
@@ -342,10 +371,8 @@ function refresh() {
         return str.join("&");
     }
 
-    $.get("/mofs/search", html_params
-
-        , function (data) {
-            set_table(data);
+    $.get("/mofs/search", html_params, function (data) {
+            finish_search(data)
         }
     );
 
