@@ -2,6 +2,15 @@
     margin-bottom: 2.3rem
 }
 
+#loading_holder {
+    position: relative;
+}
+
+#loading {
+    position: absolute;
+    width: 100%;
+}
+
 #generic_page {
     margin-top: 10px;
     margin-bottom: 10px;

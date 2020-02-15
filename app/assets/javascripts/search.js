@@ -196,13 +196,13 @@ $(document).on('DOMContentLoaded', function () {
 function start_loading() {
 
     // turn on loading svg and turn off table
-    document.getElementById('table_wrap').style.display = 'none';
+    document.getElementById('table_wrap').style.opacity = '0.5';
     document.getElementById('loading').style.display = 'unset'
 }
 
 function finish_loading() {
     // turn off loading svg turn on table
-    document.getElementById('table_wrap').style.display = 'unset';
+    document.getElementById('table_wrap').style.opacity = '1';
     document.getElementById('loading').style.display = 'none'
 }
 
