@@ -6,13 +6,7 @@ gem "passenger", ">= 5.3.2", require: "phusion_passenger/rack_handler"
 gem 'rubyzip'
 gem 'rails', '~> 6.0'
 
-gem 'rails-erd', group: :development
 gem 'mysql2', '>= 0.4.4', '< 0.6.0'
-
-gem 'rack-mini-profiler'
-gem 'memory_profiler'
-gem 'flamegraph'
-gem 'stackprof'
 
 gem 'sass-rails'
 gem 'uglifier'
@@ -31,6 +25,10 @@ group :development, :test do
 end
 
 group :development do
+  gem 'rack-mini-profiler'
+  gem 'memory_profiler'
+  gem 'flamegraph'
+  gem 'stackprof'
   gem 'bullet'
   gem 'web-console', '>= 3.3.0'
   gem 'factory_bot_rails'
