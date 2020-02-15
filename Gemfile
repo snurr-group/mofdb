@@ -3,7 +3,7 @@ git_source(:github) {|repo| "https://github.com/#{repo}.git"}
 
 gem 'activerecord-import'
 gem "passenger", ">= 5.3.2", require: "phusion_passenger/rack_handler"
-gem 'rubyzip', '1'
+gem 'rubyzip'
 gem 'rails', '~> 6.0'
 
 gem 'rails-erd', group: :development
@@ -14,10 +14,10 @@ gem 'memory_profiler'
 gem 'flamegraph'
 gem 'stackprof'
 
-gem 'sass-rails', '~> 5.0'
-gem 'uglifier', '>= 1.3.0'
+gem 'sass-rails'
+gem 'uglifier'
 
-gem 'jbuilder', '~> 2.5'
+gem 'jbuilder'
 gem 'bootsnap', '>= 1.1.0', require: false
 gem 'dotenv-rails'
 gem 'nouislider-rails'
