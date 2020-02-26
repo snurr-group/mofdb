@@ -15,6 +15,6 @@ production:
   <<: *default
   database: mofdb2_production
   username: mofdb
-  password: <%= ENV['MOFDB2_DATABASE_PASSWORD'] %>
+  password: <%= Rails.application.credentials.prod_mysql_pass %>
   socket: <%= ENV['SOCKET'] %>
 
