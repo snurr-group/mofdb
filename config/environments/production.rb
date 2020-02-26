@@ -1,4 +1,6 @@
 Rails.application.configure do
+  config.hosts << "129.105.23.180"
+  config.hosts << "mof.tech.northwestern.edu"
   # Settings specified here will take precedence over those in config/application.rb.
 
   # Code is not reloaded between requests.
