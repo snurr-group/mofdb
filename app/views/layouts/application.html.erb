@@ -2,6 +2,16 @@
 <html lang="en">
 
 <head>
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <% if Rails.env.production? %>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-111016820-6"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() {dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-111016820-6');
+    </script>
+  <% end %>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Nathaniel Tracy-Amoroso n8ta.com">
   <meta name="description" content="A database of MOFs and simulated Isotherms ">
