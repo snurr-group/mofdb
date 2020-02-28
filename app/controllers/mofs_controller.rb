@@ -9,7 +9,8 @@ class MofsController < ApplicationController
   # GET /mofs.json
   def index
     if params[:gases] && !params[:gases].empty?
-      gas_ids = params[:gases].map {|gas_name| Gas.find_gas(gas_name).id}.uniq
+      gases = params[:gases].is_a?(String) ? [params[:gases]] : params[:gases] # put a string in an array so we can map it  below
+      gas_ids = gases.map {|gas_name| Gas.find_gas(gas_name).id}.uniq
       # We join mofs to isotherms then isotherms to isodata and then filter isodata by gas
       @mofs = Mof.joins("INNER JOIN isotherms on isotherms.mof_id = mofs.id").joins("INNER JOIN isodata on isodata.isotherm_id = isotherms.id").where("isodata.gas_id in (?)", gas_ids).distinct
     else
