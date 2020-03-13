@@ -1,7 +1,7 @@
 namespace :pregen do
   # Generate all json ahead of time because fuck is rendering json slow in rails...
   desc "TODO"
-  task all: :environment do
+  task json: :environment do
     i = 0
     size = Mof.all.size
     Mof.all.includes(:gases,:isodata,:isotherms, :elements).where(pregen_json: nil).find_each do |mof|
