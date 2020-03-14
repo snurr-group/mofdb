@@ -2,6 +2,11 @@ namespace :pregen do
   # Generate all json ahead of time because fuck is rendering json slow in rails...
   desc "TODO"
   task keys: :environment do
+    mofkey_failures = 0
+    mofkey_successes = 0
+    mofid_failures = 0
+    mofid_successes = 0
+
     FileUtils.rm_rf(Rails.root.join("tmp","mofid"))
     FileUtils.rm_rf(Rails.root.join("tmp","mofid-out"))
     Dir.mkdir(Rails.root.join("tmp","mofid").to_s)
@@ -9,9 +14,9 @@ namespace :pregen do
 
     i = 0
     size = Mof.all.size
-    Mof.all.where(mofkey: nil).find_in_batches(batch_size: 20) do |batch|
-      i = i + 1000
-      puts i.to_f / size.to_f
+    batch_size = 20
+    Mof.all.where(mofkey: nil).find_in_batches(batch_size: batch_size) do |batch|
+      i = i + batch_size
 
       # write cifs to delete tmp
       batch.each do |mof|
@@ -22,45 +27,54 @@ namespace :pregen do
                                Rails.root.join("tmp", "mofid").to_s,
                                Rails.root.join("tmp", "mofid-out").to_s]).read
 
-      results = File.open(Rails.root.join("tmp","mofid-out","results_part.txt"),'r')
-
-      group = ["","",""] # 3 lines in output file, 1st line is our internal id, 2nd is mofid, 3rd is mofkey
-      i = 0
+      # Parse MOFids
+      results = File.open(Rails.root.join("tmp", "mofid-out", "folder_mofid.smi"), 'r')
       results.each_line do |line|
-        i=0 if line[0] == "*"
-        group[i%3] = line
-        i += 1
-        if i == 3
-          parse_keys_and_update_mof(group)
-          i=0
+        begin
+          update_mofid(line)
+          mofid_successes += 1
+        rescue
+          mofid_failures += 1
         end
       end
+      results
 
-      # puts text
+      # Parse MOFkeys
+      results = File.open(Rails.root.join("tmp", "mofid-out", "folder_mofkey.tsv"), 'r')
+      results.each_with_index do |line, line_number|
+        next if line_number == 0
+        begin
+          update_mofkey(line)
+          mofkey_successes += 1
+        rescue
+          mofkey_failures += 1
+        end
+      end
       results.close
-
-      # delete tmp cif files
-      # batch.each do |mof|
-      #   mof.delete_cif
-      # end
-
-      raise("Done")
-
+      puts "---- % Complete: #{puts i.to_f / size.to_f}%"
+      puts "Mofkey: succeeded: #{mofkey_successes} failed: #{mofkey_failures}"
+      puts "Mofid: succeeded: #{mofid_successes} failed: #{mofid_failures}"
     end
+    puts "%%%%%%%% FINISHED %%%%%%%%"
+    puts "Mofkey: succeeded: #{mofkey_successes} failed: #{mofkey_failures}"
+    puts "Mofid: succeeded: #{mofid_successes} failed: #{mofid_failures}"
 
-    FileUtils.rm_rf(Rails.root.join("tmp","mofid"))
-    FileUtils.rm_rf(Rails.root.join("tmp","mofid-out"))
+    FileUtils.rm_rf(Rails.root.join("tmp", "mofid"))
+    FileUtils.rm_rf(Rails.root.join("tmp", "mofid-out"))
 
   end
 end
-
-def parse_keys_and_update_mof(lines)
-  # array of three lines of text
-  puts "----"
-  id = lines[0].split("tmp-")[1]
-  mofid = lines[1]
-  mofkey = lines[2][1..lines[2].size]
-  mof = Mof.find(id)
-  mof.update(mofid: mofid, mofkey: mofkey)
-  puts "----"
-end
+#
+# def update_mofid(line)
+#   line = line.split(";tmp-")
+#   mof = Mof.find line[1]
+#   mof.update(mofid: line[0])
+# end
+#
+# def update_mofkey(line)
+#   line = line.split("\t")
+#   return if line[1] == "\n"
+#   mof = Mof.find line[0][4..line[0].size - 5] # tmp-32.cif --> 32
+#   mofkey = line[1].chomp! # Remove trailing \n
+#   mof.update(mofkey: mofkey)
+# end
