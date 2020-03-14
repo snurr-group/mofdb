@@ -1,6 +1,5 @@
 <div id="generic_page">
   <h1>API Routes</h1>
-
   <ul>
     <li><h3>/mofs.json</h3></li>
     <p>Returns at most <%= ENV['PAGE_SIZE'] %> MOFs</p>
@@ -12,11 +11,21 @@
       </tr>
       <tr>
         <td>page</td>
-        <td>integer
+        <td>integer</td>
         <td>default is 1, if you want to see the next <%= ENV['PAGE_SIZE'] %> results increment the page, (400 error if
-          page # too lage)
-        </td>
+          page # too lage)</td>
       </tr>
+      <tr>
+        <td>mofid</td>
+        <td>string</td>
+        <td>Partial match search on mofID, as a regex: ".+STRING.+", or as sql '%STRING%' (only matches first 1000 characters) </td>
+      </tr>
+      <tr>
+        <td>mofkey</td>
+        <td>string</td>
+        <td>Partial match search on mofID, same as above</td>
+      </tr>
+
       <tr>
         <td>vf_min</td>
         <td>float

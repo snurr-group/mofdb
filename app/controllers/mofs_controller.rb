@@ -94,6 +94,8 @@ class MofsController < ApplicationController
                   pld: params[:pld],
                   lcd: params[:lcd],
                   pxrd: params[:pxrd],
+                  mofkey: params[:mofkey],
+                  mofid: params[:mofid],
                   pore_size_distribution: params[:pore_size_distribution]}
 
     if params[:db] == "hMOFs"
@@ -148,6 +150,16 @@ class MofsController < ApplicationController
     ## VOID FRAC
     if params[:vf_min] && !params[:vf_min].empty? && params[:vf_min] && params[:vf_min].to_f != 0
       @mofs = @mofs.where("void_fraction >= ?", params[:vf_min])
+    end
+
+    if params[:mofid] && !params[:mofid].empty?
+      mofid_str = ActiveRecord::Base.connection.quote(params[:mofid])
+      @mofs = @mofs.where("mofid LIKE %?%", "#{mofid_str}")
+    end
+
+    if params[:mofkey] && !params[:mofkey].empty?
+      mofkey_str = ActiveRecord::Base.connection.quote(params[:mofkey])
+      @mofs = @mofs.where("mofkey LIKE %?%", "#{mofkey_str}")
     end
 
     if params[:vf_max] && !params[:vf_max].empty? && params[:vf_max].to_f != 1

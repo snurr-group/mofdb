@@ -15,4 +15,18 @@ class Mof < ApplicationRecord
     self.pregen_json = json
     self.save
   end
+
+
+  def write_cif_to_file
+    name = 'tmp-' + self.id.to_s + '.cif'
+    tmp = File.open(Rails.root.join("tmp","mofid", name), 'w+')
+    tmp.write(self.cif)
+    tmp.close()
+  end
+
+  def delete_cif
+    name = 'tmp-' + self.id.to_s + '.cif'
+    File.delete(Rails.root.join("tmp","mofid", name))
+  end
+
 end

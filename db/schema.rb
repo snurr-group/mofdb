@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_04_053716) do
+ActiveRecord::Schema.define(version: 2020_03_11_153509) do
 
   create_table "classifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name"
@@ -127,9 +127,13 @@ ActiveRecord::Schema.define(version: 2019_09_04_053716) do
     t.text "pore_size_distribution"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "mofid"
+    t.text "mofkey"
     t.json "pregen_json"
     t.index ["database_id"], name: "fk_rails_42b2867304"
     t.index ["hashkey"], name: "index_mofs_on_hashkey"
+    t.index ["mofid"], name: "index_mofs_on_mofid", length: 1000
+    t.index ["mofkey"], name: "index_mofs_on_mofkey", length: 1000
   end
 
   create_table "synonyms", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
