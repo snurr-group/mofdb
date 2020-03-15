@@ -29,7 +29,7 @@ group :development do
   gem 'memory_profiler'
   gem 'flamegraph'
   gem 'stackprof'
-  gem 'bullet'
+  # gem 'bullet'
   gem 'web-console', '>= 3.3.0'
   gem 'factory_bot_rails'
   gem 'faker'

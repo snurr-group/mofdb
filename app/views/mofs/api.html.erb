@@ -1,5 +1,5 @@
 <div id="generic_page">
-  <h1>API Routes</h1>
+  <h1>API Routes & Supported URL Parameters</h1>
   <ul>
     <li><h3>/mofs.json</h3></li>
     <p>Returns at most <%= ENV['PAGE_SIZE'] %> MOFs</p>
@@ -18,12 +18,15 @@
       <tr>
         <td>mofid</td>
         <td>string</td>
-        <td>Partial match search on mofID, as a regex: ".+STRING.+", or as sql '%STRING%' (only matches strings in the first 1000 characters) </td>
+        <td>Returns only the exact match if found, otherwies: partial match search on mofID using
+          <a href="https://dev.mysql.com/doc/refman/5.6/en/fulltext-boolean.html">mysql full text search<a/>
+            If you want to see all results not just the exact match add ?non_exact=true to your query.
+        </td>
       </tr>
       <tr>
         <td>mofkey</td>
         <td>string</td>
-        <td>Partial match search on mofID, same as above</td>
+        <td>Same as mofid. Using both mofid and mofkey doesn't make sense and was not designed for. </td>
       </tr>
 
       <tr>
@@ -112,7 +115,7 @@
       <tr>
         <td>hashkey</td>
         <td>string</td>
-        <td>(50 characters exactly)</td>
+        <td>(50 characters exactly) hash of the cif file. NOT a good unique id used only to help prevent duplicate uploads. See mofid/mofkey for a better primary key.</td>
       </tr>
       <tr>
         <td>gases</td>
@@ -135,6 +138,12 @@
         <td>boolean</td>
         <td>?cifs=true, Return a zip of the cifs satisfying the other params</td>
       </tr>
+      <tr>
+        <td>non_exact</td>
+        <td>boolean (default false)</td>
+        <td>?non_exact=true, mofid/mofkey will return ONLY the exact match if found. Setting non_exact to true disables this and causes all matches to be returned.</td>
+      </tr>
+
 
     </table>
     </li>

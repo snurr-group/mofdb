@@ -162,14 +162,21 @@ $(document).on('DOMContentLoaded', function () {
 
     $('#name').bind('keypress', function (e) {
         if (e.keyCode == 13 | e.keyCode == 9) {
-            console.log("triggered by enter key");
+            console.log("triggered by enter key: name");
             refresh();
         }
     });
 
-    $('#idkey').bind('keypress', function (e) {
+    $('#mofid').bind('keypress', function (e) {
         if (e.keyCode == 13 | e.keyCode == 9) {
-            console.log("triggered by enter key");
+            console.log("triggered by enter key: mofid ");
+            refresh();
+        }
+    });
+
+    $('#mofkey').bind('keypress', function (e) {
+        if (e.keyCode == 13 | e.keyCode == 9) {
+            console.log("triggered by enter key: mofkey ");
             refresh();
         }
     });
@@ -223,7 +230,6 @@ function set_table(data) {
         console.log('destroying table');
         table.destroy();
     }
-    ;
 
     if (data != undefined) {
         document.getElementById('mof_tbody').innerHTML = data;
@@ -236,6 +242,7 @@ function set_table(data) {
             "oLanguage": {
                 "sSearch": "Filter results" // Less confusing than the defaut "Search" since it doesn't actually do a new search just filter the table
             },
+            "aaSorting": [],
             responsive: true,
             dom: 'Bfrtip',
             buttons: [
@@ -279,7 +286,8 @@ function refresh() {
 
 
     let name = document.getElementById("name").value;
-    let idkey = document.getElementById('idkey').value;
+    let mofkey = document.getElementById('mofkey').value;
+    let mofid = document.getElementById('mofid').value;
     let N2 = document.getElementById("N2").checked;
     let X2 = document.getElementById("X2").checked;
     let Kr = document.getElementById("Kr").checked;
@@ -344,7 +352,8 @@ function refresh() {
         "sa_m2cm3_max": sa_m2cm3_max,
 
         "name": name,
-        "idkey": idkey,
+        "mofid": mofid,
+        "mofkey": mofkey,
         "gases": gases,
 
         "database": db_choice,

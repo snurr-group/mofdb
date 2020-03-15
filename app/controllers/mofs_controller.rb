@@ -14,7 +14,7 @@ class MofsController < ApplicationController
   def index
     if params[:gases] && !params[:gases].empty?
       gases = params[:gases].is_a?(String) ? [params[:gases]] : params[:gases] # put a string in an array so we can map it  below
-      gas_ids = gases.map {|gas_name| Gas.find_gas(gas_name).id}.uniq
+      gas_ids = gases.map { |gas_name| Gas.find_gas(gas_name).id }.uniq
       # We join mofs to isotherms then isotherms to isodata and then filter isodata by gas
       @mofs = Mof.joins("INNER JOIN isotherms on isotherms.mof_id = mofs.id").joins("INNER JOIN isodata on isodata.isotherm_id = isotherms.id").where("isodata.gas_id in (?)", gas_ids).distinct
     else
@@ -27,8 +27,8 @@ class MofsController < ApplicationController
       else
         # Fallback
         respond_to do |format|
-          format.html {@mofs = Mof.all.includes(:database)}
-          format.json {@mofs = Mof.all}
+          format.html { @mofs = Mof.all.includes(:database) }
+          format.json { @mofs = Mof.all }
         end
       end
     end
@@ -84,7 +84,7 @@ class MofsController < ApplicationController
     hashkey = params[:hashkey]
     @mof = Mof.find_by(hashkey: hashkey)
     begin
-      elements = JSON.parse(params[:atoms]).map {|atm| Element.find_by(symbol: atm == "x" ? "Xe" : atm)}
+      elements = JSON.parse(params[:atoms]).map { |atm| Element.find_by(symbol: atm == "x" ? "Xe" : atm) }
       mof_params[:elements] = elements
     rescue
     end
@@ -156,10 +156,6 @@ class MofsController < ApplicationController
       @mofs = @mofs.where("void_fraction >= ?", sanitize(params[:vf_min]))
     end
 
-    if params[:idkey] && !params[:idkey].empty?
-      @mofs = @mofs.where("mofid LIKE ? or mofkey like ?", "%#{params[:idkey]}%","%#{params[:idkey]}%")
-    end
-
     if params[:vf_max] && !params[:vf_max].empty? && params[:vf_max].to_f != 1
       @mofs = @mofs.where("void_fraction <= ?", params[:vf_max])
     end
@@ -217,21 +213,53 @@ class MofsController < ApplicationController
       @mofs = @mofs.where(hashkey: params[:hashkey])
     end
 
-    # if params[:gases] && !params[:gases].empty?
-    #   @mofs = @mofs.select {|mf| (mf.gases.pluck(:name) & params[:gases]).any?}
-    # end
+    if params[:mofid] && !params[:mofid].empty?
+      puts "SEARCHING mofid:::"
+      mofid = ActiveRecord::Base.connection.quote(params[:mofid].to_s)
+      @mofs = @mofs.where("MATCH (mofid) AGAINST (#{mofid})")
+    end
+
+    if params[:mofkey] && !params[:mofkey].empty?
+      puts "SEARCHING mofkey:::"
+      mofkey = ActiveRecord::Base.connection.quote(params[:mofkey].to_s)
+      @mofs = @mofs.where("MATCH (mofkey) AGAINST (#{mofkey})")
+    end
+
 
     if params[:doi] && !params[:doi].empty?
-      puts "finding dois..."
       @mofs = Isotherm.where(doi: params[:doi]).limit(500)
-      puts "mapping to mofs..."
-      @mofs = @mofs.map {|iso| iso.mof}
-      puts "flattening ..."
+      @mofs = @mofs.map { |iso| iso.mof }
       @mofs = @mofs.flatten
-      puts "unique only ..."
       @mofs = @mofs.uniq
     end
 
+
+    # Check for an exact mofid of mofkey match, but only if the user didn't disable it
+    if params[:non_exact] && params[:non_exact].to_s != "true"
+      # No exact match
+      puts "NOTTT EXACT MATCH"
+      puts "NOTTT EXACT MATCH"
+      puts "NOTTT EXACT MATCH"
+      puts "NOTTT EXACT MATCH"
+    else
+      # Use exact mofid/key match if found
+      puts "USE EXACT MATCH"
+      puts "USE EXACT MATCH"
+      puts "USE EXACT MATCH"
+      puts "USE EXACT MATCH"
+
+      # If mofid/key was set (and not the empty string) check for an exact match
+      exact_match_by_mofid = (params[:mofid] && !params[:mofid].empty?) ? Mof.find_by(mofid: params[:mofid]) : nil
+      exact_match_by_mofkey = (params[:mofkey] && !params[:mofkey].empty?) ? Mof.find_by(mofkey: params[:mofkey]) : nil
+
+      if exact_match_by_mofid
+        puts "Found ::: Exact match for mofid"
+        @mofs = [exact_match_by_mofid]
+      elsif exact_match_by_mofkey
+        puts "Found ::: Exact match for mofkey"
+        @mofs = [exact_match_by_mofkey]
+      end
+    end
 
     respond_to do |format|
       format.html {
