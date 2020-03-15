@@ -1,5 +1,9 @@
 require 'zip'
 
+def sanitize(val)
+  ActiveRecord::Base.connection.quote(val)
+end
+
 class MofsController < ApplicationController
   before_action :set_mof, only: [:show, :edit, :update, :destroy, :cif]
   skip_forgery_protection only: [:upload]
@@ -149,17 +153,11 @@ class MofsController < ApplicationController
   def filter_mofs
     ## VOID FRAC
     if params[:vf_min] && !params[:vf_min].empty? && params[:vf_min] && params[:vf_min].to_f != 0
-      @mofs = @mofs.where("void_fraction >= ?", params[:vf_min])
+      @mofs = @mofs.where("void_fraction >= ?", sanitize(params[:vf_min]))
     end
 
-    if params[:mofid] && !params[:mofid].empty?
-      mofid_str = ActiveRecord::Base.connection.quote(params[:mofid])
-      @mofs = @mofs.where("mofid LIKE %?%", "#{mofid_str}")
-    end
-
-    if params[:mofkey] && !params[:mofkey].empty?
-      mofkey_str = ActiveRecord::Base.connection.quote(params[:mofkey])
-      @mofs = @mofs.where("mofkey LIKE %?%", "#{mofkey_str}")
+    if params[:idkey] && !params[:idkey].empty?
+      @mofs = @mofs.where("mofid LIKE ? or mofkey like ?", "%#{params[:idkey]}%","%#{params[:idkey]}%")
     end
 
     if params[:vf_max] && !params[:vf_max].empty? && params[:vf_max].to_f != 1
@@ -205,7 +203,7 @@ class MofsController < ApplicationController
 
     # NAME
     if params[:name] && !params[:name].empty?
-      @mofs = @mofs.where("name LIKE ?", "%" + params[:name] + "%")
+      @mofs = @mofs.where("name LIKE ?", "%#{params[:name]}%")
     end
 
     # DB

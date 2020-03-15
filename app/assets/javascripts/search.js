@@ -167,6 +167,13 @@ $(document).on('DOMContentLoaded', function () {
         }
     });
 
+    $('#idkey').bind('keypress', function (e) {
+        if (e.keyCode == 13 | e.keyCode == 9) {
+            console.log("triggered by enter key");
+            refresh();
+        }
+    });
+
     $("#checkboxes").keydown(function () {
         console.log("triggered by checkboxes");
         refresh();
@@ -272,6 +279,7 @@ function refresh() {
 
 
     let name = document.getElementById("name").value;
+    let idkey = document.getElementById('idkey').value;
     let N2 = document.getElementById("N2").checked;
     let X2 = document.getElementById("X2").checked;
     let Kr = document.getElementById("Kr").checked;
@@ -336,6 +344,7 @@ function refresh() {
         "sa_m2cm3_max": sa_m2cm3_max,
 
         "name": name,
+        "idkey": idkey,
         "gases": gases,
 
         "database": db_choice,
