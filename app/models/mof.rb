@@ -18,7 +18,7 @@ class Mof < ApplicationRecord
 
 
   def write_cif_to_file
-    name = 'tmp-' + self.id.to_s + '.cif'
+    name = self.name.to_s + '.cif'
     tmp = File.open(Rails.root.join("tmp","mofid", name), 'w+')
     tmp.write(self.cif)
     tmp.close()

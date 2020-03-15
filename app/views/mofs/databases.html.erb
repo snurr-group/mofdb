@@ -6,9 +6,9 @@
       <br/>
       <li><a href="/mofs.json?database=<%=db.name %>"><%= db.name %> </a >MOFs + Isotherms <em>( SLOW )</em></li>
       <% next if db.name == "CSD" %>
-      <% # These zips are now from the API they are static becuase generating them on the fly was incredibly slow %>
+      <% # These tarballs are not from the API, they are static b/c generating them on the fly was incredibly slow %>
       <% # they will need to be created in the /public/DB/ directory by hand for new databases %>
-      <li><a href="/DB/<%=db.name %>.zip"><%= db.name %> </a >CIFs</li>
+      <li><a href="/DB/<%=db.name %>.tar.gz"><%= db.name %> </a >CIFs <span title="Uncompress with 'tar -xvf <%= db.name %>.tar.gz'">ⓘ</span></li>
     <% end %>
 
   </ul>
