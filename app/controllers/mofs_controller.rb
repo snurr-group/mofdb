@@ -110,8 +110,6 @@ class MofsController < ApplicationController
 
 
     if @mof.nil?
-      puts "Elements is:"
-      puts mof_params[:elements]
       @mof = Mof.new(mof_params)
       @mof.save!
     else
@@ -214,13 +212,11 @@ class MofsController < ApplicationController
     end
 
     if params[:mofid] && !params[:mofid].empty?
-      puts "SEARCHING mofid:::"
       mofid = ActiveRecord::Base.connection.quote(params[:mofid].to_s)
       @mofs = @mofs.where("MATCH (mofid) AGAINST (#{mofid})")
     end
 
     if params[:mofkey] && !params[:mofkey].empty?
-      puts "SEARCHING mofkey:::"
       mofkey = ActiveRecord::Base.connection.quote(params[:mofkey].to_s)
       @mofs = @mofs.where("MATCH (mofkey) AGAINST (#{mofkey})")
     end
@@ -237,26 +233,16 @@ class MofsController < ApplicationController
     # Check for an exact mofid of mofkey match, but only if the user didn't disable it
     if params[:non_exact] && params[:non_exact].to_s != "true"
       # No exact match
-      puts "NOTTT EXACT MATCH"
-      puts "NOTTT EXACT MATCH"
-      puts "NOTTT EXACT MATCH"
-      puts "NOTTT EXACT MATCH"
     else
       # Use exact mofid/key match if found
-      puts "USE EXACT MATCH"
-      puts "USE EXACT MATCH"
-      puts "USE EXACT MATCH"
-      puts "USE EXACT MATCH"
 
       # If mofid/key was set (and not the empty string) check for an exact match
       exact_match_by_mofid = (params[:mofid] && !params[:mofid].empty?) ? Mof.find_by(mofid: params[:mofid]) : nil
       exact_match_by_mofkey = (params[:mofkey] && !params[:mofkey].empty?) ? Mof.find_by(mofkey: params[:mofkey]) : nil
 
       if exact_match_by_mofid
-        puts "Found ::: Exact match for mofid"
         @mofs = [exact_match_by_mofid]
       elsif exact_match_by_mofkey
-        puts "Found ::: Exact match for mofkey"
         @mofs = [exact_match_by_mofkey]
       end
     end
