@@ -1,5 +1,8 @@
 // 4 Sliders to choose ranges
 
+
+active = 'mofid';
+
 window.onbeforeunload = function () {
     pld = document.getElementById('pld_slider');
     lcd = document.getElementById('lcd_slider');
@@ -18,10 +21,32 @@ window.onbeforeunload = function () {
 
 };
 
+function toggle(mode) {
+    console.log(mode);
+    if (mode == "mofid") {
+        active = mode;
+        document.getElementById('mofid_button').classList.add('active');
+        document.getElementById('mofkey_button').classList.remove('active');
+    } else if (mode =="mofkey") {
+        active = mode;
+        document.getElementById('mofkey_button').classList.add('active');
+        document.getElementById('mofid_button').classList.remove('active');
+    }
+
+
+}
 
 $(document).on('DOMContentLoaded', function () {
     // Prepare Sliders
     pld = document.getElementById('pld_slider');
+
+
+    document.getElementById('mofid_button').addEventListener('click',function() {
+        toggle("mofid");
+    });
+    document.getElementById('mofkey_button').addEventListener('click',function() {
+        toggle("mofkey");
+    });
 
     if (pld == undefined) {
         return
@@ -167,16 +192,9 @@ $(document).on('DOMContentLoaded', function () {
         }
     });
 
-    $('#mofid').bind('keypress', function (e) {
+    $('#mofidkey').bind('keypress', function (e) {
         if (e.keyCode == 13 | e.keyCode == 9) {
             console.log("triggered by enter key: mofid ");
-            refresh();
-        }
-    });
-
-    $('#mofkey').bind('keypress', function (e) {
-        if (e.keyCode == 13 | e.keyCode == 9) {
-            console.log("triggered by enter key: mofkey ");
             refresh();
         }
     });
@@ -286,8 +304,7 @@ function refresh() {
 
 
     let name = document.getElementById("name").value;
-    let mofkey = document.getElementById('mofkey').value;
-    let mofid = document.getElementById('mofid').value;
+    let idkey = document.getElementById('mofidkey').value;
     let N2 = document.getElementById("N2").checked;
     let X2 = document.getElementById("X2").checked;
     let Kr = document.getElementById("Kr").checked;
@@ -352,8 +369,6 @@ function refresh() {
         "sa_m2cm3_max": sa_m2cm3_max,
 
         "name": name,
-        "mofid": mofid,
-        "mofkey": mofkey,
         "gases": gases,
 
         "database": db_choice,
@@ -361,6 +376,14 @@ function refresh() {
 
         "doi": doi
     };
+
+    if (active == "mofid") {
+        url_params["mofid"] = idkey;
+    } else if (active == "mofkey") {
+        url_params["mofkey"] = idkey;
+    }
+
+
     let html_params = Object.assign({}, url_params); // Copy params to html_params and add the flag so the api returns table rows
     html_params['html'] = true;
     url_params['cifs'] = true; // The link "Downlod Cifs" needs to return a zip so add this flag

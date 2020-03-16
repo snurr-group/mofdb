@@ -258,7 +258,32 @@ body input {
     justify-content: space-between;
 }
 
-#search button {
+#search .toggle .toggle_item {
+    cursor: pointer;
+    font-size: inherit;
+    font-weight: 300;
+    font-size: 15px;
+    border-radius: 3px;
+    border:0px;
+    background-color: rgba(78, 42, 132, .08);
+    padding: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+#search .toggle .active {
+    background-color: rgba(128, 72, 213, 0.34);
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: black;
+}
+
+#search .toggle {
+    margin-bottom: 5px;
+}
+
+
+#search button:not(.toggle_item) {
     width: 200px;
     border: 0px;
     margin-top: 20px;
