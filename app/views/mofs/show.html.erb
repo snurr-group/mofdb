@@ -7,7 +7,7 @@
         <td>MOFkey</td>
         <td>
           <% if @mof.mofkey %>
-            <button class="copy" data-copy="<%= @mof.mofkey %>">Copy</button> <%= @mof.mofkey[0..200] %>...</td>
+            <button class="copy" data-copy="<%= @mof.mofkey %>">Copy</button> <%= @mof.mofkey[0..20] %>...</td>
           <% end %>
           </tr>
 
@@ -16,7 +16,7 @@
         <td>MofID</td>
         <td>
           <% if @mof.mofid %>
-            <button class="copy" data-copy="<%= @mof.mofid %>">Copy</button> <%= @mof.mofid[0..100] %>
+            <button class="copy" data-copy="<%= @mof.mofid %>">Copy</button> <%= @mof.mofid[0..20] %>...
           <% end %>
         </td>
       </tr>
