@@ -1,6 +1,7 @@
 def work(queue)
   Rails.application.executor.wrap do
     while not queue.empty?
+      puts queue.size if queue.size%100 == 0
       mof = queue.pop()
       mof.write_cif_to_file
       out = `#{Rails.root.join("lib", "tasks", "atoms.py")} #{Rails.root.join("tmp", "id-" + mof.id.to_s + ".cif")}`
@@ -17,7 +18,7 @@ namespace :load do
   # Import all mofid/mofkey in /lib/assets/mofid/*.csv
   desc "Import all atom from cif files"
   task atoms: :environment do
-    num_threads = 8
+    num_threads = 12
     queue = Queue.new
     Mof.all.take(100).each do |mof|
       queue << mof
