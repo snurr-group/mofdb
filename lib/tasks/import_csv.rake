@@ -9,21 +9,22 @@ namespace :load do
     csvs.each do |file|
       next if file[file.size - 4, file.size] != ".csv"
       results = File.open(Rails.root.join("lib", "assets", "mofid", file), 'r')
-      begin
-        results.each_with_index do |line, line_number|
+
+      results.each_with_index do |line, line_number|
+        begin
           line = line.split(",")
           mofid = line[1]
           mofkey = line[2]
           mof = Mof.find(line[0])
           mof.update(mofid: mofid, mofkey: mofkey)
           suc += 1
+        rescue
+          fail += 1
         end
-      rescue
-        fail += 1
-      ensure
-        results.close
       end
-      puts "suc: #{suc}, fail: #{fail}, out of: #{len}"
+      results.close
     end
+    puts "suc: #{suc}, fail: #{fail}, out of: #{len}"
   end
+end
 end
