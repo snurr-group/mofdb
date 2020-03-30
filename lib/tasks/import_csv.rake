@@ -1,5 +1,5 @@
 namespace :load do
-  # Generate all json ahead of time because fuck is rendering json slow in rails...
+  # Import all mofid/mofkey in /lib/assets/mofid/*.csv
   desc "Import all csv files from mofid/mofkey"
   suc = 0
   fail = 0
@@ -23,7 +23,7 @@ namespace :load do
         end
       end
       results.close
+      puts "suc: #{suc}, fail: #{fail}, out of: #{len}"
     end
-    puts "suc: #{suc}, fail: #{fail}, out of: #{len}"
   end
 end
