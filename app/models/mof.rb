@@ -19,14 +19,14 @@ class Mof < ApplicationRecord
 
   def write_cif_to_file
     id = 'id-' + self.id.to_s + '.cif'
-    tmp = File.open(Rails.root.join("tmp", id), 'w+')
+    tmp = File.open(Rails.root.join("/","tmp", id), 'w+')
     tmp.write(self.cif)
     tmp.close()
   end
 
   def delete_cif
     id = "id-" + self.id.to_s + ".cif"
-    File.delete(Rails.root.join("tmp", id))
+    File.delete(Rails.root.join("/","tmp", id))
   end
 
 end
