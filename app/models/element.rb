@@ -5,5 +5,4 @@ class Element < ApplicationRecord
     self.name = name.split(" ").join("") unless name.nil?
     self.symbol = symbol.split(" ").join("") unless symbol.nil?
   end
-
 end
