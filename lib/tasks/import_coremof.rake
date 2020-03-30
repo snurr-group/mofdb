@@ -13,30 +13,30 @@ namespace :load do
       puts "Mofid: succeeded: #{data[:mofid_successes]} failed: #{data[:mofid_failures]}"
     end
 
-    # results = File.open(Rails.root.join("lib", "assets", "core_mofid.smi"), 'r')
-    # results.each_with_index do |line,line_number|
-    #   print_results(data) if line_number % 100 == 0
-    #   begin
-    #     update_mofid(line)
-    #     data[:mofid_successes] += 1
-    #   rescue
-    #     data[:mofid_failures] += 1
-    #   end
-    # end
-    # results.close
-
-    results = File.open(Rails.root.join("lib", "assets", "core_mofkey.tsv"), 'r')
-    results.each_with_index do |line, line_number|
-      next if line_number == 0
+    results = File.open(Rails.root.join("lib", "assets", "core_mofid.smi"), 'r')
+    results.each_with_index do |line,line_number|
       print_results(data) if line_number % 100 == 0
       begin
-        update_mofkey(line)
-        data[:mofkey_successes] += 1
+        update_mofid(line)
+        data[:mofid_successes] += 1
       rescue
-        data[:mofkey_failures] += 1
+        data[:mofid_failures] += 1
       end
     end
     results.close
+
+    # results = File.open(Rails.root.join("lib", "assets", "core_mofkey.tsv"), 'r')
+    # results.each_with_index do |line, line_number|
+    #   next if line_number == 0
+    #   print_results(data) if line_number % 100 == 0
+    #   begin
+    #     update_mofkey(line)
+    #     data[:mofkey_successes] += 1
+    #   rescue
+    #     data[:mofkey_failures] += 1
+    #   end
+    # end
+    # results.close
 
 
   end

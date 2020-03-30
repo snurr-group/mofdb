@@ -228,25 +228,6 @@ class MofsController < ApplicationController
       @mofs = @mofs.flatten
       @mofs = @mofs.uniq
     end
-
-
-    # Check for an exact mofid of mofkey match, but only if the user didn't disable it
-    if params[:non_exact] && params[:non_exact].to_s != "true"
-      # No exact match
-    else
-      # Use exact mofid/key match if found
-
-      # If mofid/key was set (and not the empty string) check for an exact match
-      exact_match_by_mofid = (params[:mofid] && !params[:mofid].empty?) ? Mof.find_by(mofid: params[:mofid]) : nil
-      exact_match_by_mofkey = (params[:mofkey] && !params[:mofkey].empty?) ? Mof.find_by(mofkey: params[:mofkey]) : nil
-
-      if exact_match_by_mofid
-        @mofs = [exact_match_by_mofid]
-      elsif exact_match_by_mofkey
-        @mofs = [exact_match_by_mofkey]
-      end
-    end
-
     respond_to do |format|
       format.html {
         @mofs = @mofs.take(100)
@@ -270,4 +251,5 @@ class MofsController < ApplicationController
   def mof_params
     params.require(:mof).permit(:hashkey, :name, :db, :cif, :void_fraction, :surface_area_m2g, :surface_area_m2cm3, :pld, :lcd, :pxrd, :pore_size_distribution)
   end
+
 end

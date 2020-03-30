@@ -18,15 +18,14 @@
       <tr>
         <td>mofid</td>
         <td>string</td>
-        <td>Returns only the exact match if found, otherwies: partial match search on mofID using
+        <td>Returns partial match search on mofID using
           <a href="https://dev.mysql.com/doc/refman/5.6/en/fulltext-boolean.html">mysql full text search<a/>
-            If you want to see all results not just the exact match add ?non_exact=true to your query.
         </td>
       </tr>
       <tr>
         <td>mofkey</td>
         <td>string</td>
-        <td>Same as mofid. Using both mofid and mofkey doesn't make sense and was not designed for. </td>
+        <td>Same as mofid. </td>
       </tr>
 
       <tr>
@@ -138,13 +137,6 @@
         <td>boolean</td>
         <td>?cifs=true, Return a zip of the cifs satisfying the other params</td>
       </tr>
-      <tr>
-        <td>non_exact</td>
-        <td>boolean (default false)</td>
-        <td>?non_exact=true, mofid/mofkey will return ONLY the exact match if found. Setting non_exact to true disables this and causes all matches to be returned.</td>
-      </tr>
-
-
     </table>
     </li>
     <li><h3>/mofs/#.json</h3></li>

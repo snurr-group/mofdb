@@ -15,10 +15,11 @@ namespace :load do
           line = line.split(",")
           mofid = line[1]
           mofkey = line[2]
-          mof = Mof.find(line[0])
+          mof = Mof.find_by(name: line[0])
           mof.update(mofid: mofid, mofkey: mofkey)
           suc += 1
         rescue
+          puts "file: #{file} -- #{line}"
           fail += 1
         end
       end
