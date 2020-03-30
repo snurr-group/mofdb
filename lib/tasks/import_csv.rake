@@ -27,4 +27,3 @@ namespace :load do
     puts "suc: #{suc}, fail: #{fail}, out of: #{len}"
   end
 end
-end
