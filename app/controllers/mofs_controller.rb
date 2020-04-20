@@ -18,12 +18,8 @@ class MofsController < ApplicationController
       # We join mofs to isotherms then isotherms to isodata and then filter isodata by gas
       @mofs = Mof.joins("INNER JOIN isotherms on isotherms.mof_id = mofs.id").joins("INNER JOIN isodata on isodata.isotherm_id = isotherms.id").where("isodata.gas_id in (?)", gas_ids).distinct
     else
-      if params[:html]
-        # Preload data for html view
+      if params[:html] || params[:cifs]
         @mofs = Mof.all.includes(:database, :elements)
-      elsif params[:cifs]
-        # No CSD for cif download
-        @mofs = Mof.all.where.not(database: Database.find_by(name: "CSD"))
       else
         # Fallback
         respond_to do |format|
@@ -47,6 +43,7 @@ class MofsController < ApplicationController
     # If params[:cifs] is set it means we're going to serve a zip file instead of an HTML page
     # we exclude all CSD mofs since those cifs are prviate.
     if params[:cifs] && params[:cifs] == "true" && @mofs.any?
+      @mofs = @mofs.select { |mof| mof.database != Database.find_by(name: "CSD")}
       temp_name = "mof-dl-#{SecureRandom.hex(8)}.zip"
       temp_path = Rails.root.join(Rails.root.join("tmp"), temp_name)
 
