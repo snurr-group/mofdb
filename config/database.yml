@@ -6,7 +6,7 @@ default: &default
 
 development:
   <<: *default
-  database: mofdb2
+  database: mofdb2_production
 #  database: mofdb2_testing
   password: admin
   username: admin
@@ -14,7 +14,7 @@ development:
 
 production:
   <<: *default
-  database: mofdb2
+  database: mofdb2_production
   username: mofdb
   password: <%= Rails.application.credentials.prod_mysql_pass %>
   socket: <%= ENV['SOCKET'] %>
