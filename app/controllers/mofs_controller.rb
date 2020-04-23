@@ -43,7 +43,7 @@ class MofsController < ApplicationController
     # If params[:cifs] is set it means we're going to serve a zip file instead of an HTML page
     # we exclude all CSD mofs since those cifs are prviate.
     if params[:cifs] && params[:cifs] == "true" && @mofs.any?
-      @mofs = @mofs.select { |mof| mof.database != Database.find_by(name: "CSD")}
+      @mofs = @mofs.select { |mof| mof.database != Database.find_by(name: "CSD") }
       temp_name = "mof-dl-#{SecureRandom.hex(8)}.zip"
       temp_path = Rails.root.join(Rails.root.join("tmp"), temp_name)
 
@@ -112,8 +112,17 @@ class MofsController < ApplicationController
       @mof = Mof.new(mof_params)
       @mof.save!
     else
-      @mof.update(mof_params)
+      non_nil_params = {}
+      mof_params.each do |key,value|
+        if value.nil? || value.is_a?(String) && value.empty?
+        else
+          non_nil_params[key] = value
+        end
+        @mof.update(non_nil_params)
+      end
+
     end
+
     render status: 200, json: @mof.id.to_json
   end
 

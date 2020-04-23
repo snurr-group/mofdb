@@ -78,9 +78,6 @@ class IsothermsController < ApplicationController
     JSON.parse(params[:points]).each do |isodatum|
       gas_name = isodatum[0]
       gas = gas_cache(gas_name)
-      puts "GAS ---"
-      puts gas.inspect
-
       datum = Isodatum.new(
           isotherm: @isotherm,
           gas: gas,
