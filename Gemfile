@@ -25,6 +25,7 @@ group :development, :test do
 end
 
 group :development do
+  gem 'bullet'
   gem 'rack-mini-profiler'
   gem 'memory_profiler'
   gem 'flamegraph'

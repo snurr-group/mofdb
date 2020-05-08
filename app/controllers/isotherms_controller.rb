@@ -2,6 +2,7 @@ class IsothermsController < ApplicationController
   skip_forgery_protection only: [:upload]
   before_action :set_isotherm, only: [:show]
   before_action :verify_access, only: [:upload]
+  before_action :cache, except: [:upload]
 
   def index
 

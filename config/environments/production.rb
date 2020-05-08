@@ -5,7 +5,6 @@ Rails.application.configure do
 
   # Code is not reloaded between requests.
   config.cache_classes = true
-
   # Eager load code on boot. This eager loads most of Rails and
   # your application in memory, allowing both threaded web servers
   # and those relying on copy on write to perform better.
@@ -61,11 +60,7 @@ Rails.application.configure do
 
   # Use a different cache store in production.
   config.action_controller.perform_caching = true
-
-  config.cache_store = :memory_store
-  config.public_file_server.headers = {
-      'Cache-Control' => "public, max-age=#{2.days.to_i}"
-  }
+  config.cache_store = :memory_store, { size: 100.megabytes }
 
   # Use a real queuing backend for Active Job (and separate queues per environment)
   # config.active_job.queue_adapter     = :resque

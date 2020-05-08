@@ -315,27 +315,20 @@ function refresh() {
     let gases = [];
 
 
-    if (N2) {
+    if (N2)
         gases = gases.concat("Nitrogen");
-    }
-    if (X2) {
+    if (X2)
         gases = gases.concat("Xenon");
-    }
-    if (Kr) {
+    if (Kr)
         gases = gases.concat("Krypton");
-    }
-    if (H2) {
+    if (H2)
         gases = gases.concat("Hydrogen");
-    }
-    if (CO2) {
+    if (CO2)
         gases = gases.concat("CarbonDioxide");
-    }
-    if (CH4) {
+    if (CH4)
         gases = gases.concat("Methane");
-    }
-    if (H2O) {
+    if (H2O)
         gases = gases.concat("Water");
-    }
 
     let doi = document.getElementById("doi_label").value;
 
@@ -388,6 +381,7 @@ function refresh() {
     html_params['html'] = true;
     url_params['cifs'] = true; // The link "Downlod Cifs" needs to return a zip so add this flag
     let url_params_as_string = dictToURI(url_params);
+
     set_link(url_params_as_string);
 
     function finish_search(data) {

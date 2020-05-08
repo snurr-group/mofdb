@@ -62,6 +62,9 @@ GEM
     bootsnap (1.4.6)
       msgpack (~> 1.0)
     builder (3.2.4)
+    bullet (6.1.0)
+      activesupport (>= 3.0.0)
+      uniform_notifier (~> 1.11)
     byebug (11.1.2)
     concurrent-ruby (1.1.6)
     crass (1.0.6)
@@ -180,6 +183,7 @@ GEM
       thread_safe (~> 0.1)
     uglifier (4.2.0)
       execjs (>= 0.3.0, < 3)
+    uniform_notifier (1.13.0)
     web-console (4.0.1)
       actionview (>= 6.0.0)
       activemodel (>= 6.0.0)
@@ -196,6 +200,7 @@ PLATFORMS
 DEPENDENCIES
   activerecord-import
   bootsnap (>= 1.1.0)
+  bullet
   byebug
   dotenv-rails
   factory_bot_rails

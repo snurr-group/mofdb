@@ -1,13 +1,10 @@
 require 'zip'
 
-def sanitize(val)
-  ActiveRecord::Base.connection.quote(val)
-end
-
 class MofsController < ApplicationController
   before_action :set_mof, only: [:show, :edit, :update, :destroy, :cif]
   skip_forgery_protection only: [:upload]
   before_action :verify_access, only: [:upload]
+  before_action :cache, except: [:upload]
 
   # GET /mofs
   # GET /mofs.json
@@ -15,8 +12,17 @@ class MofsController < ApplicationController
     if params[:gases] && !params[:gases].empty?
       gases = params[:gases].is_a?(String) ? [params[:gases]] : params[:gases] # put a string in an array so we can map it  below
       gas_ids = gases.map { |gas_name| Gas.find_gas(gas_name).id }.uniq
-      # We join mofs to isotherms then isotherms to isodata and then filter isodata by gas
-      @mofs = Mof.joins("INNER JOIN isotherms on isotherms.mof_id = mofs.id").joins("INNER JOIN isodata on isodata.isotherm_id = isotherms.id").where("isodata.gas_id in (?)", gas_ids).distinct
+      # This was really slow without the custom sql.
+      query = "SELECT DISTINCT mofs.id from isodata
+              INNER JOIN isotherms on isotherms.id = isodata.isotherm_id
+              INNER JOIN mofs on mofs.id = isotherms.mof_id
+              where gas_id in (?)"
+      sanitized = ActiveRecord::Base.send(:sanitize_sql_array, [query, gas_ids])
+      mof_ids = ActiveRecord::Base.connection.execute(sanitized).to_a.flatten
+      # Now we have the ids of all the mofs with this gas_id in their isodata.
+      # In order to be compatible with the filter method below we return to the active record
+      # interface. This is an extra query sadly.
+      @mofs = Mof.where("mofs.id in (?)",mof_ids).includes(:database,:elements)
     else
       if params[:html] || params[:cifs]
         @mofs = Mof.all.includes(:database, :elements)
@@ -113,7 +119,7 @@ class MofsController < ApplicationController
       @mof.save!
     else
       non_nil_params = {}
-      mof_params.each do |key,value|
+      mof_params.each do |key, value|
         if value.nil? || value.is_a?(String) && value.empty?
         else
           non_nil_params[key] = value
@@ -159,7 +165,7 @@ class MofsController < ApplicationController
   def filter_mofs
     ## VOID FRAC
     if params[:vf_min] && !params[:vf_min].empty? && params[:vf_min] && params[:vf_min].to_f != 0
-      @mofs = @mofs.where("void_fraction >= ?", sanitize(params[:vf_min]))
+      @mofs = @mofs.where("void_fraction >= ?", params[:vf_min])
     end
 
     if params[:vf_max] && !params[:vf_max].empty? && params[:vf_max].to_f != 1
