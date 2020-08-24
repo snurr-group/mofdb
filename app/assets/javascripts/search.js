@@ -306,6 +306,7 @@ function refresh() {
     let name = document.getElementById("name").value;
     let idkey = document.getElementById('mofidkey').value;
     let N2 = document.getElementById("N2").checked;
+    let Ar = document.getElementById("Ar").checked;
     let X2 = document.getElementById("X2").checked;
     let Kr = document.getElementById("Kr").checked;
     let H2 = document.getElementById("H2").checked;
@@ -329,6 +330,8 @@ function refresh() {
         gases = gases.concat("Methane");
     if (H2O)
         gases = gases.concat("Water");
+    if (Ar)
+        gases = gases.concat("Argon");
 
     let doi = document.getElementById("doi_label").value;
 
