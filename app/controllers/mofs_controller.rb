@@ -35,7 +35,7 @@ class MofsController < ApplicationController
       end
     end
 
-    if params[:elements]
+    if params[:elements] && params[:elements] != ""
       el_ids = params[:elements].map{|el| Element.find_by(symbol:  el).id }
       query = "SELECT DISTINCT elements_mofs.mof_id from elements_mofs
               where element_id in (?)"
