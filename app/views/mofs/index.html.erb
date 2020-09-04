@@ -141,7 +141,16 @@
           </tbody>
           <tfoot></tfoot>
         </table>
-        <a id="download_cifs" href="/mofs.json?cifs=true" target="_blank"> Download Cifs</a>
+        <br/>
+        <p>
+          <a title="Max <%= ENV['PAGE_SIZE'] %> cifs. Please see the API page on how to download more than one page"
+            id="download_cifs" href="/mofs.json?cifs=true" target="_blank" >
+            ⓘ Download Cifs
+          </a>
+        </p>
+        <p>
+          <em>API returned <span id='mofdb-count'>0</span> results. Table only shows up to 100.</em>
+        </p>
       </div>
     </div>
   </div>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_30_162125) do
+ActiveRecord::Schema.define(version: 2020_09_04_230857) do
 
   create_table "classifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name"
@@ -41,6 +41,8 @@ ActiveRecord::Schema.define(version: 2020_03_30_162125) do
   create_table "elements_mofs", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.bigint "mof_id", null: false
     t.bigint "element_id", null: false
+    t.index ["element_id"], name: "index_elements_mofs_on_element_id"
+    t.index ["mof_id"], name: "index_elements_mofs_on_mof_id"
   end
 
   create_table "forcefields", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -132,8 +134,8 @@ ActiveRecord::Schema.define(version: 2020_03_30_162125) do
     t.text "mofkey"
     t.index ["database_id"], name: "fk_rails_42b2867304"
     t.index ["hashkey"], name: "index_mofs_on_hashkey"
-    t.index ["mofid"], name: "index_mofs_on_mofid", type: :fulltext
-    t.index ["mofkey"], name: "index_mofs_on_mofkey", type: :fulltext
+    t.index ["mofid"], name: "index_mofs_on_mofid", length: 1000
+    t.index ["mofkey"], name: "index_mofs_on_mofkey", length: 1000
     t.index ["name"], name: "index_mofs_on_name"
   end
 

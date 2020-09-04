@@ -19,7 +19,7 @@
         <td>mofid</td>
         <td>string</td>
         <td>Returns partial match search on mofID using
-          <a href="https://dev.mysql.com/doc/refman/5.6/en/fulltext-boolean.html">mysql full text search<a/>
+          <a href="https://dev.mysql.com/doc/refman/5.6/en/fulltext-boolean.html">mysql full text search</a>
         </td>
       </tr>
       <tr>
@@ -122,6 +122,12 @@
         <td>eg. mofs.json?gases[]=Nitrogen&gases[]=Carbon+Dioxide</td>
       </tr>
       <tr>
+        <td>elements/atoms</td>
+        <td>array</td>
+        <td>Includes at least on of the atoms listed. eg. mofs.json?elements[]=C&elements[]=Ar</td>
+      </tr>
+
+      <tr>
         <td>doi</td>
         <td>string</td>
         <td>Any mof whose isotherm's mof whose doi <em>EXACTLY</em> matches the given string.
@@ -135,7 +141,8 @@
       <tr>
         <td>cifs</td>
         <td>boolean</td>
-        <td>?cifs=true, Return a zip of the cifs satisfying the other params</td>
+        <td>?cifs=true, Return a zip of the cifs satisfying the other params.
+          When this is set results are not paginated. This can be quite slow for large #s of mofs.
       </tr>
     </table>
     </li>

@@ -35,6 +35,15 @@ class MofsController < ApplicationController
       end
     end
 
+    if params[:elements]
+      el_ids = params[:elements].map{|el| Element.find_by(symbol:  el).id }
+      query = "SELECT DISTINCT elements_mofs.mof_id from elements_mofs
+              where element_id in (?)"
+      sanitized = ActiveRecord::Base.send(:sanitize_sql_array, [query, el_ids])
+      mof_ids = ActiveRecord::Base.connection.execute(sanitized).to_a.flatten
+      @mofs = @mofs.where("mofs.id in (?)",mof_ids)
+    end
+
     begin
       filter_mofs
     rescue PageTooLarge
@@ -42,6 +51,7 @@ class MofsController < ApplicationController
     end
 
     if params[:html]
+      response.headers['mofdb-count'] = @count
       render partial: 'mofs/rows'
       return
     end
@@ -65,8 +75,6 @@ class MofsController < ApplicationController
       File.open(temp_path, 'r') do |file|
         send_data file.read, :type => 'application/zip', :filename => temp_name
       end
-      # raise
-      # File.delete(temp_path)
       return
     end
 
@@ -196,7 +204,7 @@ class MofsController < ApplicationController
       @mofs = @mofs.where("surface_area_m2g >= ?", params[:sa_m2g_min])
     end
 
-    if params[:sa_m2g_max] && !params[:sa_m2g_max].empty? && params[:sa_m2g_max].to_f != 5000
+    if params[:sa_m2g_max] && !params[:sa_m2g_max].empty? && params[:sa_m2g_max].to_f != 10000
       @mofs = @mofs.where("surface_area_m2g <= ?", params[:sa_m2g_max])
     end
 
@@ -235,13 +243,17 @@ class MofsController < ApplicationController
       @mofs = @mofs.where("MATCH (mofkey) AGAINST (#{mofkey})")
     end
 
-
     if params[:doi] && !params[:doi].empty?
       @mofs = Isotherm.where(doi: params[:doi]).limit(500)
       @mofs = @mofs.map { |iso| iso.mof }
       @mofs = @mofs.flatten
       @mofs = @mofs.uniq
     end
+
+
+
+    @count = @mofs.count
+
     respond_to do |format|
       format.html {
         @mofs = @mofs.take(100)

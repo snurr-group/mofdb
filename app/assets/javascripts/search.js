@@ -100,11 +100,11 @@ $(document).on('DOMContentLoaded', function () {
         })
     });
     noUiSlider.create(sa_m2g, {
-        start: [0, 5000],
+        start: [0, 10000],
         step: 100,
         range: {
             'min': [0],
-            'max': [5000]
+            'max': [10000]
         },
         connect: true,
         format: wNumb({
@@ -240,9 +240,12 @@ function finish_loading() {
 
 table = undefined;
 
-function set_table(data) {
+function set_table(data, count) {
     // Setup data table with data in the form of a "string" containing <tr>s
     console.log("setting up table");
+
+    const countNode = document.getElementById('mofdb-count')
+    countNode.innerHTML = count
 
     if (table != undefined) {
         console.log('destroying table');
@@ -387,15 +390,16 @@ function refresh() {
 
     set_link(url_params_as_string);
 
-    function finish_search(data) {
-        search_cache[url_params_as_string] = data;
+    function finish_search(data, count) {
+        search_cache[url_params_as_string] = {data: data, count: count};
         finish_loading();
-        set_table(data);
+        set_table(data, count);
     }
 
     if (search_cache[url_params_as_string]) {
         console.log("cache hit");
-        finish_search (search_cache[url_params_as_string]);
+        finish_search (search_cache[url_params_as_string].data,
+            search_cache[url_params_as_string].count);
         return
     }
     console.log("cache miss");
@@ -409,11 +413,10 @@ function refresh() {
         return str.join("&");
     }
 
-    $.get("/mofs/search", html_params, function (data) {
-            finish_search(data)
+    $.get("/mofs/search", html_params, function (data, status, xhr) {
+            const count = xhr.getResponseHeader('mofdb-count')
+            finish_search(data, count)
         }
     );
-
-
 }
 
