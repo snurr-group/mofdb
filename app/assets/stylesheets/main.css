@@ -1,3 +1,26 @@
+#combo-container {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+}
+
+#combo-container .combo-inner {
+    padding: 1rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    margin-bottom: 1rem;
+    background-color: rgba(0,0,0,.03);
+    border-radius: 5px;
+}
+
+#combo-container .combo-inner a {
+    margin-right: .5rem;
+}
+
+#combo-container .combo-inner h3 {
+    margin-top: 0;
+}
+
 .isotherm_graph {
     margin-bottom: 2.3rem
 }

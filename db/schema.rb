@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_04_230857) do
+ActiveRecord::Schema.define(version: 2020_09_05_221632) do
 
   create_table "classifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name"
@@ -110,6 +110,7 @@ ActiveRecord::Schema.define(version: 2020_09_04_230857) do
     t.index ["adsorbate_forcefield_id"], name: "fk_rails_8886e0d88b"
     t.index ["adsorption_units_id"], name: "index_isotherms_on_adsorption_units_id"
     t.index ["composition_type_id"], name: "index_isotherms_on_composition_type_id"
+    t.index ["doi"], name: "index_isotherms_on_doi"
     t.index ["mof_id"], name: "index_isotherms_on_mof_id"
     t.index ["molecule_forcefield_id"], name: "fk_rails_180e64ceb3"
     t.index ["pressure_units_id"], name: "index_isotherms_on_pressure_units_id"

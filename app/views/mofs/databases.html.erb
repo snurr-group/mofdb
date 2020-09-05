@@ -4,24 +4,42 @@
 
     <% Database.all.each do |db| %>
       <br/>
-      <li><a href="/mofs.json?database=<%=db.name %>"><%= db.name %> </a >MOFs + Isotherms <em>( SLOW )</em></li>
+      <li><a href="/mofs.json?database=<%= db.name %>"><%= db.name %> </a>MOFs + Isotherms <em>( SLOW )</em></li>
       <% next if db.name == "CSD" %>
       <% # These tarballs are not from the API, they are static b/c generating them on the fly was incredibly slow %>
       <% # they will need to be created in the /public/DB/ directory by hand for new databases %>
-      <li><a href="/DB/<%=db.name %>.tar.gz"><%= db.name %> </a >CIFs <span title="Uncompress with 'tar -xvf <%= db.name %>.tar.gz'">ⓘ</span></li>
+      <li><a href="/DB/<%= db.name %>.tar.gz"><%= db.name %> </a>CIFs
+        <span title="Uncompress with 'tar -xvf <%= db.name %>.tar.gz'">ⓘ</span></li>
     <% end %>
 
   </ul>
 
+  <h1>Download Database Subsets</h1>
+  <div id="combo-container">
+    <% @combinations.each do |database, doiToGas| %>
+      <% if doiToGas.keys.any? %>
+        <div class="combo-inner">
+          <h3><%= database.name %></h3>
+          <% doiToGas.keys.each do |doi| %>
+            <h4><%= doi %></h4>
+            <% doiToGas[doi].each do |gas| %>
+              <a href='/mofs.jon'><%= gas.name %></a>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+
   <h1>Download Forcefields</h1>
   <ul>
-      <li><a href="/FF/hMOFs-CO2.zip">hMOF CO2</a></li>
-      <li><a href="/FF/hMOFs-hydrogen.zip">hMOF Hydrogen</a></li>
-      <li><a href="/FF/hMOFs-methane.zip">hMOF Methane</a></li>
-      <li><a href="/FF/hMOFs-N2.zip">hMOF N2</a></li>
-      <li><a href="/FF/hMOFs-XeKr.zip">hMOF XeKr</a></li>
-      <li><a href="/FF/Tobacco_Hydrogen.zip">Tobacco Hydrogen</a></li>
-      <li><a href="/FF/Tobacco_methane.zip">Tobacco Methane</a></li>
-      <li><a href="/FF/tobacco_XeKr.zip">Tobacco XeKr</a></li>
+    <li><a href="/FF/hMOFs-CO2.zip">hMOF CO2</a></li>
+    <li><a href="/FF/hMOFs-hydrogen.zip">hMOF Hydrogen</a></li>
+    <li><a href="/FF/hMOFs-methane.zip">hMOF Methane</a></li>
+    <li><a href="/FF/hMOFs-N2.zip">hMOF N2</a></li>
+    <li><a href="/FF/hMOFs-XeKr.zip">hMOF XeKr</a></li>
+    <li><a href="/FF/Tobacco_Hydrogen.zip">Tobacco Hydrogen</a></li>
+    <li><a href="/FF/Tobacco_methane.zip">Tobacco Methane</a></li>
+    <li><a href="/FF/tobacco_XeKr.zip">Tobacco XeKr</a></li>
   </ul>
 </div>
