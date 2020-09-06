@@ -12,20 +12,25 @@ namespace :datasets do
           puts doi
           puts gas.name
           gen_zip(db, doi, gas)
-
-
         end
+        gen_zip(db, doi, nil)
       end
     end
   end
 end
 
-def gen_zip(db, doi, gas)
+def gen_zip(db, doi, gas = nil)
+  # nil gas means generate a zip for the entire database/doi pair
   puts ""
-  name = "#{db.name}-#{doi}-#{gas.name}".gsub(/[^0-9a-z ]/i, ' ') + ".zip"
-  path = Rails.root.join(Rails.root.join("public","Datasets"), name)
+  name = "#{db.name}-#{doi}-#{gas.nil? ? "all" : gas.name}".gsub(/[^0-9a-z ]/i, ' ') + ".zip"
+  path = Rails.root.join(Rails.root.join("public", "Datasets"), name)
 
-  mof_ids = gas.isodata.distinct.includes(:isotherm).where("isotherms.doi = (?)", doi).pluck('isotherms.mof_id')
+
+  if gas.nil?
+    mofs_ids = Isotherm.includes(:mof).where("mofs.database_id = (?)", db.id).where(doi: doi).pluck('isotherms.mof_id')
+  else
+    mof_ids = gas.isodata.distinct.includes(:isotherm).where("isotherms.doi = (?)", doi).pluck('isotherms.mof_id')
+  end
 
   mofs = Mof.where("mofs.id in (?)", mof_ids)
   total = mofs.count
@@ -38,9 +43,14 @@ def gen_zip(db, doi, gas)
     mofs.find_in_batches do |batch|
       batch.each do |mof|
         begin
-          i += 1
-          puts i if i%1000 ==0
           jsn = mof.pregen_json
+          if gas.nil?
+            io.put_next_entry(mof.name + ".cif")
+            io.write(mof.cif)
+            io.put_next_entry(mof.name + ".json")
+            io.write(jsn.to_json)
+            next
+          end
           isos = jsn["isotherms"].filter { |iso|
             iso["adsorbates"].map { |ads| ads["id"] }.include?(gas.id) }
           jsn["isotherms"] = isos
@@ -50,7 +60,7 @@ def gen_zip(db, doi, gas)
             io.put_next_entry(mof.name + ".json")
             io.write(jsn.to_json)
           else
-            puts "skipping"
+            # skipping mofs w/o istherms
           end
         rescue Exception => e
           puts e

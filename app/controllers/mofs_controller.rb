@@ -9,39 +9,17 @@ class MofsController < ApplicationController
   # GET /mofs
   # GET /mofs.json
   def index
-    if params[:gases] && !params[:gases].empty?
-      gases = params[:gases].is_a?(String) ? [params[:gases]] : params[:gases] # put a string in an array so we can map it  below
-      gas_ids = gases.map { |gas_name| Gas.find_gas(gas_name).id }.uniq
-      # This was really slow without the custom sql.
-      query = "SELECT DISTINCT mofs.id from isodata
-              INNER JOIN isotherms on isotherms.id = isodata.isotherm_id
-              INNER JOIN mofs on mofs.id = isotherms.mof_id
-              where gas_id in (?)"
-      sanitized = ActiveRecord::Base.send(:sanitize_sql_array, [query, gas_ids])
-      mof_ids = ActiveRecord::Base.connection.execute(sanitized).to_a.flatten
-      # Now we have the ids of all the mofs with this gas_id in their isodata.
-      # In order to be compatible with the filter method below we return to the active record
-      # interface. This is an extra query sadly.
-      @mofs = Mof.where("mofs.id in (?)",mof_ids).includes(:database,:elements)
-    else
-      if params[:html] || params[:cifs]
-        @mofs = Mof.all.includes(:database, :elements)
-      else
-        # Fallback
-        respond_to do |format|
-          format.html { @mofs = Mof.all.includes(:database) }
-          format.json { @mofs = Mof.all }
-        end
-      end
+    if request.path == "/"
+      return render 'index'
     end
-
-    if params[:elements] && params[:elements] != ""
-      el_ids = params[:elements].map{|el| Element.find_by(symbol:  el).id }
-      query = "SELECT DISTINCT elements_mofs.mof_id from elements_mofs
-              where element_id in (?)"
-      sanitized = ActiveRecord::Base.send(:sanitize_sql_array, [query, el_ids])
-      mof_ids = ActiveRecord::Base.connection.execute(sanitized).to_a.flatten
-      @mofs = @mofs.where("mofs.id in (?)",mof_ids)
+    if params[:html] || params[:cifs]
+      @mofs = Mof.all.includes(:database, :elements)
+    else
+      # Fallback
+      respond_to do |format|
+        format.html { @mofs = Mof.all.includes(:database) }
+        format.json { @mofs = Mof.all }
+      end
     end
 
     begin
@@ -169,14 +147,14 @@ class MofsController < ApplicationController
     @combinations = Rails.cache.read("combinations")
     if (@combinations.nil?)
       @combinations = {}
-      all_dois = Isotherm.distinct.pluck(:doi).uniq.select{|doi| !doi.nil?}
+      all_dois = Isotherm.distinct.pluck(:doi).uniq.select { |doi| !doi.nil? }
       Database.all.each do |db|
         @combinations[db] = {}
-        dois = all_dois.select{|doi| Isotherm.find_by(doi: doi).mof.database == db }
+        dois = all_dois.select { |doi| Isotherm.find_by(doi: doi).mof.database == db }
         dois.each do |doi|
           @combinations[db][doi] = []
           gases = Isotherm.distinct.where(doi: doi).includes(:isodata).pluck("isodata.gas_id")
-          gases = gases.select{|gas_id| !gas_id.nil? }.map{|gas_id| Gas.find(gas_id)}
+          gases = gases.select { |gas_id| !gas_id.nil? }.map { |gas_id| Gas.find(gas_id) }
           @combinations[db][doi] = gases
         end
       end
@@ -189,6 +167,34 @@ class MofsController < ApplicationController
   private
 
   def filter_mofs
+
+    ## Elements in MOF
+    if params[:elements] && params[:elements] != ""
+      el_ids = params[:elements].map { |el| Element.find_by(symbol: el).id }
+      query = "SELECT DISTINCT elements_mofs.mof_id from elements_mofs
+              where element_id in (?)"
+      sanitized = ActiveRecord::Base.send(:sanitize_sql_array, [query, el_ids])
+      mof_ids = ActiveRecord::Base.connection.execute(sanitized).to_a.flatten
+      @mofs = @mofs.where("mofs.id in (?)", mof_ids)
+    end
+
+    ## GASES
+    if params[:gases] && !params[:gases].empty?
+      gases = params[:gases].is_a?(String) ? [params[:gases]] : params[:gases] # put a string in an array so we can map it  below
+      gas_ids = gases.map { |gas_name| Gas.find_gas(gas_name).id }.uniq
+      # This was really slow without the custom sql.
+      query = "SELECT DISTINCT mofs.id from isodata
+              INNER JOIN isotherms on isotherms.id = isodata.isotherm_id
+              INNER JOIN mofs on mofs.id = isotherms.mof_id
+              where gas_id in (?)"
+      sanitized = ActiveRecord::Base.send(:sanitize_sql_array, [query, gas_ids])
+      mof_ids = ActiveRecord::Base.connection.execute(sanitized).to_a.flatten
+      # Now we have the ids of all the mofs with this gas_id in their isodata.
+      # In order to be compatible with the filter method below we return to the active record
+      # interface. This is an extra query sadly.
+      @mofs = @mofs.where("mofs.id in (?)",mof_ids).includes(:database,:elements)
+    end
+
     ## VOID FRAC
     if params[:vf_min] && !params[:vf_min].empty? && params[:vf_min] && params[:vf_min].to_f != 0
       @mofs = @mofs.where("void_fraction >= ?", params[:vf_min])
@@ -262,12 +268,8 @@ class MofsController < ApplicationController
     end
 
     if params[:doi] && !params[:doi].empty?
-      @mofs = Isotherm.where(doi: params[:doi]).limit(500)
-      @mofs = @mofs.map { |iso| iso.mof }
-      @mofs = @mofs.flatten
-      @mofs = @mofs.uniq
+      @mofs = @mofs.includes(:isotherms).where("isotherms.doi = (?)", params[:doi]).references(:isotherms)
     end
-
 
 
     @count = @mofs.count
