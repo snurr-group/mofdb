@@ -4,7 +4,7 @@ require 'zip'
 namespace :datasets do
   desc "Generate all datasets for the databases page"
   task pregen: :environment do
-    combinations = Rails.cache.read("combinations")
+    combinations = ApplicationHelper.get_db_doi_gas_combos
     combinations.each do |db, doiToGas|
       doiToGas.keys.each do |doi|
         doiToGas[doi].each do |gas|
