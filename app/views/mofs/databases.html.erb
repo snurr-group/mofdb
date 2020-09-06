@@ -23,7 +23,7 @@
           <% doiToGas.keys.each do |doi| %>
             <h4><%= doi %></h4>
             <% doiToGas[doi].each do |gas| %>
-              <a href='<%= "#{database.name}-#{doi}-#{gas.name}".gsub(/[^0-9a-z]/i, ' ') %>.zip'>
+              <a href='/Datasets/<%= "#{database.name}-#{doi}-#{gas.name}".gsub(/[^0-9a-z]/i, ' ') %>.zip'>
                 <%= gas.name %>
               </a>
             <% end %>

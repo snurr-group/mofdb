@@ -22,8 +22,8 @@ end
 
 def gen_zip(db, doi, gas)
   puts ""
-  name = "#{db.name}-#{doi}-#{gas.name}".gsub(/[^0-9a-z ]/i, ' ')+".zip"
-  path = Rails.root.join(Rails.root.join("public"), name)
+  name = "#{db.name}-#{doi}-#{gas.name}".gsub(/[^0-9a-z ]/i, ' ') + ".zip"
+  path = Rails.root.join(Rails.root.join("public","Datasets"), name)
 
   mof_ids = gas.isodata.distinct.includes(:isotherm).where("isotherms.doi = (?)", doi).pluck('isotherms.mof_id')
 
@@ -31,17 +31,33 @@ def gen_zip(db, doi, gas)
   total = mofs.count
   puts "Total: #{total}"
   i = 0
+  failures = 0
 
   Zip::OutputStream.open(path) do |io|
+    puts "Openning zip"
     mofs.find_in_batches do |batch|
       batch.each do |mof|
-        i += 1
-        puts "#{i} / #{total}" if i % 1000 == 0
-        io.put_next_entry(mof.name + ".json")
-        io.put_next_entry(mof.name + ".cif")
-        io.write(mof.cif)
-        io.write(mof.pregen_json.to_s)
+        begin
+          i += 1
+          puts i if i%1000 ==0
+          jsn = mof.pregen_json
+          isos = jsn["isotherms"].filter { |iso|
+            iso["adsorbates"].map { |ads| ads["id"] }.include?(gas.id) }
+          jsn["isotherms"] = isos
+          if isos.any?
+            io.put_next_entry(mof.name + ".cif")
+            io.write(mof.cif)
+            io.put_next_entry(mof.name + ".json")
+            io.write(jsn.to_json)
+          else
+            puts "skipping"
+          end
+        rescue Exception => e
+          puts e
+          failures += 1
+        end
       end
     end
   end
+  puts "Failures #{failures}"
 end
