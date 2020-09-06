@@ -136,8 +136,9 @@ class MofsController < ApplicationController
       end
 
     end
-
+    @mof.regen_json
     render status: 200, json: @mof.id.to_json
+
   end
 
   # GET /mofs/1
