@@ -19,7 +19,7 @@ namespace :datasets do
   end
 end
 
-def gen_zip(db, doi, gas = nil)
+def gen_zip(db, doi, gas)
   # nil gas means generate a zip for the entire database/doi pair
   puts ""
   name = "#{db.name}-#{doi}-#{gas.nil? ? "all" : gas.name}".gsub(/[^0-9a-z ]/i, ' ') + ".zip"
