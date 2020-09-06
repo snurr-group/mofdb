@@ -31,3 +31,19 @@ rails conventions to make your life easier.
 I'd recommend starting by looking at ```db/schema.rb``` and then [the api routes](https://mof.tech.northwestern.edu). 
 
 \- Nate
+
+# Rake tasks
+
+## Pregen datasets
+
+```> bundle exec rails datasets:pregen```
+
+This job generates all the zip files for each combination of database-doi-gas you see in the databases page. This needs to be run 
+each time that data changes. 
+
+## Pregen Json
+
+```> bundle exec rails pregen:json```
+
+This job generates all the json shown on the site. Use this if those values are not appearing for some reason. You likely won't need to run this.
+ 
