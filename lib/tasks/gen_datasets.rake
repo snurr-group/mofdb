@@ -1,10 +1,13 @@
 require 'base64'
 require 'zip'
 
+require "#{Rails.root}/app/helpers/application_helper"
+include ApplicationHelper
+
 namespace :datasets do
   desc "Generate all datasets for the databases page"
   task pregen: :environment do
-    combinations = ApplicationHelper.get_db_doi_gas_combos
+    combinations = get_db_doi_gas_combos
     combinations.each do |db, doiToGas|
       doiToGas.keys.each do |doi|
         doiToGas[doi].each do |gas|

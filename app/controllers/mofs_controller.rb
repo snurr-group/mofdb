@@ -1,4 +1,6 @@
 require 'zip'
+require "#{Rails.root}/app/helpers/application_helper"
+include ApplicationHelper
 
 class MofsController < ApplicationController
   before_action :set_mof, only: [:show, :edit, :update, :destroy, :cif]
@@ -144,7 +146,7 @@ class MofsController < ApplicationController
 
   # GET /databases
   def databases
-    @combinations = ApplicationHelper.get_db_doi_gas_combos
+    @combinations = get_db_doi_gas_combos
   end
 
 
