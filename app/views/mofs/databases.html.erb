@@ -27,7 +27,7 @@
                 <%= gas.name %>
               </a>
             <% end %>
-            <a href='/Datasets/<%= "#{database.name}-#{doi}-all" %>.zip'>
+            <a href='/Datasets/<%= "#{database.name}-#{doi}-all".gsub(/[^0-9a-z]/i, ' ') %>.zip'>
              All
             </a>
 
