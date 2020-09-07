@@ -3,6 +3,7 @@ module ApplicationHelper
   def get_db_doi_gas_combos
     combinations = Rails.cache.read("combinations")
     if (combinations.nil?)
+      puts "CACHE MISS"
       combinations = {}
       all_dois = Isotherm.distinct.pluck(:doi).uniq.select { |doi| !doi.nil? }
       Database.all.each do |db|
@@ -17,6 +18,7 @@ module ApplicationHelper
       end
       Rails.cache.write('combinations', @combinations, expires_in: 30.days)
     else
+      puts "CACHE HIT"
     end
     return combinations
   end
