@@ -16,7 +16,7 @@ module ApplicationHelper
           combinations[db][doi] = gases
         end
       end
-      Rails.cache.write('combinations', @combinations, expires_in: 30.days)
+      Rails.cache.write('combinations', combinations, expires_in: 30.days)
     else
       puts "CACHE HIT"
     end
