@@ -27,7 +27,11 @@
                 <%= gas.name %>
               </a>
             <% end %>
-          <% end %>
+            <a href='/Datasets/<%= "#{database.name}-#{doi}-all" %>.zip'>
+              <%= gas.name %>
+            </a>
+
+        <% end %>
         </div>
       <% end %>
     <% end %>
