@@ -456,17 +456,23 @@ $(document).on('DOMContentLoaded', function () {
                 }
             );
         } else {
+
             bar.style.width = "100%"
             barmsg.innerText = "100%"
             message.innerText = "Download complete, check your downloads folder"
 
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(mofs));
-            const downloadAnchorNode = document.createElement('a');
-            downloadAnchorNode.setAttribute("href",     dataStr);
-            downloadAnchorNode.setAttribute("download", "mofs.json");
-            document.body.appendChild(downloadAnchorNode); // required for firefox
-            downloadAnchorNode.click();
-            downloadAnchorNode.remove();
+            const blob = new Blob([JSON.stringify(mofs)], {type: 'text/json'});
+            if(window.navigator.msSaveOrOpenBlob) {
+                window.navigator.msSaveBlob(blob, "mofs.json");
+            }
+            else{
+                var elem = window.document.createElement('a');
+                elem.href = window.URL.createObjectURL(blob);
+                elem.download = "mofs.json";
+                document.body.appendChild(elem);
+                elem.click();
+                document.body.removeChild(elem);
+            }
             console.info(mofs,"done")
         }
     }
