@@ -15,7 +15,7 @@ class MofsController < ApplicationController
       return render 'index'
     end
     if params[:html] || params[:cifs]
-      @mofs = Mof.all.includes(:database, :elements)
+      @mofs = Mof.all.includes(:database, :elements, :gases)
     else
       # Fallback
       respond_to do |format|
