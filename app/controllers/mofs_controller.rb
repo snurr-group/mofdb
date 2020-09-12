@@ -30,8 +30,9 @@ class MofsController < ApplicationController
       return render :json => {"error": "Page number too large"}, status: 400
     end
 
+    response.headers['mofdb-count'] = @count
+    response.headers['mofdb-pages'] = (@count.to_f / ENV['PAGE_SIZE'].to_f).ceil
     if params[:html]
-      response.headers['mofdb-count'] = @count
       render partial: 'mofs/rows'
       return
     end

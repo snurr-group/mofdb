@@ -1,5 +1,12 @@
 // 4 Sliders to choose ranges
 
+function dictToURI(dict) {
+    var str = [];
+    for (var p in dict) {
+        str.push(encodeURIComponent(p) + "=" + encodeURIComponent(dict[p]));
+    }
+    return str.join("&");
+}
 
 active = 'mofid';
 
@@ -18,7 +25,6 @@ window.onbeforeunload = function () {
         sa_m2g.noUiSlider.destroy();
         sa_m2cm3.noUiSlider.destroy();
     }
-
 };
 
 function toggle(mode) {
@@ -27,24 +33,25 @@ function toggle(mode) {
         active = mode;
         document.getElementById('mofid_button').classList.add('active');
         document.getElementById('mofkey_button').classList.remove('active');
-    } else if (mode =="mofkey") {
+    } else if (mode == "mofkey") {
         active = mode;
         document.getElementById('mofkey_button').classList.add('active');
         document.getElementById('mofid_button').classList.remove('active');
     }
-
-
 }
 
 $(document).on('DOMContentLoaded', function () {
     // Prepare Sliders
     pld = document.getElementById('pld_slider');
 
+    if (!pld) {
+        return
+    }
 
-    document.getElementById('mofid_button').addEventListener('click',function() {
+    document.getElementById('mofid_button').addEventListener('click', function () {
         toggle("mofid");
     });
-    document.getElementById('mofkey_button').addEventListener('click',function() {
+    document.getElementById('mofkey_button').addEventListener('click', function () {
         toggle("mofkey");
     });
 
@@ -279,17 +286,17 @@ function set_table(data, count) {
 
 
 function set_link(url) {
+    const copy = Object.assign({}, url)
+    delete copy['cifs']
+    delete copy['html']
+    const str = dictToURI(copy)
     let link = document.getElementById('download_cifs');
-    link.href = "/mofs.json?" + url;
+    link.href = "/mofs/bulk?" + str;
 }
-
 
 search_cache = {};
 
-function refresh() {
-
-    start_loading();
-
+function get_params() {
     let vf_min = vf.noUiSlider.get()[0];
     let vf_max = vf.noUiSlider.get()[1];
 
@@ -381,14 +388,22 @@ function refresh() {
     } else if (active == "mofkey") {
         url_params["mofkey"] = idkey;
     }
+    return url_params
+}
 
+function refresh() {
+
+    start_loading();
+
+    const url_params = get_params()
 
     let html_params = Object.assign({}, url_params); // Copy params to html_params and add the flag so the api returns table rows
     html_params['html'] = true;
     url_params['cifs'] = true; // The link "Downlod Cifs" needs to return a zip so add this flag
     let url_params_as_string = dictToURI(url_params);
 
-    set_link(url_params_as_string);
+
+    set_link(url_params);
 
     function finish_search(data, count) {
         search_cache[url_params_as_string] = {data: data, count: count};
@@ -398,20 +413,11 @@ function refresh() {
 
     if (search_cache[url_params_as_string]) {
         console.log("cache hit");
-        finish_search (search_cache[url_params_as_string].data,
+        finish_search(search_cache[url_params_as_string].data,
             search_cache[url_params_as_string].count);
         return
     }
     console.log("cache miss");
-
-
-    function dictToURI(dict) {
-        var str = [];
-        for (var p in dict) {
-            str.push(encodeURIComponent(p) + "=" + encodeURIComponent(dict[p]));
-        }
-        return str.join("&");
-    }
 
     $.get("/mofs/search", html_params, function (data, status, xhr) {
             const count = xhr.getResponseHeader('mofdb-count')
@@ -420,3 +426,51 @@ function refresh() {
     );
 }
 
+
+$(document).on('DOMContentLoaded', function () {
+    const message = document.getElementById('bulk-dl-message')
+    const bar = document.getElementById('bulk-dl-bar-color')
+    const barmsg = document.getElementById('bulk-dl-bar-message')
+    let pages = null
+    const params = window.location.search
+    let current_page = 1
+    let mofs = []
+    bar.style.width = "0%"
+
+
+    const doNextPage = () => {
+        console.info("pages",current_page,pages)
+        if (current_page < pages || (pages === null)) {
+            $.get("/mofs.json" + params, function (data, status, xhr) {
+                    mofs = mofs.concat(data)
+                    current_page += 1;
+                    pages = xhr.getResponseHeader('mofdb-pages')
+                    message.innerText = `Finished page ${current_page} of ${pages}`
+                    console.info(current_page, pages)
+                    const pct = `${Math.floor(100*current_page / pages)}%`
+                    console.info(pct)
+                    bar.style.width = pct
+                    barmsg.innerText = pct
+                    doNextPage()
+                }
+            );
+        } else {
+            bar.style.width = "100%"
+            barmsg.innerText = "100%"
+            message.innerText = "Download complete, check your downloads folder"
+
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(mofs));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href",     dataStr);
+            downloadAnchorNode.setAttribute("download", "mofs.json");
+            document.body.appendChild(downloadAnchorNode); // required for firefox
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+            console.info(mofs,"done")
+        }
+    }
+
+    if (bar) {
+        doNextPage()
+    }
+})

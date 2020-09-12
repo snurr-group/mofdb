@@ -2,6 +2,7 @@ Rails.application.routes.draw do
 
   resources :mofs do
     collection do
+      get '/bulk' => 'mofs#bulk', as: 'bulk'
       get '/search' => 'mofs#index', as: "search"
       post '/upload' => 'mofs#upload', as: 'upload'
     end
