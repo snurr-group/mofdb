@@ -6,7 +6,7 @@
     <% @combinations.each do |database, doiToGas| %>
       <% if doiToGas.keys.any? %>
         <div class="combo-inner">
-          <h3>
+          <h3 title="Full database of cifs + isotherms">
             <a href='/Datasets/<%= "#{database.name}".gsub(/[^0-9a-z]/i, ' ') %>.zip'>
               <%= database.name %>
             </a>
@@ -14,11 +14,11 @@
           <% doiToGas.keys.each do |doi| %>
             <h4><%= doi %></h4>
             <% doiToGas[doi].each do |gas| %>
-              <a href='/Datasets/<%= "#{database.name}-#{doi}-#{gas.name}".gsub(/[^0-9a-z]/i, ' ') %>.zip'>
+              <a title="All isotherms for this gas and this doi + relevant cif files" href='/Datasets/<%= "#{database.name}-#{doi}-#{gas.name}".gsub(/[^0-9a-z]/i, ' ') %>.zip'>
                 <%= gas.name %>
               </a>
             <% end %>
-            <a href='/Datasets/<%= "#{database.name}-#{doi}-all".gsub(/[^0-9a-z]/i, ' ') %>.zip'>
+            <a title="All isotherms + cifs for this doi" href='/Datasets/<%= "#{database.name}-#{doi}-all".gsub(/[^0-9a-z]/i, ' ') %>.zip'>
               All
             </a>
           <% end %>
