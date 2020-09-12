@@ -1,25 +1,14 @@
 <div id="generic_page">
   <h1>Download Databases</h1>
-  <ul>
-
-    <% Database.all.each do |db| %>
-      <br/>
-      <li><a href="/mofs.json?database=<%= db.name %>"><%= db.name %> </a>MOFs + Isotherms <em>( SLOW )</em></li>
-      <% next if db.name == "CSD" %>
-      <% # These tarballs are not from the API, they are static b/c generating them on the fly was incredibly slow %>
-      <% # they will need to be created in the /public/DB/ directory by hand for new databases %>
-      <li><a href="/DB/<%= db.name %>.tar.gz"><%= db.name %> </a>CIFs
-        <span title="Uncompress with 'tar -xvf <%= db.name %>.tar.gz'">ⓘ</span></li>
-    <% end %>
-
-  </ul>
-
-  <h1>Download Database Subsets</h1>
   <div id="combo-container">
     <% @combinations.each do |database, doiToGas| %>
       <% if doiToGas.keys.any? %>
         <div class="combo-inner">
-          <h3><%= database.name %></h3>
+          <h3>
+            <a href='/Datasets/<%= "#{database.name}".gsub(/[^0-9a-z]/i, ' ') %>.zip'>
+              <%= database.name %>
+            </a>
+          </h3>
           <% doiToGas.keys.each do |doi| %>
             <h4><%= doi %></h4>
             <% doiToGas[doi].each do |gas| %>
@@ -28,10 +17,9 @@
               </a>
             <% end %>
             <a href='/Datasets/<%= "#{database.name}-#{doi}-all".gsub(/[^0-9a-z]/i, ' ') %>.zip'>
-             All
+              All
             </a>
-
-        <% end %>
+          <% end %>
         </div>
       <% end %>
     <% end %>

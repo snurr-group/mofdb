@@ -9,6 +9,7 @@ namespace :datasets do
   task pregen: :environment do
     combinations = get_db_doi_gas_combos
     combinations.each do |db, doiToGas|
+      gen_zip(db, nil, nil)
       doiToGas.keys.each do |doi|
         gen_zip(db, doi, nil)
         doiToGas[doi].each do |gas|
@@ -24,12 +25,16 @@ end
 
 def gen_zip(db, doi, gas)
   # nil gas means generate a zip for the entire database/doi pair
-  name = "#{db.name}-#{doi}-#{gas.nil? ? "all" : gas.name}".gsub(/[^0-9a-z ]/i, ' ') + ".zip"
+  name = get_zip_name(db, doi, gas)
   path = Rails.root.join(Rails.root.join("public", "Datasets"), name)
 
-  mof_ids = gas.nil? ?
+  if doi.nil?
+    mof_ids = Mof.where(db: db).pluck(:id)
+  else
+    mof_ids = gas.nil? ?
                  Isotherm.includes(:mof).where("mofs.database_id = (?)", db.id).where(doi: doi).pluck('isotherms.mof_id')
                  : gas.isodata.distinct.includes(:isotherm).where("isotherms.doi = (?)", doi).pluck('isotherms.mof_id')
+  end
 
   mofs = Mof.where("mofs.id in (?)", mof_ids)
   total = mofs.count

@@ -1,5 +1,21 @@
 module ApplicationHelper
 
+  def fetch_or_gen(key, lambda, expiry=nil)
+    val = Rails.cache.read(key)
+    if val.nil?
+      val = lambda.call
+      Rails.cache.write(key, val, expires_in: expiry.nil? ? 1.days : expiry)
+    end
+    return val
+  end
+
+  def get_zip_name(db, doi, gas)
+    if doi.nil?
+      return "#{db.name}.zip".gsub(/[^0-9a-z ]/i, ' ')
+    end
+    return "#{db.name}-#{doi}-#{gas.nil? ? "all" : gas.name}".gsub(/[^0-9a-z ]/i, ' ') + ".zip"
+  end
+
   def get_db_doi_gas_combos
     combinations = Rails.cache.read("combinations")
     if (combinations.nil?)

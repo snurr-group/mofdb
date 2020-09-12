@@ -229,7 +229,7 @@ class MofsController < ApplicationController
 
     # NAME
     if params[:name] && !params[:name].empty?
-      @mofs = @mofs.where("name LIKE ?", "%#{params[:name]}%")
+      @mofs = @mofs.where("name LIKE ?", "#{params[:name]}%")
     end
 
     # DB
@@ -257,8 +257,9 @@ class MofsController < ApplicationController
       @mofs = @mofs.includes(:isotherms).where("isotherms.doi = (?)", params[:doi]).references(:isotherms)
     end
 
-
-    @count = @mofs.count
+    @count = Rails.cache.fetch("mofcount-paramsp-#{params.to_s}") do
+      @mofs.count
+    end
 
     respond_to do |format|
       format.html {

@@ -5,6 +5,12 @@ class Mof < ApplicationRecord
   has_many :gases, through: :isotherms
   has_and_belongs_to_many :elements
   has_many :heats
+  has_and_belongs_to_many :gases
+
+  def regen_gas_cache
+    self.cached_gaess = self.gases.distinct
+    self.save
+  end
 
   def regen_json
     json = ApplicationController.render(template: 'mofs/_mof.json.jbuilder',
