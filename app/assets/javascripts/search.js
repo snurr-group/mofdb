@@ -441,6 +441,7 @@ $(document).on('DOMContentLoaded', function () {
     const doNextPage = () => {
         console.info("pages",current_page,pages)
         if (current_page < pages || (pages === null)) {
+            message.innerText = pages === null ? "Starting page "+current_page : `Starting page ${current_page} of ${pages}`
             $.get("/mofs.json" + params + '&page=' + current_page, function (data, status, xhr) {
                     mofs = mofs.concat(data)
                     current_page += 1;
