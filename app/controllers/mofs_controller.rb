@@ -72,9 +72,11 @@ class MofsController < ApplicationController
           end
         end
       ensure
+        puts "closing stream"
         response.stream.close
+        return
       end
-      return
+
     end
 
     respond_to do |format|
