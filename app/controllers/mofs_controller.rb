@@ -17,8 +17,10 @@ class MofsController < ApplicationController
     if request.path == "/"
       return render 'index'
     end
-    if params[:html] || params[:bulk]
+    if params[:html]
       @mofs = Mof.all.includes(:database, :elements, :gases)
+    elsif params[:bulk] && params[:bulk] == 'true'
+      @mofs = Mof.all
     else
       # Fallback
       respond_to do |format|
@@ -56,11 +58,11 @@ class MofsController < ApplicationController
         response.stream.write(chunk)
       end
 
-      begin
+      # begin
         ZipTricks::Streamer.open(writer) do |zip|
-          @mofs.in_batches(of: 100).each_record do |mof|
-
-            # next if mof.database == csd
+          @mofs = @mofs.select("id, pregen_json, name, cif, database_id")
+          @mofs.in_batches(of: 50).each_record do |mof|
+            next if mof.database_id == csd.id
             zip.write_deflated_file("#{mof.name}-(id:#{mof.id}).cif") do |file_writer|
               file_writer << mof.cif
             end
@@ -69,9 +71,9 @@ class MofsController < ApplicationController
             end
           end
         end
-      ensure
-        response.stream.close
-      end
+      # ensure
+      #   response.stream.close
+      # end
       return
     end
 
