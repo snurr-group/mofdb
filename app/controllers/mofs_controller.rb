@@ -58,7 +58,7 @@ class MofsController < ApplicationController
         response.stream.write(chunk)
       end
 
-      # begin
+      begin
         ZipTricks::Streamer.open(writer) do |zip|
           @mofs = @mofs.select("id, pregen_json, name, cif, database_id")
           @mofs.in_batches(of: 50).each_record do |mof|
@@ -71,9 +71,9 @@ class MofsController < ApplicationController
             end
           end
         end
-      # ensure
-      #   response.stream.close
-      # end
+      ensure
+        response.stream.close
+      end
       return
     end
 
