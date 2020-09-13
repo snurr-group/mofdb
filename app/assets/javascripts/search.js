@@ -251,8 +251,7 @@ function set_table(data, count) {
     // Setup data table with data in the form of a "string" containing <tr>s
     console.log("setting up table");
 
-    const countNode = document.getElementById('mofdb-count')
-    countNode.innerHTML = count
+    set_link({}, count)
 
     if (table != undefined) {
         console.log('destroying table');
@@ -285,13 +284,15 @@ function set_table(data, count) {
 };
 
 
-function set_link(url) {
+function set_link(url, count) {
     const copy = Object.assign({}, url)
     delete copy['cifs']
     delete copy['html']
-    const str = dictToURI(copy)
-    let link = document.getElementById('download_cifs');
-    link.href = "/mofs/bulk?" + str;
+    copy['bulk'] = true
+    const link = document.getElementById('download_cifs');
+    const countSpan = document.getElementById('mofdb-count');
+    countSpan.innerText = count
+    link.href = '/mofs.json?'+dictToURI(copy)
 }
 
 search_cache = {};
@@ -403,12 +404,11 @@ function refresh() {
     let url_params_as_string = dictToURI(url_params);
 
 
-    set_link(url_params);
-
     function finish_search(data, count) {
         search_cache[url_params_as_string] = {data: data, count: count};
         finish_loading();
         set_table(data, count);
+        set_link(url_params, count);
     }
 
     if (search_cache[url_params_as_string]) {
@@ -425,59 +425,3 @@ function refresh() {
         }
     );
 }
-
-
-$(document).on('DOMContentLoaded', function () {
-    const message = document.getElementById('bulk-dl-message')
-    const bar = document.getElementById('bulk-dl-bar-color')
-    const barmsg = document.getElementById('bulk-dl-bar-message')
-    let pages = null
-    const params = window.location.search
-    let current_page = 1
-    let mofs = []
-    bar.style.width = "0%"
-
-
-    const doNextPage = () => {
-        console.info("pages",current_page,pages)
-        if (current_page < pages || (pages === null)) {
-            message.innerText = pages === null ? "Starting page "+current_page : `Starting page ${current_page} of ${pages}`
-            $.get("/mofs.json" + params + '&page=' + current_page, function (data, status, xhr) {
-                    mofs = mofs.concat(data)
-                    current_page += 1;
-                    pages = xhr.getResponseHeader('mofdb-pages')
-                    message.innerText = `Finished page ${current_page} of ${pages}`
-                    console.info(current_page, pages)
-                    const pct = `${Math.floor(100*current_page / pages)}%`
-                    console.info(pct)
-                    bar.style.width = pct
-                    barmsg.innerText = pct
-                    doNextPage()
-                }
-            );
-        } else {
-
-            bar.style.width = "100%"
-            barmsg.innerText = "100%"
-            message.innerText = "Download complete, check your downloads folder"
-
-            const blob = new Blob([JSON.stringify(mofs)], {type: 'text/json'});
-            if(window.navigator.msSaveOrOpenBlob) {
-                window.navigator.msSaveBlob(blob, "mofs.json");
-            }
-            else{
-                var elem = window.document.createElement('a');
-                elem.href = window.URL.createObjectURL(blob);
-                elem.download = "mofs.json";
-                document.body.appendChild(elem);
-                elem.click();
-                document.body.removeChild(elem);
-            }
-            console.info(mofs,"done")
-        }
-    }
-
-    if (bar) {
-        doNextPage()
-    }
-})

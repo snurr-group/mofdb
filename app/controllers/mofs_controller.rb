@@ -1,8 +1,11 @@
 require 'zip'
+require 'zip_tricks'
 require "#{Rails.root}/app/helpers/application_helper"
 include ApplicationHelper
 
 class MofsController < ApplicationController
+  include ActionController::Live
+
   before_action :set_mof, only: [:show, :edit, :update, :destroy, :cif]
   skip_forgery_protection only: [:upload]
   before_action :verify_access, only: [:upload]
@@ -14,7 +17,7 @@ class MofsController < ApplicationController
     if request.path == "/"
       return render 'index'
     end
-    if params[:html] || params[:cifs]
+    if params[:html] || params[:bulk]
       @mofs = Mof.all.includes(:database, :elements, :gases)
     else
       # Fallback
@@ -37,24 +40,37 @@ class MofsController < ApplicationController
       return
     end
 
-    # If params[:cifs] is set it means we're going to serve a zip file instead of an HTML page
-    # we exclude all CSD mofs since those cifs are prviate.
-    if params[:cifs] && params[:cifs] == "true" && @mofs.any?
-      @mofs = @mofs.select { |mof| mof.database != Database.find_by(name: "CSD") }
-      temp_name = "mof-dl-#{SecureRandom.hex(8)}.zip"
-      temp_path = Rails.root.join(Rails.root.join("tmp"), temp_name)
+    # If params[:bulk]
+    if params[:bulk] && params[:bulk] == "true" && @mofs.any?
+      csd = Database.find_by(name: "CSD")
+      zipname = "mofs-bulk-search-download.zip"
+      send_file_headers!(
+          type: "application/zip",
+          disposition: "attachment",
+          filename: zipname
+      )
+      response.headers["Last-Modified"] = Time.now.httpdate.to_s
+      response.headers["X-Accel-Buffering"] = "no"
 
-
-      Zip::OutputStream.open(temp_path) do |io|
-        @mofs.each do |mof|
-          io.put_next_entry(mof.name + ".cif")
-          io.write(mof.cif)
-        end
+      writer = ZipTricks::BlockWrite.new do |chunk|
+        response.stream.write(chunk)
       end
 
+      begin
+        ZipTricks::Streamer.open(writer) do |zip|
+          @mofs.in_batches(of: 100).each_record do |mof|
 
-      File.open(temp_path, 'r') do |file|
-        send_data file.read, :type => 'application/zip', :filename => temp_name
+            # next if mof.database == csd
+            zip.write_deflated_file("#{mof.name}-(id:#{mof.id}).cif") do |file_writer|
+              file_writer << mof.cif
+            end
+            zip.write_deflated_file("#{mof.name}-(id:#{mof.id}).json") do |file_writer|
+              file_writer << mof.pregen_json.to_json
+            end
+          end
+        end
+      ensure
+        response.stream.close
       end
       return
     end
@@ -179,7 +195,7 @@ class MofsController < ApplicationController
       # Now we have the ids of all the mofs with this gas_id in their isodata.
       # In order to be compatible with the filter method below we return to the active record
       # interface. This is an extra query sadly.
-      @mofs = @mofs.where("mofs.id in (?)",mof_ids).includes(:database,:elements)
+      @mofs = @mofs.where("mofs.id in (?)", mof_ids).includes(:database, :elements)
     end
 
     ## VOID FRAC
@@ -267,11 +283,13 @@ class MofsController < ApplicationController
         @mofs = @mofs.take(100)
       }
       format.json {
-        page = params['page'].to_i # nil -> 0
-        page = 1 if page == 0
-        offset = (ENV['PAGE_SIZE'].to_i) * (page - 1)
-        raise PageTooLarge if offset > @mofs.size
-        @mofs = @mofs.offset(offset).take(ENV['PAGE_SIZE'])
+        unless params[:bulk] && params[:bulk] == 'true'
+          page = params['page'].to_i # nil -> 0
+          page = 1 if page == 0
+          offset = (ENV['PAGE_SIZE'].to_i) * (page - 1)
+          raise PageTooLarge if offset > @mofs.size
+          @mofs = @mofs.offset(offset).take(ENV['PAGE_SIZE'])
+        end
       }
     end
   end

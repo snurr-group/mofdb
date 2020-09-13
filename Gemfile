@@ -11,6 +11,7 @@ gem 'mysql2', '>= 0.4.4', '< 0.6.0'
 gem 'sass-rails'
 gem 'uglifier'
 
+gem 'zip_tricks'
 gem 'jbuilder'
 gem 'bootsnap', '>= 1.1.0', require: false
 gem 'dotenv-rails'
