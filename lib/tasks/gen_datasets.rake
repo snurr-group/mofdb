@@ -8,7 +8,7 @@ namespace :datasets do
   desc "Generate all datasets for the databases page"
   task pregen: :environment do
     combinations = get_db_doi_gas_combos
-    combinations.each do |db, doiToGas|
+    combinations. each do |db, doiToGas|
       gen_zip(db, nil, nil)
       doiToGas.keys.each do |doi|
         gen_zip(db, doi, nil)

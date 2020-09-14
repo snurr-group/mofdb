@@ -13,7 +13,7 @@ module ApplicationHelper
 
   def get_zip_name(db, doi, gases)
     if doi.nil?
-      return "#{db.name}.zip".gsub(/[^0-9a-z ]/i, ' ')
+      return db.name.gsub(/[^0-9a-z ]/i, ' ') + '.zip'
     end
     return "#{db.name}-#{doi}-#{gases.nil? ? "all" : gases.to_a.map{|g|Gas.find(g).name}.join("-")}".gsub(/[^0-9a-z ]/i, ' ') + ".zip"
   end
