@@ -61,7 +61,7 @@ class MofsController < ApplicationController
       begin
         ZipTricks::Streamer.open(writer) do |zip|
           @mofs = @mofs.select("id, pregen_json, name, cif, database_id")
-          @mofs.in_batches(of: 50).each_record do |mof|
+          @mofs.in_batches(of: 500).each_record do |mof|
             next if mof.database_id == csd.id
             zip.write_deflated_file("#{mof.name}-(id:#{mof.id}).cif") do |file_writer|
               file_writer << mof.cif

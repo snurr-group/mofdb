@@ -7,18 +7,18 @@
       <% if doiToGas.keys.any? %>
         <div class="combo-inner">
           <h3 title="Full database of cifs + isotherms">
-            <a href='/Datasets/<%= "#{database.name}".gsub(/[^0-9a-z]/i, ' ') %>.zip'>
+            <a href='/Datasets/<%= get_zip_name(database, nil, nil) %>'>
               <%= database.name %>
             </a>
           </h3>
           <% doiToGas.keys.each do |doi| %>
             <h4><%= doi %></h4>
-            <% doiToGas[doi].each do |gas| %>
-              <a title="All isotherms for this gas and this doi + relevant cif files" href='/Datasets/<%= "#{database.name}-#{doi}-#{gas.name}".gsub(/[^0-9a-z]/i, ' ') %>.zip'>
-                <%= gas.name %>
+            <% doiToGas[doi].to_a.each do |gases| %>
+              <a title="All isotherms for this gas and this doi + relevant cif files" href='/Datasets/<%= get_zip_name(database, doi, gases) %>'>
+                <%= gases.map { |g| Gas.find(g).name}.join("/") %>
               </a>
             <% end %>
-            <a title="All isotherms + cifs for this doi" href='/Datasets/<%= "#{database.name}-#{doi}-all".gsub(/[^0-9a-z]/i, ' ') %>.zip'>
+            <a title="All isotherms + cifs for this doi" href='<%= get_zip_name(database, doi, nil) %>'>
               All
             </a>
           <% end %>

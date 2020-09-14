@@ -27,6 +27,7 @@ end
 
 group :development do
   gem 'bullet'
+  gem 'meta_request'
   gem 'rack-mini-profiler'
   gem 'memory_profiler'
   gem 'flamegraph'
