@@ -15,7 +15,7 @@
             <h4><%= doi %></h4>
             <% doiToGas[doi].to_a.each do |gases| %>
               <a title="All isotherms for this gas and this doi + relevant cif files" href='/Datasets/<%= get_zip_name(database, doi, gases) %>'>
-                <%= gases.map { |g| Gas.find(g).name}.join("/") %>
+                <%= gases.map { |g| g.name}.join("/") %>
               </a>
             <% end %>
             <a title="All isotherms + cifs for this doi" href='<%= get_zip_name(database, doi, nil) %>'>
