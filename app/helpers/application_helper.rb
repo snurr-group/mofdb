@@ -20,7 +20,7 @@ module ApplicationHelper
 
   def get_db_doi_gas_combos
     combinations = Rails.cache.read("combinations")
-    combinations = nil
+    # combinations = nil
     if (combinations.nil?)
       puts "CACHE MISS"
       combinations = {}
