@@ -9,9 +9,9 @@ namespace :datasets do
   task pregen: :environment do
     combinations = get_db_doi_gas_combos
     combinations. each do |db, doiToGas|
-      # gen_zip(db, nil, nil)
+      gen_zip(db, nil, nil)
       doiToGas.keys.each do |doi|
-        # gen_zip(db, doi, nil)
+        gen_zip(db, doi, nil)
         doiToGas[doi].each do |gases|
           puts "database: #{db.name} - doi:#{doi} - #{gases.to_a.map{|g|g.name}.join('/')}"
           gen_zip(db, doi, gases)
