@@ -13,7 +13,7 @@ namespace :datasets do
       doiToGas.keys.each do |doi|
         gen_zip(db, doi, nil)
         doiToGas[doi].each do |gases|
-          puts "database: #{db.name} - doi:#{doi} - #{gases.to_a.map{|g|Gas.find(g).name}.join('/')}"
+          puts "database: #{db.name} - doi:#{doi} - #{gases.to_a.map{|g|g.name}.join('/')}"
           gen_zip(db, doi, gases)
         end
       end
@@ -25,7 +25,7 @@ def gen_zip(db, doi, gases)
   # nil gas means generate a zip for the entire database/doi pair
   name = get_zip_name(db, doi, gases)
   path = Rails.root.join(Rails.root.join("public", "Datasets"), name)
-
+  gas_ids_set = gases.nil? ? nil : gases.map{|g|g.id}.to_set
   if doi.nil?
     mof_ids = Mof.where(database: db).pluck(:id)
   else
@@ -53,7 +53,7 @@ def gen_zip(db, doi, gases)
           next
         end
         isos = jsn["isotherms"].filter { |iso|
-          iso["adsorbates"].map { |ads| ads["id"] }.to_set == gases }
+          iso["adsorbates"].map { |ads| Gas.find[ads["id"]] }.to_set == gas_ids_set }
         jsn["isotherms"] = isos
         io.put_next_entry(mof.name + ".cif")
         io.write(mof.cif)
