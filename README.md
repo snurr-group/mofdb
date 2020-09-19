@@ -36,14 +36,14 @@ I'd recommend starting by looking at ```db/schema.rb``` and then [the api routes
 
 ## Pregen datasets page
 
-```> bundle exec rails pregen:databases```
+```> bundle exec rake environment pregen:databases```
 
 This job generates all the zip files for each combination of database-doi-gas you see in the databases page. This needs to be run 
 each time that data changes. 
 
 ## Pregen json
 
-```> bundle exec rails pregen:json```
+```> bundle exec rake environment pregen:json```
 
 This job generates all the json shown on the site. Use this if those values are not appearing for some reason. You likely won't need to run this.
  
