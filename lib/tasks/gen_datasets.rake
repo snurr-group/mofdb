@@ -4,16 +4,16 @@ require 'set'
 require "#{Rails.root}/app/helpers/application_helper"
 include ApplicationHelper
 
-namespace :datasets do
+namespace :pregen do
   desc "Generate all datasets for the databases page"
-  task pregen: :environment do
+  task :databases, :environment do
     combinations = get_db_doi_gas_combos
     combinations. each do |db, doiToGas|
       gen_zip(db, nil, nil)
       doiToGas.keys.each do |doi|
         gen_zip(db, doi, nil)
         doiToGas[doi].each do |gases|
-          puts "database: #{db.name} - doi:#{doi} - #{gases.to_a.map{|g|g.name}.join('/')}"
+          puts "da  tabase: #{db.name} - doi:#{doi} - #{gases.to_a.map{|g|g.name}.join('/')}"
           gen_zip(db, doi, gases)
         end
       end
@@ -31,7 +31,7 @@ def gen_zip(db, doi, gases)
     mof_ids = Isotherm.includes(:mof).where("mofs.database_id = (?)", db.id).where(doi: doi).pluck('isotherms.mof_id')
   end
 
-  mofs = Mof.where("mofs.id in (?)", mof_ids)
+  mofs = Mof.visible.where("mofs.id in (?)", mof_ids)
   total = mofs.count
   puts "Total: #{total}"
   i = 0

@@ -6,7 +6,7 @@ include ApplicationHelper
 class MofsController < ApplicationController
   include ActionController::Live
 
-  before_action :set_mof, only: [:show, :edit, :update, :destroy, :cif]
+  before_action :set_mof, only: [:show, :cif]
   skip_forgery_protection only: [:upload]
   before_action :verify_access, only: [:upload]
   before_action :cache, except: [:upload]
@@ -14,18 +14,20 @@ class MofsController < ApplicationController
   # GET /mofs
   # GET /mofs.json
   def index
+    visible = Mof.all.visible
     if request.path == "/"
+      # If there are no filters just render the html view
       return render 'index'
     end
     if params[:html]
-      @mofs = Mof.all.includes(:database, :elements, :gases)
+      @mofs = visible.includes(:database, :elements, :gases)
     elsif params[:bulk] && params[:bulk] == 'true'
-      @mofs = Mof.all
+      @mofs = visible
     else
       # Fallback
       respond_to do |format|
-        format.html { @mofs = Mof.all.includes(:database) }
-        format.json { @mofs = Mof.all }
+        format.html { @mofs = visible.includes(:database) }
+        format.json { @mofs = visible }
       end
     end
 
@@ -45,11 +47,11 @@ class MofsController < ApplicationController
     # If params[:bulk]
     if params[:bulk] && params[:bulk] == "true" && @mofs.any?
       csd = Database.find_by(name: "CSD")
-      zipname = "mofs-bulk-search-download.zip"
+      zip_name = "mofs-bulk-search-download.zip"
       send_file_headers!(
           type: "application/zip",
           disposition: "attachment",
-          filename: zipname
+          filename: zip_name
       )
       response.headers["Last-Modified"] = Time.now.httpdate.to_s
       response.headers["X-Accel-Buffering"] = "no"
@@ -95,8 +97,8 @@ class MofsController < ApplicationController
     # Used by the mofdb_upload (on github) to add a new mof
     hashkey = params[:hashkey]
     name = params[:name]
-    @mof = Mof.find_by(hashkey: hashkey)
-    @mof = Mof.find_by(name: name) if @mof.nil?
+    @mof = Mof.visible.find_by(hashkey: hashkey)
+    @mof = Mof.visible.find_by(name: name) if @mof.nil?
     begin
       elements = JSON.parse(params[:atoms]).map { |atm| Element.find_by(symbol: atm == "x" ? "Xe" : atm) }
       mof_params[:elements] = elements

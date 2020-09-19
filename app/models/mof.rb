@@ -6,6 +6,8 @@ class Mof < ApplicationRecord
   has_and_belongs_to_many :elements
   has_many :heats
 
+  scope :visible, -> { where(:hidden => false) }
+
   def regen_gas_cache
     self.cached_gaess = self.gases.distinct
     self.save
