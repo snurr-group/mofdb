@@ -18,7 +18,7 @@
                 <%= gases.map { |g| g.name}.join("/") %>
               </a>
             <% end %>
-            <a title="All isotherms + cifs for this doi" href='<%= get_zip_name(database, doi, nil) %>'>
+            <a title="All isotherms + cifs for this doi" href='/Datasets/<%= get_zip_name(database, doi, nil) %>'>
               All
             </a>
           <% end %>
