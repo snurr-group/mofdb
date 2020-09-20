@@ -252,7 +252,7 @@ class MofsController < ApplicationController
 
     # NAME
     if params[:name] && !params[:name].empty?
-      @mofs = @mofs.where("name LIKE ?", "#{params[:name]}%")
+      @mofs = @mofs.where("mofs.name LIKE ?", "#{params[:name]}%")
     end
 
     # DB
