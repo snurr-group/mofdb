@@ -206,48 +206,48 @@ class MofsController < ApplicationController
 
     ## VOID FRAC
     if params[:vf_min] && !params[:vf_min].empty? && params[:vf_min] && params[:vf_min].to_f != 0
-      @mofs = @mofs.where("void_fraction >= ?", params[:vf_min])
+      @mofs = @mofs.where("mofs.void_fraction >= ?", params[:vf_min])
     end
 
     if params[:vf_max] && !params[:vf_max].empty? && params[:vf_max].to_f != 1
-      @mofs = @mofs.where("void_fraction <= ?", params[:vf_max])
+      @mofs = @mofs.where("mofs.void_fraction <= ?", params[:vf_max])
     end
 
     ### PLD
     if params[:pld_min] && !params[:pld_min].empty? && params[:pld_min].to_f != 0
-      @mofs = @mofs.where("pld >= ?", params[:pld_min])
+      @mofs = @mofs.where("mofs.pld >= ?", params[:pld_min])
     end
 
 
     if params[:pld_max] && !params[:pld_max].empty? && params[:pld_max].to_f != 20
-      @mofs = @mofs.where("pld <= ?", params[:pld_max])
+      @mofs = @mofs.where("mofs.pld <= ?", params[:pld_max])
     end
 
     ### LCD
     if params[:lcd_min] && !params[:lcd_min].empty? && params[:lcd_min].to_f != 0
-      @mofs = @mofs.where("lcd >= ?", params[:lcd_min])
+      @mofs = @mofs.where("mofs.lcd >= ?", params[:lcd_min])
     end
 
     if params[:lcd_max] && !params[:lcd_max].empty? && params[:lcd_max].to_f != 100
-      @mofs = @mofs.where("lcd <= ?", params[:lcd_max])
+      @mofs = @mofs.where("mofs.lcd <= ?", params[:lcd_max])
     end
 
     ### SA M2G
     if params[:sa_m2g_min] && !params[:sa_m2g_min].empty? && params[:sa_m2g_min].to_f != 0
-      @mofs = @mofs.where("surface_area_m2g >= ?", params[:sa_m2g_min])
+      @mofs = @mofs.where("mofs.surface_area_m2g >= ?", params[:sa_m2g_min])
     end
 
     if params[:sa_m2g_max] && !params[:sa_m2g_max].empty? && params[:sa_m2g_max].to_f != 10000
-      @mofs = @mofs.where("surface_area_m2g <= ?", params[:sa_m2g_max])
+      @mofs = @mofs.where("mofs.surface_area_m2g <= ?", params[:sa_m2g_max])
     end
 
     ### SA M2G
     if params[:sa_m2cm3_min] && !params[:sa_m2cm3_min].empty? && params[:sa_m2cm3_min].to_f != 0
-      @mofs = @mofs.where("surface_area_m2cm3 >= ?", params[:sa_m2cm3_min])
+      @mofs = @mofs.where("mofs.surface_area_m2cm3 >= ?", params[:sa_m2cm3_min])
     end
 
     if params[:sa_m2cm3_max] && !params[:sa_m2cm3_max].empty? && params[:sa_m2cm3_max].to_f != 5000
-      @mofs = @mofs.where("surface_area_m2cm3 <= ?", params[:sa_m2cm3_max])
+      @mofs = @mofs.where("mofs.surface_area_m2cm3 <= ?", params[:sa_m2cm3_max])
     end
 
     # NAME
@@ -268,12 +268,12 @@ class MofsController < ApplicationController
 
     if params[:mofid] && !params[:mofid].empty?
       mofid = ActiveRecord::Base.connection.quote(params[:mofid].to_s)
-      @mofs = @mofs.where("MATCH (mofid) AGAINST (#{mofid})")
+      @mofs = @mofs.where("MATCH (mofs.mofid) AGAINST (#{mofid})")
     end
 
     if params[:mofkey] && !params[:mofkey].empty?
       mofkey = ActiveRecord::Base.connection.quote(params[:mofkey].to_s)
-      @mofs = @mofs.where("MATCH (mofkey) AGAINST (#{mofkey})")
+      @mofs = @mofs.where("MATCH (mofs.mofkey) AGAINST (#{mofkey})")
     end
 
     if params[:doi] && !params[:doi].empty?
