@@ -7,6 +7,8 @@ include ApplicationHelper
 namespace :pregen do
   desc "Generate all datasets for the databases page"
   task :databases, :environment do
+    dir_path = Rails.root.join('public','Datasets')
+    Dir.foreach(dir_path) {|f| File.delete(f) if f != '.' && f != '..'}
     combinations = get_db_doi_gas_combos
     combinations. each do |db, doiToGas|
       gen_zip(db, nil, nil)

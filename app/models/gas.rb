@@ -4,11 +4,21 @@ class Gas < ApplicationRecord
   has_many :isotherms, through: :isodata
   has_many :mofs, through: :isotherms
 
+  def to_nist_json
+    {id: self.id,
+     InChIKey: self.inchikey,
+     name: self.name,
+     InChICode: self.inchicode,
+     formula: self.formula,
+    }
+
+  end
+
   def cleanup
     self.name = name.split(" ").join("") unless name.nil?
-    self.inchikey = inchikey.split(" ").join("") unless inchikey .nil?
-    self.inchicode = inchicode.split(" ").join("") unless inchicode .nil?
-    self.formula = formula.split(" ").join("") unless formula .nil?
+    self.inchikey = inchikey.split(" ").join("") unless inchikey.nil?
+    self.inchicode = inchicode.split(" ").join("") unless inchicode.nil?
+    self.formula = formula.split(" ").join("") unless formula.nil?
   end
 
   def self.find_gas(name)
