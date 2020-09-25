@@ -11,3 +11,14 @@ namespace :pregen do
     end
   end
 end
+
+namespace :pregen do
+  desc "Regen all JSON and all ZIP files"
+  task all: :environment do
+    puts "Starting JSON generation"
+    Rake::Task['pregen:json'].invoke
+    puts "Starting ZIP generation"
+    Rake::Task['pregen:databases'].invoke
+  end
+end
+
