@@ -34,6 +34,10 @@ I'd recommend starting by looking at ```db/schema.rb``` and then [the api routes
 
 # Rake tasks
 
+## Pregen all
+Regenerate all json/zip files.
+```> bundle exec rake environment pregen:all```
+
 ## Pregen datasets page
 
 ```> bundle exec rake environment pregen:databases```
