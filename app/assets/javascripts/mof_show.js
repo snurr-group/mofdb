@@ -51,9 +51,9 @@ $(document).on('DOMContentLoaded', function () {
         child.setAttribute('class', "isotherm_graph");
         right.appendChild(child);
 
-
-        let loading_label = "Loading [" + json['adsorption_units'] + "]";
-        let pressure_label = "Pressure [" + json['pressure_units'] + "]";
+        console.info(json)
+        let loading_label = "Loading [" + json['adsorptionUnits'] + "]";
+        let pressure_label = "Pressure [" + json['pressureUnits'] + "]";
         let adsorbates = [];
 
         for (let i = 0; i < json['adsorbates'].length; i++) {
