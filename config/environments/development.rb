@@ -11,6 +11,7 @@ Rails.application.configure do
   config.eager_load = false
 
   # Show full error reports.
+  config.cache_store = :file_store, Rails.root.join('tmp','cache'), { size: 100.megabytes }
   config.consider_all_requests_local = true
 
   # Enable/disable caching. By default caching is disabled.

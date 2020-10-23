@@ -60,7 +60,7 @@ Rails.application.configure do
 
   # Use a different cache store in production.
   config.action_controller.perform_caching = true
-  config.cache_store = :memory_store, { size: 100.megabytes }
+  config.cache_store = :file_store, Rails.root.join('tmp','cache'), { size: 100.megabytes }
 
   # Use a real queuing backend for Active Job (and separate queues per environment)
   # config.active_job.queue_adapter     = :resque
