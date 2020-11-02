@@ -12,7 +12,7 @@ namespace :find do
     old_logger = ActiveRecord::Base.logger
     ActiveRecord::Base.logger = nil
     i = 0
-    isos = Isotherm.joins(:mof).where('mofs.database_id = 3').joins(:isodata).where('isodata.gas_id = 243')
+    isos = Isotherm.joins(:mof).where('mofs.database_id = 3').joins(:isodata).where('isodata.gas_id = 243').select('id').distinct
     total = isos.size
     puts total
     isos.find_in_batches(batch_size: 1000) do |ids|
