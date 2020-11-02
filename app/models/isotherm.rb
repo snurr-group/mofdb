@@ -4,7 +4,7 @@ class Isotherm < ApplicationRecord
   belongs_to :mof
   has_many :isodata, dependent: :delete_all
   has_many :gases, through: :isodata
-  after_save :regen_mof_json
+  # after_save :regen_mof_json
 
   def regen_mof_json
     self.mof.regen_json
