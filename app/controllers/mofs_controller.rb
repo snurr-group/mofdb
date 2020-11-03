@@ -97,8 +97,7 @@ class MofsController < ApplicationController
     # Used by the mofdb_upload (on github) to add a new mof
     hashkey = params[:hashkey]
     name = params[:name]
-    @mof = Mof.visible.find_by(hashkey: hashkey)
-    @mof = Mof.visible.find_by(name: name) if @mof.nil?
+    @mof = Mof.visible.find_by(name: name)
     begin
       elements = JSON.parse(params[:atoms]).map { |atm| Element.find_by(symbol: atm == "x" ? "Xe" : atm) }
       mof_params[:elements] = elements
