@@ -95,7 +95,6 @@ class MofsController < ApplicationController
 
   def upload
     # Used by the mofdb_upload (on github) to add a new mof
-    hashkey = params[:hashkey]
     name = params[:name]
     @mof = Mof.visible.find_by(name: name)
     begin
