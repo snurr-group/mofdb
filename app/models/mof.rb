@@ -6,11 +6,22 @@ class Mof < ApplicationRecord
   has_and_belongs_to_many :elements
   has_many :heats
 
+  after_create :storeMassAndVol
+
   scope :visible, -> { where(:hidden => false) }
 
-  def regen_gas_cache
-    self.cached_gaess = self.gases.distinct
-    self.save
+  def storeMassAndVol
+    write_cif_to_file
+    begin
+      cmd = "python3 #{Rails.root.join("lib","massAndVol.py")} #{cif_path}"
+      result = %x( #{cmd} )
+      result = JSON.load(result)
+      self.volumeA3 = result['volumeA3']
+      self.atomicMass = result['atomicMass']
+      self.save
+    ensure
+      delete_cif
+    end
   end
 
   def regen_json
@@ -23,17 +34,20 @@ class Mof < ApplicationRecord
     self.save
   end
 
+  def cif_path
+    id = 'id-' + self.id.to_s + '.cif'
+    return Rails.root.join("tmp", id)
+  end
 
   def write_cif_to_file
-    id = 'id-' + self.id.to_s + '.cif'
-    tmp = File.open(Rails.root.join("tmp", id), 'w+')
+
+    tmp = File.open(cif_path, 'w+')
     tmp.write(self.cif)
     tmp.close()
   end
 
   def delete_cif
-    id = "id-" + self.id.to_s + ".cif"
-    File.delete(Rails.root.join("tmp", id))
+    File.delete(cif_path)
   end
 
 end

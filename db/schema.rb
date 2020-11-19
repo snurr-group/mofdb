@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_15_201155) do
+ActiveRecord::Schema.define(version: 2020_11_19_051332) do
 
   create_table "classifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name"
@@ -134,6 +134,8 @@ ActiveRecord::Schema.define(version: 2020_09_15_201155) do
     t.text "mofid"
     t.text "mofkey"
     t.boolean "hidden", default: false, null: false
+    t.float "atomicMass"
+    t.float "volumeA3"
     t.index ["database_id"], name: "fk_rails_42b2867304"
     t.index ["hashkey"], name: "index_mofs_on_hashkey"
     t.index ["hidden"], name: "index_mofs_on_hidden"
