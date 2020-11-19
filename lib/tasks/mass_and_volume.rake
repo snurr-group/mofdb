@@ -6,7 +6,7 @@ namespace :pregen do
     Rails.application.executor.wrap do
       success = Concurrent::AtomicFixnum.new
       fails = Concurrent::AtomicFixnum.new
-      mofs = Mof.all
+      mofs = Mof.all.where(volumeA3: nil)
       size = mofs.size
       pool = Concurrent::FixedThreadPool.new(10, max_queue: 1000000)
       mofs.each do |mof|
