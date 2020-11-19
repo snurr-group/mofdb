@@ -64,7 +64,7 @@ module UnitsHelper
       molesOfUnitCells = grams / molarMass
     end
 
-    puts "moles of unit cells is #{molesOfUnitCells}"
+    # puts "moles of unit cells is #{molesOfUnitCells}"
 
 
     if to == "cm3"
@@ -83,7 +83,7 @@ module UnitsHelper
 
   def convert_gas_unit(from, to, value, molarMass, tempK, pressureAtm)
     r = 0.082057
-    atmSTP = 0.986923
+    atmSTP = 1
     tempSTP = 273.15
 
     supported = ["cm3", "cm3(STP)", "g", "mg", "mmol", "mol"]
@@ -110,7 +110,7 @@ module UnitsHelper
       moles = value / 1000.0
     end
 
-    puts "moles of gas: #{moles}"
+    # puts "moles of gas: #{moles}"
 
     if to == "mg"
       return moles * molarMass * 1000.0
