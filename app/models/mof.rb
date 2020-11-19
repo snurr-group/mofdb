@@ -1,3 +1,5 @@
+require 'Open3'
+
 class Mof < ApplicationRecord
   belongs_to :database
   has_many :isotherms, dependent: :delete_all
@@ -11,16 +13,23 @@ class Mof < ApplicationRecord
   scope :visible, -> { where(:hidden => false) }
 
   def storeMassAndVol
+    success = false
     write_cif_to_file
     begin
       cmd = "python3 #{Rails.root.join("lib","massAndVol.py")} #{cif_path}"
-      result = %x( #{cmd} )
-      result = JSON.load(result)
+      stdout_str, stderr_str, status = Open3.capture3(cmd)
+      result = JSON.load(stdout_str)
       self.volumeA3 = result['volumeA3']
       self.atomicMass = result['atomicMass']
-      self.save
+      self.save!
+      # puts result
+      success = true
+    rescue Exception => e
+      puts e
+      success = false
     ensure
       delete_cif
+      return success
     end
   end
 

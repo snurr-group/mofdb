@@ -4,6 +4,7 @@ git_source(:github) {|repo| "https://github.com/#{repo}.git"}
 gem 'activerecord-import'
 gem "passenger", ">= 5.3.2", require: "phusion_passenger/rack_handler"
 gem 'rubyzip'
+gem 'concurrent-ruby'
 gem 'rails', '~> 6.0'
 
 gem 'mysql2', '>= 0.4.4', '< 0.6.0'

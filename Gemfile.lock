@@ -208,6 +208,7 @@ DEPENDENCIES
   bootsnap (>= 1.1.0)
   bullet
   byebug
+  concurrent-ruby
   dotenv-rails
   factory_bot_rails
   faker

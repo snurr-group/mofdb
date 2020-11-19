@@ -10,7 +10,7 @@ module UnitsHelper
   end
   # temp = k
   # pressure = atm
-  def convert_gas_unit(from, to, value, molarMass, tempK pressureAtm)
+  def convert_gas_unit(from, to, value, molarMass, tempK, pressureAtm)
     r = 0.082057
     supported = ["cm3", "cm3(STP)", "g", "mg", "mmol", "mol"]
     raise UnsupportedGasUnit("#{from} is not a supported gas unit") if supported.index(from).nil?
