@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_19_051332) do
+ActiveRecord::Schema.define(version: 2020_11_19_073418) do
 
   create_table "classifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name"
@@ -65,6 +65,7 @@ ActiveRecord::Schema.define(version: 2020_11_19_051332) do
     t.string "name"
     t.string "inchicode", limit: 500
     t.string "formula", limit: 500
+    t.float "molarMass"
     t.index ["formula"], name: "index_gases_on_formula"
     t.index ["inchicode"], name: "index_gases_on_inchicode"
     t.index ["inchikey"], name: "index_gases_on_inchikey"
