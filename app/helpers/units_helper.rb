@@ -42,12 +42,11 @@ module UnitsHelper
     molesOfUnitCells = nil
 
     # volume of a mol of unit cells
-    volumeMolCm3 = volumeA3 * (avogadro / 1e+24) #  [cm3/mol]
+    volumeMolCm3 = (volumeA3 * avogadro) / 1e+24 #  [cm3/mol]
     #     # puts "volumeMolCm3: #{volumeMolCm3}, volumeA3: #{volumeA3}, unitCellMass: #{unitCellMass}"
 
     # molar mass of mof
     molarMass = unitCellMass # [g/mol]
-    #     # puts "molarmass: #{molarMass}"
 
     if from == "cm3"
       molesOfUnitCells = value / volumeMolCm3
@@ -64,6 +63,8 @@ module UnitsHelper
       grams = value / 1000.0
       molesOfUnitCells = grams / molarMass
     end
+
+    puts "moles of unit cells is #{molesOfUnitCells}"
 
 
     if to == "cm3"
@@ -109,7 +110,7 @@ module UnitsHelper
       moles = value / 1000.0
     end
 
-    # puts "moles IS #{moles}"
+    puts "moles of gas: #{moles}"
 
     if to == "mg"
       return moles * molarMass * 1000.0
@@ -121,7 +122,7 @@ module UnitsHelper
       return (moles * r * tempK * 1000.0) / pressureAtm
     elsif to == "cm3(STP)"
       liters = moles * r * tempSTP / (atmSTP)
-      return liters * 1000.0
+      return liters * 1000
     elsif to == "mmol"
       return 1000.0 * moles
     end
