@@ -9,7 +9,7 @@ namespace :pregen do
       mofs = Mof.all.where(volumeA3: nil)
       size = mofs.size
       pool = Concurrent::FixedThreadPool.new(2, max_queue: 1000000)
-      mofs.find_in_batches.each do |mof|
+      mofs.in_batches.each do |mof|
         pool.post do
           result = mof.storeMassAndVol
           success.increment if result
