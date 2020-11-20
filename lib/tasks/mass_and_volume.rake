@@ -8,8 +8,8 @@ namespace :pregen do
       fails = Concurrent::AtomicFixnum.new
       mofs = Mof.all.where(volumeA3: nil)
       size = mofs.size
-      pool = Concurrent::FixedThreadPool.new(10, max_queue: 1000000)
-      mofs.each do |mof|
+      pool = Concurrent::FixedThreadPool.new(2, max_queue: 1000000)
+      mofs.find_in_batches.each do |mof|
         pool.post do
           result = mof.storeMassAndVol
           success.increment if result
