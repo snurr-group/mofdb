@@ -1,5 +1,9 @@
 module UnitsHelper
 
+  def supportedUnits
+    return ["cm3/cm3", "cm3(STP)/g", "cm3(STP)/cm3", "g/l", "mg/g", "mmol/g", "mol/kg"]
+  end
+
   class UnsupportedGasUnit < StandardError
     def initialize(msg = nil)
       super
@@ -18,10 +22,14 @@ module UnitsHelper
   end
 
 
-  def convert_adsorption_units(from, to, value, gas, mof, tempK, pressureBar)
-    supported = ["cm3/cm3", "cm3(STP)/g", "cm3(STP)/cm3", "g/l", "mg/g", "mmol/g", "mol/kg"] #, "wt%" ]
-    raise UnsupportedGasUnit.new("#{from} is not a supported adsorption unit") unless supported.include?(from)
-    raise UnsupportedGasUnit.new("#{to} is not a supported adsorption unit") unless supported.include?(to)
+  def convert_adsorption_units(from, to, isodata)
+    raise UnsupportedGasUnit.new("#{from} is not a supported adsorption unit") unless supportedUnits.include?(from)
+    raise UnsupportedGasUnit.new("#{to} is not a supported adsorption unit") unless supportedUnits.include?(to)
+    gas = isodata.gas
+    mof = isodata.isotherm.mof
+    value = isodata.loading
+    tempK = isodata.isotherm.temp
+    pressureBar = isodata.pressure
 
     gasFrom, gasTo, mofFrom, mofTo = parseUnits(from, to)
 

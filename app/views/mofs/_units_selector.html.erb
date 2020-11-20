@@ -1,0 +1,24 @@
+<% prefUnit = session[:prefUnits]
+   if prefUnit
+     unitsList = supportedUnits.filter { |u| u != prefUnit }
+     unitsList = [prefUnit] + unitsList
+   else
+     unitsList = supportedUnits
+   end
+%>
+<p class="unitsText">Select your prefered units</p>
+<select id="supportedUnitsSelector">
+  <% if !prefUnit %>
+    <option value="native" label="Isotherm Default"></option>
+  <% end %>
+
+  <% unitsList.each do |unit| %>
+    <option value="<%= unit %>" label="<%= unit %>"></option>
+  <% end %>
+
+  <% if prefUnit %>
+    <option value="native" label="Isotherm Default"></option>
+  <% end %>
+
+
+</select>

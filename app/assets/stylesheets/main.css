@@ -99,6 +99,11 @@
     padding: 20px;
 }
 
+.unitsText {
+    margin-bottom: 0;
+    margin-top: 5px;
+    padding-bottom: 0;
+}
 #info_content {
     grid-area: content;
     background-color: #fdfffc;
@@ -112,9 +117,13 @@
 #nav {
     grid-area: header;
     display: grid;
-    grid-template-columns: 1fr minmax(800px, 1110px) 1fr;
+    grid-template-columns: 1fr minmax(500px, 800px) 300px 1fr;
     grid-column-gap: 20px;
-    grid-template-areas: ". nav_txt .";
+    grid-template-areas: ". nav_txt nav_units .";
+}
+
+#nav_units {
+    grid-area: nav_units
 }
 
 #nav_api a, #nav_database a {
@@ -146,7 +155,7 @@
     }
 
     #nav {
-        grid-template-columns: 20px 1fr 20px;
+        grid-template-columns: 20px 1fr  100px 20px;
     }
 
     #info_content {

@@ -17,5 +17,6 @@ Rails.application.routes.draw do
   root 'mofs#index'
   get '/api' => 'mofs#api', as: 'api'
   get '/databases' => 'mofs#databases', as: 'databases'
+  post '/setUnits' => 'application#setUnits'
 
 end

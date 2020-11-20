@@ -77,6 +77,9 @@
   </div>
   <div id="right">
     <% if @mof.isotherms.any? %>
+      <% if @cannotConvert %>
+        <p>This mofs isotherms cannot be automatically converted to your desired units.</p>
+      <% end %>
       <div class="lead">Isotherms <%= link_to "<button>View JSON</button>".html_safe, mof_path(@mof, format: :json) %></div>
     <% else
          @mof.isotherms.any? %>

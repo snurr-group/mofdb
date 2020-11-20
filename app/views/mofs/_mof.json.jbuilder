@@ -4,7 +4,7 @@ json.database mof.database.name
 gases = mof.gases.uniq
 
 json.url mof_url(mof, format: :json)
-json.adsorbates gases.uniq.map{|g| g.to_nist_json}
+json.adsorbates gases.uniq.map { |g| g.to_nist_json }
 
 json.heats(mof.heats) do |heat|
   json.pressure heat.pressure
@@ -15,7 +15,7 @@ end
 
 json.isotherms(mof.isotherms) do |isotherm|
 
-  json.adsorbates isotherm.gases.uniq.map{|g| g.to_nist_json}
+  json.adsorbates isotherm.gases.uniq.map { |g| g.to_nist_json }
 
   json.extract! isotherm, :id, :digitizer, :simin
   json.DOI isotherm.doi
@@ -29,19 +29,24 @@ json.isotherms(mof.isotherms) do |isotherm|
   end
   json.category "exp"
 
-  json.adsorptionUnits Classification.find(isotherm.adsorption_units_id).name
+  isothermaAdsorptionUnits = Classification.find(isotherm.adsorption_units_id).name
+  adsUnitsName = @convert ? session[:prefUnits] : isothermaAdsorptionUnits
+  json.adsorptionUnits adsUnitsName
   json.pressureUnits Classification.find(isotherm.pressure_units_id).name
   json.compositionType Classification.find(isotherm.composition_type_id).name
 
   points = {}
   isotherm.isodata.each do |isodata|
     pressure = isodata.pressure
-    subpoint = {'InChIKey': Gas.find(isodata.gas_id).inchikey, 'composition': isodata.bulk_composition, 'adsorption': isodata.loading}
+    loading = @convert ? convert_adsorption_units(isothermaAdsorptionUnits, session[:prefUnits], isodata) : isodata.loading
+    subpoint = {'InChIKey': Gas.find(isodata.gas_id).inchikey,
+                'composition': isodata.bulk_composition,
+                'adsorption': loading}
     if !points.key?(pressure)
       points[pressure] = {}
       points[pressure]['total_adsorption'] = 0.0
     end
-    points[pressure]['total_adsorption'] += isodata.loading
+    points[pressure]['total_adsorption'] += loading
 
     if points[pressure]['entries']
       points[pressure]['entries'] << subpoint
@@ -60,5 +65,5 @@ json.isotherms(mof.isotherms) do |isotherm|
       json.adsorption subpoint[:adsorption]
     end
   end
-  json.isotherm_url "/isotherms/"+isotherm.id.to_s+".json"
+  json.isotherm_url "/isotherms/" + isotherm.id.to_s + ".json"
 end

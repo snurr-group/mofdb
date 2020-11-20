@@ -7,7 +7,11 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-111016820-6"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
-        function gtag() {dataLayer.push(arguments);}
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
         gtag('js', new Date());
         gtag('config', 'UA-111016820-6');
     </script>
@@ -17,7 +21,7 @@
   <meta name="description" content="A database of MOFs and simulated Isotherms ">
   <meta name="keywords" content="MOF,snurr,Northwestern,isotherm,nitrogen,database,chemistry,NU,zeolites">
   <title>
-    Metal Organic Framework Database | <%= fetch_or_gen("mofcount", lambda { return Mof.all.size }, 3.days ) %> Mofs
+    Metal Organic Framework Database | <%= fetch_or_gen("mofcount", lambda { return Mof.all.size }, 3.days) %> Mofs
   </title>
   <!-- JQUERY -->
   <!-- <script src="js/jquery.min.js" ></script> -->
@@ -47,7 +51,11 @@
 <div id="nav">
   <h1><a href="/"><span id="mof">MOF</span><span id="db">DB</span></a>
     <span id="nav_api"><a href="/api">API</a></span>
-    <span id="nav_database"><a href="/databases">Databases</a></span></h1>
+    <span id="nav_database"><a href="/databases">Databases</a></span>
+  </h1>
+  <span id="nav_units">
+    <%= render partial: 'mofs/units_selector' %>
+  </span>
 </div>
 <div id="page">
   <%= yield %>
