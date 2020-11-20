@@ -147,7 +147,12 @@ class MofsController < ApplicationController
   def show
     # Mof has necessary data to auto-convert isotherm loading units
     @convert = !@mof.volumeA3.nil? && !@mof.atomicMass.nil? && !session[:prefUnits].nil?
-    @cannotConvert = !@convert && session[:prefUnits]
+    @cannotConvertVolMass = !@convert && session[:prefUnits]
+    @cannotConvertIsoUnits = false
+    @mof.isotherms.map {|i| Classification.find(i.adsorption_units_id).name }.each do |name|
+      @cannotConvertIsoUnits = true unless supportedUnits.include?(name)
+    end
+
   end
 
   # GET /mofs/1/cif

@@ -29,8 +29,14 @@ json.isotherms(mof.isotherms) do |isotherm|
   end
   json.category "exp"
 
+
+
+
   isothermaAdsorptionUnits = Classification.find(isotherm.adsorption_units_id).name
-  adsUnitsName = @convert ? session[:prefUnits] : isothermaAdsorptionUnits
+
+  convertThisIsotherm = @convert && supportedUnits.include?(isothermaAdsorptionUnits)
+
+  adsUnitsName = convertThisIsotherm  ? session[:prefUnits] : isothermaAdsorptionUnits
   json.adsorptionUnits adsUnitsName
   json.pressureUnits Classification.find(isotherm.pressure_units_id).name
   json.compositionType Classification.find(isotherm.composition_type_id).name
@@ -38,7 +44,7 @@ json.isotherms(mof.isotherms) do |isotherm|
   points = {}
   isotherm.isodata.each do |isodata|
     pressure = isodata.pressure
-    loading = @convert ? convert_adsorption_units(isothermaAdsorptionUnits, session[:prefUnits], isodata) : isodata.loading
+    loading = convertThisIsotherm ? convert_adsorption_units(isothermaAdsorptionUnits, session[:prefUnits], isodata) : isodata.loading
     subpoint = {'InChIKey': Gas.find(isodata.gas_id).inchikey,
                 'composition': isodata.bulk_composition,
                 'adsorption': loading}

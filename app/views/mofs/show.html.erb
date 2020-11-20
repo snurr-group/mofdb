@@ -48,6 +48,14 @@
         <td>Atoms in MOF</td>
         <td><%= @mof.elements.pluck(:symbol).join(", ") %></td>
       </tr>
+      <tr>
+        <td>Atomic Mass of Cif</td>
+        <td><%= @mof.atomicMass || "Unknown"  %></td>
+      </tr>
+      <tr>
+        <td>Cif Volume A^3</td>
+        <td><%= @mof.volumeA3 || "Unknown" %></td>
+      </tr>
       <Tr>
         <td>Cif</td>
         <td>
@@ -77,10 +85,14 @@
   </div>
   <div id="right">
     <% if @mof.isotherms.any? %>
-      <% if @cannotConvert %>
-        <p>This mofs isotherms cannot be automatically converted to your desired units.</p>
-      <% end %>
       <div class="lead">Isotherms <%= link_to "<button>View JSON</button>".html_safe, mof_path(@mof, format: :json) %></div>
+      <% if @cannotConvertVolMass %>
+        <p>⚠️ Isotherm units cannot be automatically converted for this MOF
+          <br/>MOF is missing atomic mass or volume</p>
+      <% elsif @cannotConvertIsoUnits %>
+        <p>⚠️ Some isotherm units cannot be automatically converted for this MOF
+          <br/>At least one isotherm is using a unit we cannot yet automatically convert.</p>
+      <% end %>
     <% else
          @mof.isotherms.any? %>
       <p class="lead">This mof has no isotherms</p>
