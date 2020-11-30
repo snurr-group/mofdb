@@ -10,6 +10,12 @@ module UnitsHelper
     end
   end
 
+  class UnsupportedPressureUnit < StandardError
+    def initialize(msg = nil)
+      super
+    end
+  end
+
   def parseUnits(from, to)
     def parseUnit(unit)
       split = unit.split("/")
@@ -22,14 +28,25 @@ module UnitsHelper
   end
 
 
+  def get_pressure_in_bar(isodata)
+    pressure_units = Classification.find(isodata.isotherm.pressure_units_id)
+    if pressure_units.data != 0 and !pressure_units.data.nil?
+      return isodata.loading * pressure_units.data
+    else
+      raise UnsupportedPressureUnit.new("#{pressure_units.name} is not a supported pressure unit")
+    end
+  end
+
   def convert_adsorption_units(from, to, isodata)
     raise UnsupportedGasUnit.new("#{from} is not a supported adsorption unit") unless supportedUnits.include?(from)
     raise UnsupportedGasUnit.new("#{to} is not a supported adsorption unit") unless supportedUnits.include?(to)
+
+
     gas = isodata.gas
     mof = isodata.isotherm.mof
     value = isodata.loading
     tempK = isodata.isotherm.temp
-    pressureBar = isodata.pressure
+    pressureBar = get_pressure_in_bar(isodata)
 
     gasFrom, gasTo, mofFrom, mofTo = parseUnits(from, to)
 
@@ -51,7 +68,6 @@ module UnitsHelper
 
     # volume of a mol of unit cells
     volumeMolCm3 = (volumeA3 * avogadro) / 1e+24 #  [cm3/mol]
-    #     # puts "volumeMolCm3: #{volumeMolCm3}, volumeA3: #{volumeA3}, unitCellMass: #{unitCellMass}"
 
     # molar mass of mof
     molarMass = unitCellMass # [g/mol]
@@ -91,8 +107,8 @@ module UnitsHelper
 
   def convert_gas_unit(from, to, value, molarMass, tempK, pressureAtm)
     r = 0.082057
-    atmSTP = 1
     tempSTP = 273.15
+    atmSTP = 1
 
     supported = ["cm3", "cm3(STP)", "g", "mg", "mmol", "mol"]
     raise UnsupportedGasUnit.new("#{from} is not a supported gas unit") if supported.index(from).nil?
