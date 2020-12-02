@@ -17,10 +17,7 @@ namespace :pregen do
           puts "suc: #{success.value}, fails: #{fails.value} total: #{size}"
         end
       end
-      pool.shutdown
-      pool.wait_for_termination
     end
     puts "Runtime: #{(Time.now - startime).seconds}"
-
   end
 end
