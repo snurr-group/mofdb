@@ -47,16 +47,15 @@ namespace :testing do
 
       data[:units].each do |unit1, val1|
         data[:units].each do |unit2, val2|
-          newValue = ApplicationController.helpers.convert_adsorption_units(unit1.to_s, unit2.to_s, val1, gas, mof, data[:temp], data[:pressure])
+          newValue = ApplicationController.helpers.convert_adsorption_units_wrapped(unit1.to_s, unit2.to_s, val1, gas, mof, data[:temp], data[:pressure])
           diff = newValue - val2
           percentageDiff = (diff / newValue * 100)
           puts "\e[31mFrom #{unit1} to #{unit2}\e[0m Expected: #{val2} got #{newValue} diff is : #{percentageDiff}%" if percentageDiff.abs > 0.01
-          # puts "From #{unit1} to #{unit2} diff is : #{diff}" if diff.abs < 0.1
-          # puts ""
-          # puts diff
         end
       end
     end
+
+    puts "TEST COMPLETE"
 
   end
 end

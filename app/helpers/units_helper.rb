@@ -1,7 +1,7 @@
 module UnitsHelper
 
   def supportedUnits
-    return ["cm3/cm3", "cm3(STP)/g", "cm3(STP)/cm3", "g/l", "mg/g", "mmol/g", "mol/kg"]
+    return ["cm3(STP)/g", "cm3(STP)/cm3", "g/l", "mg/g", "mmol/g", "mol/kg"]
   end
 
   class UnsupportedGasUnit < StandardError
@@ -31,31 +31,30 @@ module UnitsHelper
   def get_pressure_in_bar(isodata)
     pressure_units = Classification.find(isodata.isotherm.pressure_units_id)
     if pressure_units.data != 0 and !pressure_units.data.nil?
-      return isodata.loading * pressure_units.data
+      return isodata.pressure * pressure_units.data
     else
       raise UnsupportedPressureUnit.new("#{pressure_units.name} is not a supported pressure unit")
     end
   end
 
+  def convert_adsorption_units_wrapped(from, to, value, gas, mof, temp, pressureBar)
+    gasFrom, gasTo, mofFrom, mofTo = parseUnits(from, to)
+    pressureAtm = pressureBar / 1.01325
+    numerator = convert_gas_unit(gasFrom, gasTo, value, gas.molarMass, temp, pressureAtm)
+    denominator = convert_mof_unit(mofFrom, mofTo, 1, mof.volumeA3, mof.atomicMass)
+    return numerator / denominator
+
+  end
   def convert_adsorption_units(from, to, isodata)
     raise UnsupportedGasUnit.new("#{from} is not a supported adsorption unit") unless supportedUnits.include?(from)
     raise UnsupportedGasUnit.new("#{to} is not a supported adsorption unit") unless supportedUnits.include?(to)
-
 
     gas = isodata.gas
     mof = isodata.isotherm.mof
     value = isodata.loading
     tempK = isodata.isotherm.temp
     pressureBar = get_pressure_in_bar(isodata)
-
-    gasFrom, gasTo, mofFrom, mofTo = parseUnits(from, to)
-
-    pressureAtm = pressureBar / 1.01325
-    numerator = convert_gas_unit(gasFrom, gasTo, value, gas.molarMass, tempK, pressureAtm)
-    denominator = convert_mof_unit(mofFrom, mofTo, 1, mof.volumeA3, mof.atomicMass)
-    return numerator / denominator
-
-
+    return convert_adsorption_units_wrapped(from, to, value, gas, mof, tempK, pressureBar)
   end
 
   def convert_mof_unit(from, to, value, volumeA3, unitCellMass)
@@ -134,8 +133,6 @@ module UnitsHelper
       moles = value / 1000.0
     end
 
-    # puts "moles of gas: #{moles}"
-
     if to == "mg"
       return moles * molarMass * 1000.0
     elsif to == "mol"
@@ -143,7 +140,7 @@ module UnitsHelper
     elsif to == "g"
       return moles * molarMass
     elsif to == "cm3"
-      return (moles * r * tempK * 1000.0) / pressureAtm
+      return (moles * r * tempK ) / pressureAtm
     elsif to == "cm3(STP)"
       liters = moles * r * tempSTP / (atmSTP)
       return liters * 1000
