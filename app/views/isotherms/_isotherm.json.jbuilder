@@ -1,4 +1,5 @@
-json.extract! isotherm, :id, :doi, :digitizer, :simin
+json.extract! isotherm, :id, :digitizer, :simin
+json.DOI isotherm.doi
 json.adsorbates isotherm.gases.uniq.map{|g| g.to_nist_json}
 json.date isotherm.created_at.strftime("%Y-%M-%d")
 json.temperature isotherm.temp
