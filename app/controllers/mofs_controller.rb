@@ -37,8 +37,11 @@ class MofsController < ApplicationController
       return render :json => {"error": "Page number too large"}, status: 400
     end
 
+    @pages = (@count.to_f / ENV['PAGE_SIZE'].to_f).ceil
     response.headers['mofdb-count'] = @count
-    response.headers['mofdb-pages'] = (@count.to_f / ENV['PAGE_SIZE'].to_f).ceil
+    response.headers['mofdb-pages'] = @pages
+
+
     if params[:html]
       render partial: 'mofs/rows'
       return
@@ -82,12 +85,10 @@ class MofsController < ApplicationController
     end
 
     respond_to do |format|
-      format.html {
-        # Render the index.html.erb template
-      }
+      format.html {}
       format.json {
         # Instead of generating json on the fly we store it in a pre-generated column and just concat those columns
-        render :json => @mofs.pluck(:pregen_json)
+        render :json => {"results": @mofs.pluck(:pregen_json), pages: @pages, page: @page}
       }
     end
 
@@ -282,11 +283,11 @@ class MofsController < ApplicationController
       @mofs = @mofs.where("MATCH (mofs.mofkey) AGAINST (#{mofkey})")
     end
 
-    if params[:doi] && !params[:doi].empty?
-      @mofs = @mofs.includes(:isotherms).where("isotherms.doi = (?)", params[:doi]).references(:isotherms)
+    if params[:DOI] && !params[:DOI].empty?
+      @mofs = @mofs.includes(:isotherms).where("isotherms.doi = (?)", params[:DOI]).references(:isotherms)
     end
 
-    @count = Rails.cache.fetch("mofcount-paramsp-#{params.to_s}") do
+    @count = Rails.cache.fetch("mofcount-params-#{params.to_s}") do
       @mofs.count
     end
 
@@ -296,9 +297,9 @@ class MofsController < ApplicationController
       }
       format.json {
         unless params[:bulk] && params[:bulk] == 'true'
-          page = params['page'].to_i # nil -> 0
-          page = 1 if page == 0
-          offset = (ENV['PAGE_SIZE'].to_i) * (page - 1)
+          @page = params['page'].to_i # nil -> 0
+          @page = 1 if @page == 0
+          offset = (ENV['PAGE_SIZE'].to_i) * (@page - 1)
           raise PageTooLarge if offset > @mofs.size
           @mofs = @mofs.offset(offset).take(ENV['PAGE_SIZE'])
         end
