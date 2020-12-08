@@ -10,7 +10,7 @@ namespace :tag do
     end
     count = 0
     Database.find_by(name: "CoREMOF 2019").mofs.each do |mof|
-      if all_names.include(mof.name)
+      if all_names.include?(mof.name)
         count += 1
         #mof.hidden = true
         puts count
