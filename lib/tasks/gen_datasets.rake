@@ -15,7 +15,7 @@ namespace :pregen do
       doiToGas.keys.each do |doi|
         gen_zip(db, doi, nil)
         doiToGas[doi].each do |gases|
-          puts "da  tabase: #{db.name} - doi:#{doi} - #{gases.to_a.map{|g|g.name}.join('/')}"
+          puts "database: #{db.name} - doi:#{doi} - #{gases.to_a.map{|g|g.name}.join('/')}"
           gen_zip(db, doi, gases)
         end
       end
@@ -28,7 +28,7 @@ def gen_zip(db, doi, gases)
   name = get_zip_name(db, doi, gases)
   path = Rails.root.join(Rails.root.join("public", "Datasets"), name)
   if doi.nil?
-    mof_ids = Mof.visible.where(database: db).pluck(:id)
+    mof_ids = Mof.where(database: db).pluck(:id)
   else
     mof_ids = Isotherm.includes(:mof).where("mofs.database_id = (?)", db.id).where(doi: doi).pluck('isotherms.mof_id')
   end
@@ -47,21 +47,22 @@ def gen_zip(db, doi, gases)
       begin
         jsn = mof.pregen_json
         if gases.nil?
-          io.put_next_entry(mof.name + ".cif")
-          io.write(mof.cif)
           io.put_next_entry(mof.name + ".json")
           io.write(jsn.to_json)
+          next if mof.hidden
+          io.put_next_entry(mof.name + ".cif")
+          io.write(mof.cif)
           next
         end
         isos = jsn["isotherms"].filter {|iso|
           iso["adsorbates"].map {|ads| Gas.find(ads["id"])}.to_set == gases
         }
         jsn["isotherms"] = isos
-        io.put_next_entry(mof.name + ".cif")
-        io.write(mof.cif)
         io.put_next_entry(mof.name + ".json")
         io.write(jsn.to_json)
-        # skipping mofs w/o istherms
+        next if mof.hidden
+        io.put_next_entry(mof.name + ".cif")
+        io.write(mof.cif)
       rescue Exception => e
         puts e
         failures += 1
