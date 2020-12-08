@@ -14,7 +14,7 @@ class MofsController < ApplicationController
   # GET /mofs
   # GET /mofs.json
   def index
-    visible = Mof.all.visible
+    visible = Mof.all
     if request.path == "/"
       # If there are no filters just render the html view
       return render 'index'
@@ -49,7 +49,6 @@ class MofsController < ApplicationController
 
     # If params[:bulk]
     if params[:bulk] && params[:bulk] == "true" && @mofs.any?
-      csd = Database.find_by(name: "CSD")
       zip_name = "mofs-bulk-search-download.zip"
       send_file_headers!(
           type: "application/zip",
@@ -67,12 +66,13 @@ class MofsController < ApplicationController
         ZipTricks::Streamer.open(writer) do |zip|
           @mofs = @mofs.select("id, pregen_json, name, cif, database_id")
           @mofs.in_batches(of: 500).each_record do |mof|
-            next if mof.database_id == csd.id
-            zip.write_deflated_file("#{mof.name}-(id:#{mof.id}).cif") do |file_writer|
-              file_writer << mof.cif
-            end
+
             zip.write_deflated_file("#{mof.name}-(id:#{mof.id}).json") do |file_writer|
               file_writer << mof.pregen_json.to_json
+            end
+            next if mof.hidden
+            zip.write_deflated_file("#{mof.name}-(id:#{mof.id}).cif") do |file_writer|
+              file_writer << mof.cif
             end
           end
         end
@@ -158,7 +158,7 @@ class MofsController < ApplicationController
 
   # GET /mofs/1/cif
   def cif
-    if @mof.database.name == "CSD"
+    if @mof.hidden
       return render status: 403, json: "Unavailable for CSD cifs, see: https://www.ccdc.cam.ac.uk/solutions/csd-system/components/csd/".to_json
     end
     temp_name = "cif-#{SecureRandom.hex(8)}.cif"
@@ -309,7 +309,7 @@ class MofsController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_mof
-    @mof = Mof.visible.find(params[:id])
+    @mof = Mof.find(params[:id])
   end
 
   # Never trust parameters from the scary internet, only allow the white list through.

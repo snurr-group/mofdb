@@ -28,7 +28,7 @@ def gen_zip(db, doi, gases)
   name = get_zip_name(db, doi, gases)
   path = Rails.root.join(Rails.root.join("public", "Datasets"), name)
   if doi.nil?
-    mof_ids = Mof.where(database: db).pluck(:id)
+    mof_ids = Mof.visible.where(database: db).pluck(:id)
   else
     mof_ids = Isotherm.includes(:mof).where("mofs.database_id = (?)", db.id).where(doi: doi).pluck('isotherms.mof_id')
   end

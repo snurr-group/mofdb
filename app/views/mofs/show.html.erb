@@ -59,7 +59,7 @@
       <Tr>
         <td>Cif</td>
         <td>
-          <% if @mof.database.name == "CSD" %>
+          <% if @mof.hidden %>
             Not avaialble for CSD
           <% else %>
             <%= link_to("Download", cif_mof_path(@mof)) %>
@@ -69,7 +69,7 @@
       </tbody>
     </table>
 
-    <% if @mof.database.name != "CSD" %>
+    <% if !@mof.hidden %>
       <div id="viewport-holder">
         <% if Rails.env == "production" %>
           <div id='viewport' data-url="<%= (request.original_url.to_s + "/cif.cif").gsub(/http:/, 'https:') %>" style='width:100%;height:20rem;'></div>
