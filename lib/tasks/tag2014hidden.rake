@@ -5,9 +5,10 @@ namespace :tag do
     base_names = Database.find_by(name: "CoREMOF 2019").mofs.pluck(:name).to_set
     all_names = Set.new
     base_names.each do |name|
-      basename = name.gsub("_clean","").gsub("_charged","").gsub("_ion","").gsub("_clean_h","")
+      basename = name.gsub("_clean","").gsub("_charged","").gsub("_ion","").gsub("_clean_h","").gsub("_manual","")
       all_names.add(basename)
     end
+    puts all_names
     count = 0
     Database.find_by(name: "CoREMOF 2019").mofs.each do |mof|
       if all_names.include?(mof.name)
