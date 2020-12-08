@@ -64,7 +64,8 @@ class MofsController < ApplicationController
 
       begin
         ZipTricks::Streamer.open(writer) do |zip|
-          @mofs = @mofs.select("id, pregen_json, name, cif, database_id")
+          @mofs = @mofs.select("id, pregen_json, name, cif, database_id, hidden")
+          puts "mofs: #{@mofs.size}"
           @mofs.in_batches(of: 500).each_record do |mof|
 
             zip.write_deflated_file("#{mof.name}-(id:#{mof.id}).json") do |file_writer|
@@ -72,6 +73,7 @@ class MofsController < ApplicationController
             end
             next if mof.hidden
             zip.write_deflated_file("#{mof.name}-(id:#{mof.id}).cif") do |file_writer|
+              puts "Adding cif for mof"
               file_writer << mof.cif
             end
           end
@@ -97,7 +99,6 @@ class MofsController < ApplicationController
   def upload
     # Used by the mofdb_upload (on github) to add a new mof
     name = params[:name]
-    @mof = Mof.visible.find_by(name: name)
     begin
       elements = JSON.parse(params[:atoms]).map { |atm| Element.find_by(symbol: atm == "x" ? "Xe" : atm) }
       mof_params[:elements] = elements
@@ -123,6 +124,9 @@ class MofsController < ApplicationController
       mof_params[:database] = Database.find_by(name: params[:db])
     end
 
+    database = mof_params[:database]
+
+    @mof = Mof.visible.find_by(name: name, database: database)
 
     if @mof.nil?
       @mof = Mof.new(mof_params)
