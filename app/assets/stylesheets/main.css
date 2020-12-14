@@ -255,10 +255,6 @@ body input {
     fill: #4e2a84;
 }
 
-#search .search-choice-close {
-    background: url("../images/chosen-sprite.png") -42px 1px no-repeat !important;
-}
-
 #search label {
     margin-bottom: 0;
     margin-top: 4px;
