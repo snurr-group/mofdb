@@ -190,7 +190,9 @@ class MofsController < ApplicationController
 
     ## Elements in MOF
     if params[:elements] && params[:elements] != ""
-      el_ids = params[:elements].map { |el| Element.find_by(symbol: el).id }
+      el_ids = params[:elements]
+      el_ids = el_ids.is_a?(Array) ? el_ids : [el_ids]
+      el_ids = el_ids.map { |el| Element.find_by(symbol: el).id }
       query = "SELECT DISTINCT elements_mofs.mof_id from elements_mofs
               where element_id in (?)"
       sanitized = ActiveRecord::Base.send(:sanitize_sql_array, [query, el_ids])

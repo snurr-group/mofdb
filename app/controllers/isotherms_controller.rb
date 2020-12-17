@@ -67,7 +67,7 @@ class IsothermsController < ApplicationController
                              digitizer: params[:digitizer],
                              temp: params[:temp],
                              simin: params[:simin],
-                             adsorbate_forcefield: ff_cache(params[:adsorbate_forcefield]),
+                             adsorbate_forcefield: ff_cache(params[:adsorbent_forcefield]),
                              molecule_forcefield: ff_cache(params[:molecule_forcefield]),
                              adsorption_units_id: classification_cache(params[:adsorption_units]),
                              pressure_units_id: classification_cache(params[:pressure_units]),
