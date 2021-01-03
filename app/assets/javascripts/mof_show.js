@@ -21,19 +21,19 @@ $(document).on('DOMContentLoaded', function () {
 
 
 
-    var stage = new NGL.Stage("viewport");
     let vp = document.getElementById('viewport');
 
-    if (vp == undefined) {
-
+    if (vp) {
+        var stage = new NGL.Stage("viewport");
+        var path_to_cif = vp.dataset['url'];
+        stage.loadFile(path_to_cif, {defaultRepresentation: true}).then(function (o) {
+            o.addRepresentation("unitcell");
+            o.stage.setParameters({backgroundColor: "white"});
+            o.autoView();
+        });
     }
 
-    var path_to_cif = vp.dataset['url'];
-    stage.loadFile(path_to_cif, {defaultRepresentation: true}).then(function (o) {
-        o.addRepresentation("unitcell");
-        o.stage.setParameters({backgroundColor: "white"});
-        o.autoView();
-    });
+
 
     let right = document.getElementById('right');
     let id = window.location.toString().split("/mofs/")[1].split("/")[0];
