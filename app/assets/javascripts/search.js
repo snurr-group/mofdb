@@ -247,11 +247,10 @@ function finish_loading() {
 
 table = undefined;
 
-function set_table(data, count) {
+function set_table(data) {
     // Setup data table with data in the form of a "string" containing <tr>s
     console.log("setting up table");
 
-    set_link({}, count)
 
     if (table != undefined) {
         console.log('destroying table');
@@ -284,7 +283,13 @@ function set_table(data, count) {
 };
 
 
+function unset_link() {
+    const countSpan = document.getElementById('mofdb-count');
+    countSpan.innerHTML = "<i>(loading#)</i>"
+
+}
 function set_link(url, count) {
+    console.info("Setting link",url,count)
     const copy = Object.assign({}, url)
     delete copy['cifs']
     delete copy['html']
@@ -292,10 +297,11 @@ function set_link(url, count) {
     const link = document.getElementById('download_cifs');
     const countSpan = document.getElementById('mofdb-count');
     countSpan.innerText = count
-    link.href = '/mofs.json?'+dictToURI(copy)
+    link.href = '/mofs.json?' + dictToURI(copy)
 }
 
 search_cache = {};
+count_cache = {}
 
 function get_params() {
     let vf_min = vf.noUiSlider.get()[0];
@@ -403,25 +409,34 @@ function refresh() {
     url_params['cifs'] = true; // The link "Downlod Cifs" needs to return a zip so add this flag
     let url_params_as_string = dictToURI(url_params);
 
-
-    function finish_search(data, count) {
-        search_cache[url_params_as_string] = {data: data, count: count};
+    function finish_search(data) {
+        search_cache[url_params_as_string] = {data: data};
         finish_loading();
-        set_table(data, count);
-        set_link(url_params, count);
+        set_table(data);
+
     }
 
-    if (search_cache[url_params_as_string]) {
+    if (search_cache[url_params_as_string] && count_cache[url_params_as_string]) {
         console.log("cache hit");
-        finish_search(search_cache[url_params_as_string].data,
-            search_cache[url_params_as_string].count);
+        finish_search(search_cache[url_params_as_string])
+        set_link(url_params, search_cache[url_params_as_string]);
         return
     }
-    console.log("cache miss");
 
+    unset_link()
     $.get("/mofs/search", html_params, function (data, status, xhr) {
-            const count = xhr.getResponseHeader('mofdb-count')
-            finish_search(data, count)
+        // First get the mof results
+            finish_search(data)
+
+        // Then remove the html param and make a separate request to get the # of MOFs
+            delete html_params["html"]
+            $.getJSON("/mofs/count", html_params, function (data, status, xhr) {
+                const count = xhr.getResponseHeader('mofdb-count')
+                set_link(url_params, count);
+                count_cache[url_params_as_string] = count;
+            })
+
         }
     );
+
 }

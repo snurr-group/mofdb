@@ -14,17 +14,23 @@ class MofsController < ApplicationController
   # GET /mofs
   # GET /mofs.json
   def index
-    visible = Mof.all
+    visible = Mof.all.visible
     if request.path == "/"
       # If there are no filters just render the html view
       return render 'index'
     end
+
+    # Finding the count of MOFs is the slowest part of the search
+    # to speedup the frontend we decouple this from main search query
+    # into a separate request to /mofs/count?normal_query_params
+
+    get_count = request.path == "/mofs/count" || request.format.to_s == "application/json"
+
     if params[:html]
       @mofs = visible.includes(:database, :elements, :gases)
     elsif params[:bulk] && params[:bulk] == 'true'
       @mofs = visible
     else
-      # Fallback
       respond_to do |format|
         format.html { @mofs = visible.includes(:database) }
         format.json { @mofs = visible }
@@ -32,20 +38,19 @@ class MofsController < ApplicationController
     end
 
     begin
-      filter_mofs
+      filter_mofs(get_count)
     rescue PageTooLarge
-      return render :json => {"error": "Page number too large"}, status: 400
+      return render :json => {error: "Page number too large"}, status: 400
     end
 
-    @pages = (@count.to_f / ENV['PAGE_SIZE'].to_f).ceil
-    response.headers['mofdb-count'] = @count
-    response.headers['mofdb-pages'] = @pages
-
-
-    if params[:html]
-      render partial: 'mofs/rows'
-      return
+    if get_count
+      @pages = (@count.to_f / ENV['PAGE_SIZE'].to_f).ceil
+      response.headers['mofdb-count'] = @count
+      response.headers['mofdb-pages'] = @pages
     end
+
+    # Render table rows using rails view _rows.html.erb
+    return render partial: 'mofs/rows' if params[:html]
 
     # If params[:bulk]
     if params[:bulk] && params[:bulk] == "true" && @mofs.any?
@@ -87,10 +92,13 @@ class MofsController < ApplicationController
     end
 
     respond_to do |format|
-      format.html {}
       format.json {
         # Instead of generating json on the fly we store it in a pre-generated column and just concat those columns
-        render :json => {"results": @mofs.pluck(:pregen_json), pages: @pages, page: @page}
+        if request.path == "/mofs/count"
+          return render json: { count: @count }
+        else
+          return render :json => { results: @mofs.pluck(:pregen_json), pages: @pages, page: @page }
+        end
       }
     end
 
@@ -154,7 +162,7 @@ class MofsController < ApplicationController
     @convert = !@mof.volumeA3.nil? && !@mof.atomicMass.nil? && !session[:prefUnits].nil?
     @cannotConvertVolMass = !@convert && session[:prefUnits]
     @cannotConvertIsoUnits = false
-    @mof.isotherms.map {|i| Classification.find(i.adsorption_units_id).name }.each do |name|
+    @mof.isotherms.map { |i| Classification.find(i.adsorption_units_id).name }.each do |name|
       @cannotConvertIsoUnits = true unless supportedUnits.include?(name)
     end
 
@@ -186,12 +194,11 @@ class MofsController < ApplicationController
 
   private
 
-  def filter_mofs
+  def filter_mofs(get_count)
 
     ## Elements in MOF
     if params[:elements] && params[:elements] != ""
       el_ids = params[:elements]
-      el_ids = el_ids.is_a?(Array) ? el_ids : [el_ids]
       el_ids = el_ids.map { |el| Element.find_by(symbol: el).id }
       query = "SELECT DISTINCT elements_mofs.mof_id from elements_mofs
               where element_id in (?)"
@@ -204,17 +211,7 @@ class MofsController < ApplicationController
     if params[:gases] && !params[:gases].empty?
       gases = params[:gases].is_a?(String) ? [params[:gases]] : params[:gases] # put a string in an array so we can map it  below
       gas_ids = gases.map { |gas_name| Gas.find_gas(gas_name).id }.uniq
-      # This was really slow without the custom sql.
-      query = "SELECT DISTINCT mofs.id from isodata
-              INNER JOIN isotherms on isotherms.id = isodata.isotherm_id
-              INNER JOIN mofs on mofs.id = isotherms.mof_id
-              where gas_id in (?)"
-      sanitized = ActiveRecord::Base.send(:sanitize_sql_array, [query, gas_ids])
-      mof_ids = ActiveRecord::Base.connection.execute(sanitized).to_a.flatten
-      # Now we have the ids of all the mofs with this gas_id in their isodata.
-      # In order to be compatible with the filter method below we return to the active record
-      # interface. This is an extra query sadly.
-      @mofs = @mofs.where("mofs.id in (?)", mof_ids).includes(:database, :elements)
+      @mofs = Mof.joins(:isotherms).joins(:isodata).where("isodata.gas_id in (?)", gas_ids).distinct
     end
 
     ## VOID FRAC
@@ -293,8 +290,10 @@ class MofsController < ApplicationController
       @mofs = @mofs.includes(:isotherms).where("isotherms.doi = (?)", params[:DOI]).references(:isotherms)
     end
 
-    @count = Rails.cache.fetch("mofcount-params-#{params.to_s}") do
-      @mofs.count
+    if get_count
+      @count = Rails.cache.fetch("mofcount-params-#{params.to_s}") do
+        @mofs.count
+      end
     end
 
     respond_to do |format|

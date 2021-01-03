@@ -92,7 +92,7 @@ class IsothermsController < ApplicationController
     Isodatum.import points
     render :json => @isotherm.id.to_json
     @isotherm.destroy! if points.size == 0 #or @isotherm.is_duplicate
-    # @mof.regen_json
+    @mof.regen_json
   end
 
   private
