@@ -289,7 +289,6 @@ function unset_link() {
 
 }
 function set_link(url, count) {
-    console.info("Setting link",url,count)
     const copy = Object.assign({}, url)
     delete copy['cifs']
     delete copy['html']
@@ -420,7 +419,7 @@ function refresh() {
         console.log("cache hit");
         finish_loading();
         set_table(search_cache[url_params_as_string]);
-        set_link(url_params, search_cache[url_params_as_string]);
+        set_link(url_params, count_cache[url_params_as_string]);
         return
     }
 
@@ -433,8 +432,8 @@ function refresh() {
         delete html_params["html"]
         $.getJSON("/mofs/count", html_params, function (data, status, xhr) {
             const count = xhr.getResponseHeader('mofdb-count')
-            set_link(url_params, count);
             count_cache[url_params_as_string] = count;
+            set_link(url_params, count);
         })
     });
 }
