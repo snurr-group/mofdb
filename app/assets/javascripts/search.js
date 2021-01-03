@@ -406,11 +406,11 @@ function refresh() {
 
     let html_params = Object.assign({}, url_params); // Copy params to html_params and add the flag so the api returns table rows
     html_params['html'] = true;
-    url_params['cifs'] = true; // The link "Downlod Cifs" needs to return a zip so add this flag
+    url_params['cifs'] = true; // The link "Download Cifs" needs to return a zip so add this flag
     let url_params_as_string = dictToURI(url_params);
 
     function finish_search(data) {
-        search_cache[url_params_as_string] = {data: data};
+        search_cache[url_params_as_string] = data;
         finish_loading();
         set_table(data);
 
@@ -418,7 +418,8 @@ function refresh() {
 
     if (search_cache[url_params_as_string] && count_cache[url_params_as_string]) {
         console.log("cache hit");
-        finish_search(search_cache[url_params_as_string])
+        finish_loading();
+        set_table(search_cache[url_params_as_string]);
         set_link(url_params, search_cache[url_params_as_string]);
         return
     }
@@ -426,17 +427,14 @@ function refresh() {
     unset_link()
     $.get("/mofs/search", html_params, function (data, status, xhr) {
         // First get the mof results
-            finish_search(data)
+        finish_search(data)
 
         // Then remove the html param and make a separate request to get the # of MOFs
-            delete html_params["html"]
-            $.getJSON("/mofs/count", html_params, function (data, status, xhr) {
-                const count = xhr.getResponseHeader('mofdb-count')
-                set_link(url_params, count);
-                count_cache[url_params_as_string] = count;
-            })
-
-        }
-    );
-
+        delete html_params["html"]
+        $.getJSON("/mofs/count", html_params, function (data, status, xhr) {
+            const count = xhr.getResponseHeader('mofdb-count')
+            set_link(url_params, count);
+            count_cache[url_params_as_string] = count;
+        })
+    });
 }
