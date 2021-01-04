@@ -3,7 +3,7 @@
   <% unless session[:prefUnits] %>
     <option selected value="native" label="Isotherm Default"></option>
   <% end %>
-  <% supportedUnits.each do |unit| %>
+  <% frontEndUnits.each do |unit| %>
     <% if session[:prefUnits] == unit  %>
       <option selected value="<%= unit %>" label="<%= unit %>"></option>
     <% else %>

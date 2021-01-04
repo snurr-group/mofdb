@@ -1,7 +1,13 @@
 module UnitsHelper
 
   def supportedUnits
-    return ["cm3(STP)/g", "cm3(STP)/cm3", "g/l", "mg/g", "mmol/g", "mol/kg"]
+    # Units we can convert
+    ["cm3(STP)/g", "cm3(STP)/cm3", "g/l", "mg/g", "mmol/g", "mol/kg", "cm3/cm3"]
+  end
+
+  def frontEndUnits
+    # Units we list on the frontend as conversion options
+    ["cm3(STP)/g", "cm3(STP)/cm3", "g/l", "mg/g", "mmol/g", "mol/kg"]
   end
 
   class UnsupportedGasUnit < StandardError
