@@ -11,6 +11,7 @@ Rails.application.config.content_security_policy do |policy|
   policy.object_src  :none
   policy.script_src  :self, :https, :unsafe_eval
   policy.style_src   :self, :unsafe_inline
+  policy.frame_ancestors "'none'"
 end
 
 # If you are using UJS then enable automatic nonce generation
