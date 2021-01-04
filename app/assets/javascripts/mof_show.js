@@ -12,7 +12,6 @@ window.onbeforeunload = function () {
 
 $(document).on('DOMContentLoaded', function () {
 
-
     let mof_page = document.getElementById('mof-page');
 
     if (mof_page == undefined) {
@@ -32,8 +31,6 @@ $(document).on('DOMContentLoaded', function () {
             o.autoView();
         });
     }
-
-
 
     let right = document.getElementById('right');
     let id = window.location.toString().split("/mofs/")[1].split("/")[0];

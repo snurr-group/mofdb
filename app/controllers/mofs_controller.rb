@@ -277,13 +277,23 @@ class MofsController < ApplicationController
     end
 
     if params[:mofid] && !params[:mofid].empty?
-      mofid = ActiveRecord::Base.connection.quote(params[:mofid].to_s)
-      @mofs = @mofs.where("MATCH (mofs.mofid) AGAINST (#{mofid})")
+      exact_match = @mofs.where(mofid: params[:mofid])
+      if exact_match.size > 0
+        @mofs = exact_match
+      else
+        mofid = ActiveRecord::Base.connection.quote(params[:mofid].to_s)
+        @mofs = @mofs.where("MATCH (mofs.mofid) AGAINST (?)", mofid)
+      end
     end
 
     if params[:mofkey] && !params[:mofkey].empty?
-      mofkey = ActiveRecord::Base.connection.quote(params[:mofkey].to_s)
-      @mofs = @mofs.where("MATCH (mofs.mofkey) AGAINST (#{mofkey})")
+      exact_match = @mofs.where(mofkey: params[:mofkey])
+      if exact_match.size > 0
+        @mofs = exact_match
+      else
+        mofkey = ActiveRecord::Base.connection.quote(params[:mofid].to_s)
+        @mofs = @mofs.where("MATCH (mofs.mofkey) AGAINST (#{mofkey})")
+      end
     end
 
     if params[:DOI] && !params[:DOI].empty?

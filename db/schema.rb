@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_14_084508) do
+ActiveRecord::Schema.define(version: 2021_01_03_235846) do
 
   create_table "classifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name"
@@ -142,7 +142,9 @@ ActiveRecord::Schema.define(version: 2020_12_14_084508) do
     t.index ["hidden"], name: "index_mofs_on_hidden"
     t.index ["lcd"], name: "index_mofs_on_lcd"
     t.index ["mofid"], name: "index_mofs_on_mofid", type: :fulltext
+    t.index ["mofid"], name: "mofid_exact_match_idx", length: 768
     t.index ["mofkey"], name: "index_mofs_on_mofkey", type: :fulltext
+    t.index ["mofkey"], name: "mofkey_exact_match_idx", length: 768
     t.index ["name"], name: "index_mofs_on_name"
     t.index ["pld"], name: "index_mofs_on_pld"
     t.index ["surface_area_m2cm3"], name: "index_mofs_on_surface_area_m2cm3"
