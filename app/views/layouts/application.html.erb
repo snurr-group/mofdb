@@ -23,10 +23,6 @@
   <title>
     Metal Organic Framework Database | <%= fetch_or_gen("mofcount", lambda { return Mof.all.size }, 3.days) %> Mofs
   </title>
-  <!-- JQUERY -->
-  <!-- <script src="js/jquery.min.js" ></script> -->
-  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-  <%# console %>
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>
   <%= stylesheet_link_tag 'application', media: 'all' %>
