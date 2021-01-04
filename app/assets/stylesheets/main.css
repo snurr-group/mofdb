@@ -88,16 +88,18 @@
     grid-row-gap: 20px;
     grid-area: content;
     grid-column-gap: 20px;
-    grid-template-rows: min-content 1fr;
+    /*grid-template-rows: min-content 1fr;*/
+    grid-template-rows: 1fr;
     grid-template-columns: minmax(200px, 250px) minmax(600px, 900px);
-    grid-template-areas: "warning warning" "search tbl";
+    /*grid-template-areas: "warning warning" "search tbl";*/
+    grid-template-areas: "search tbl";
 }
 
-#warning {
-    grid-area: warning;
-    background-color: #fdfffc;
-    padding: 20px;
-}
+/*#warning {*/
+/*    grid-area: warning;*/
+/*    background-color: #fdfffc;*/
+/*    padding: 20px;*/
+/*}*/
 
 .unitsText {
     margin-bottom: 0;
