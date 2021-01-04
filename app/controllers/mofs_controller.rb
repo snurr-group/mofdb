@@ -281,8 +281,7 @@ class MofsController < ApplicationController
       if exact_match.size > 0
         @mofs = exact_match
       else
-        mofid = ActiveRecord::Base.connection.quote(params[:mofid].to_s)
-        @mofs = @mofs.where("MATCH (mofs.mofid) AGAINST (?)", mofid)
+        @mofs = @mofs.where("MATCH (mofs.mofid) AGAINST (?)", params[:mofid].to_s)
       end
     end
 
@@ -291,8 +290,7 @@ class MofsController < ApplicationController
       if exact_match.size > 0
         @mofs = exact_match
       else
-        mofkey = ActiveRecord::Base.connection.quote(params[:mofid].to_s)
-        @mofs = @mofs.where("MATCH (mofs.mofkey) AGAINST (#{mofkey})")
+        @mofs = @mofs.where("MATCH (mofs.mofkey) AGAINST (?)", params[:mofkey].to_s)
       end
     end
 
