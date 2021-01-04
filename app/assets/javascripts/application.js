@@ -14,6 +14,7 @@
 //= require jquery.3.1.js
 //= require jquery.dataTables.min.js
 //= require dataTables.responsive.min.js
+//= require pdfmake.min.js
 //= require jszip.min.js
 //= require activestorage
 //= require_tree .

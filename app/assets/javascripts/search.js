@@ -249,11 +249,9 @@ table = undefined;
 
 function set_table(data) {
     // Setup data table with data in the form of a "string" containing <tr>s
-    console.log("setting up table");
 
 
     if (table != undefined) {
-        console.log('destroying table');
         table.destroy();
     }
 
