@@ -1,6 +1,19 @@
 class ApplicationController < ActionController::Base
   include UnitsHelper
   before_action :checkUnitsValid
+  before_action :setHeaders
+
+  def setHeaders
+    headers = {'Referrer-Policy' => 'same-origin',
+        'X-Content-Type-Options' => 'nosniff',
+        'X-Frame-Options' => 'SAMEORIGIN',
+        'X-XSS-Protection' => '1; mode=block',
+        'Feature-Policy' => "accelerometer 'none'; ambient-light-sensor 'none'; autoplay 'none'; camera 'none'; encrypted-media 'none'; fullscreen 'self'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; midi 'none'; payment 'none'; picture-in-picture 'none'; speaker 'self'; sync-xhr 'none'; usb 'none'; vr 'none'"}
+    headers.each do |k,v|
+      response.set_header(k,v)
+    end
+  end
+
 
   def cache
     expires_in 1.day, public: true

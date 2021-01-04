@@ -96,14 +96,6 @@ Rails.application.configure do
     config.logger    = ActiveSupport::TaggedLogging.new(logger)
   end
 
-  config.action_dispatch.default_headers = {
-      'Referrer-Policy' => 'same-origin',
-      'X-Content-Type-Options' => 'nosniff',
-      'X-Frame-Options' => 'SAMEORIGIN',
-      'X-XSS-Protection' => '1; mode=block',
-      'Feature-Policy' => "accelerometer 'none'; ambient-light-sensor 'none'; autoplay 'none'; camera 'none'; encrypted-media 'none'; fullscreen 'self'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; midi 'none'; payment 'none'; picture-in-picture 'none'; speaker 'self'; sync-xhr 'none'; usb 'none'; vr 'none'"
-  }
-
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 end
