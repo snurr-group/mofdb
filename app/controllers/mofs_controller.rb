@@ -305,9 +305,7 @@ class MofsController < ApplicationController
     end
 
     respond_to do |format|
-      format.html {
-        @mofs = @mofs.take(100)
-      }
+      format.html { @mofs = @mofs.take(100) }
       format.json {
         unless params[:bulk] && params[:bulk] == 'true'
           @page = params['page'].to_i # nil -> 0
