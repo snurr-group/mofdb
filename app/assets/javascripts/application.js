@@ -11,6 +11,9 @@
 // about supported directives.
 //
 //= require rails-ujs
+//= require jquery.3.1.js
+//= require jquery.dataTables.min.js
+//= require dataTables.responsive.min.js
 //= require activestorage
 //= require_tree .
 //= require nouislider
