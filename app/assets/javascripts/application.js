@@ -18,10 +18,19 @@
 //= require jszip.min.js
 //= require activestorage
 //= require_tree .
-
 //= require nouislider
 
 window.addEventListener('DOMContentLoaded', (event) => {
+
+    const env = document.querySelector('body').dataset['rails_env']
+
+    if (env == 'production') {
+        window.dataLayer = window.dataLayer || [];
+        function gtag() {dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-111016820-6');
+    }
+
     document.querySelectorAll('.copy').forEach(function (item) {
         item.addEventListener('click',function() {
             copyText(item.dataset.copy);

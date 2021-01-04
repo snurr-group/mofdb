@@ -11,9 +11,9 @@ module Mofdb2
 
     config.load_defaults 6.0
 
-
     config.hosts << "local.northwestern.edu"
     config.hosts << "mof.tech.northwestern.edu"
+
     if Rails.env.production?
       Raven.configure do |config|
         config.dsn = 'https://25089bbc81df4bf1bb44fa71f8e29faa:4eaaa398ad8f4baa8145a7a50a68f76f@sentry.io/1828682'
