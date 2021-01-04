@@ -14,8 +14,8 @@
   </title>
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>
-  <%= stylesheet_link_tag 'application', media: 'all' %>
-  <%= javascript_include_tag 'application' %>
+  <%= stylesheet_link_tag 'application', media: 'all', integrity: true %>
+  <%= javascript_include_tag 'application', integrity: true %>
 </head>
 
 <body data-rails_env="<%= Rails.env.to_s %>">
