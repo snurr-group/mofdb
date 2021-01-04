@@ -5,13 +5,15 @@
 # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
 
 Rails.application.config.content_security_policy do |policy|
-  policy.default_src :self, :https
+  policy.default_src :none
   policy.font_src    :self, :https, :data
+  policy.connect_src :self
+  policy.base_uri    :none
   policy.img_src     :self, :https, :data
   policy.object_src  :none
   policy.script_src  :self, :https, :unsafe_eval
   policy.style_src   :self, :unsafe_inline
-  policy.frame_ancestors "'none'"
+  policy.frame_ancestors :none
 end
 
 # If you are using UJS then enable automatic nonce generation
