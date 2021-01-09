@@ -209,7 +209,7 @@ class MofsController < ApplicationController
 
     ## GASES
     if params[:gases] && !params[:gases].empty?
-      gases = params[:gases].is_a?(String) ? [params[:gases]] : params[:gases] # put a string in an array so we can map it  below
+      gases = params[:gases].is_a?(String) ? params[:gases].split(",") : params[:gases]
       gas_ids = gases.map { |gas_name| Gas.find_gas(gas_name).id }.uniq
       @mofs = Mof.joins(:isotherms).joins(:isodata).where("isodata.gas_id in (?)", gas_ids).distinct
     end
