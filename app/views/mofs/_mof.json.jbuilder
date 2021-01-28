@@ -8,14 +8,15 @@ gases = mof.gases.uniq
 json.url mof_url(mof, format: :json)
 json.adsorbates gases.uniq.map { |g| g.to_nist_json }
 
-json.heats(mof.heats) do |heat|
-  json.pressure heat.pressure
-  json.value heat.value
-  json.pressure_units Classification.find(heat.pressure_units_ids).name
-  json.value_units Classification.find(heat.value_units_id).name
-end
+# json.heats(mof.heats) do |heat|
+#   json.pressure heat.pressure
+#   json.value heat.value
+#   json.pressure_units Classification.find(heat.pressure_units_ids).name
+#   json.value_units Classification.find(heat.value_units_id).name
+# end
 
-json.isotherms(mof.isotherms) do |isotherm|
+json.isotherms(mof.isotherms.select{|i| i.id == 1362520}) do |isotherm|
+# json.isotherms(mof.isotherms.select{|i| i.gases.include?(Gas.find_by(name:"Methane"))}) do |isotherm|
 
   json.adsorbates isotherm.gases.uniq.map { |g| g.to_nist_json }
 
