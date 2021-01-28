@@ -277,21 +277,11 @@ class MofsController < ApplicationController
     end
 
     if params[:mofid] && !params[:mofid].empty?
-      exact_match = @mofs.where(mofid: params[:mofid])
-      if exact_match.size > 0
-        @mofs = exact_match
-      else
-        @mofs = @mofs.where("MATCH (mofs.mofid) AGAINST (?)", params[:mofid].to_s)
-      end
+      @mofs = @mofs.where(mofid: params[:mofid])
     end
 
     if params[:mofkey] && !params[:mofkey].empty?
-      exact_match = @mofs.where(mofkey: params[:mofkey])
-      if exact_match.size > 0
-        @mofs = exact_match
-      else
-        @mofs = @mofs.where("MATCH (mofs.mofkey) AGAINST (?)", params[:mofkey].to_s)
-      end
+      @mofs = @mofs.where(mofkey: params[:mofkey])
     end
 
     if params[:DOI] && !params[:DOI].empty?
