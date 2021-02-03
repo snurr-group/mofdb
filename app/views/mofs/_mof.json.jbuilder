@@ -15,7 +15,7 @@ json.adsorbates gases.uniq.map { |g| g.to_nist_json }
 #   json.value_units Classification.find(heat.value_units_id).name
 # end
 
-json.isotherms(mof.isotherms.select{|i| i.gases.include?(Gas.find_by(name:"Methane"))}) do |isotherm|
+json.isotherms(mof.isotherms) do |isotherm|
 
   json.adsorbates isotherm.gases.uniq.map { |g| g.to_nist_json }
 
