@@ -50,7 +50,7 @@
       </tr>
       <tr>
         <td>Atomic Mass of Cif</td>
-        <td><%= @mof.atomicMass || "Unknown"  %></td>
+        <td><%= @mof.atomicMass || "Unknown" %></td>
       </tr>
       <tr>
         <td>Cif Volume A^3</td>
@@ -86,10 +86,8 @@
   <div id="right">
     <% if @mof.isotherms.any? %>
       <div class="lead">Isotherms <%= link_to "<button>View JSON</button>".html_safe, mof_path(@mof, format: :json) %></div>
-      <% if @cannotConvertVolMass %>
-        <p>⚠️ Isotherm units cannot be automatically converted for this MOF. MOF is missing atomic mass or volume</p>
-      <% elsif @cannotConvertIsoUnits %>
-        <p>⚠️ Some isotherm units cannot be automatically converted for this MOF. At least one isotherm is using a unit we cannot yet automatically convert.</p>
+      <% if (@convertLoading || @convertPressure) && @msg %>
+        <p>⚠️ <%= @msg.html_safe %>></p>
       <% end %>
     <% else
          @mof.isotherms.any? %>

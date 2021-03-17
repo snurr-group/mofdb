@@ -1,0 +1,18 @@
+<div class="units_selector">
+<p class="unitsText">Pressure Units</p>
+<select id="pressureUnitsSelector">
+  <% unless session[:prefPressure] %>
+    <option selected value="native" label="Isotherm Default"></option>
+  <% end %>
+  <% pressureUnits.each do |unit| %>
+    <% if session[:prefPressure] == unit  %>
+      <option selected value="<%= unit %>" label="<%= unit %>"></option>
+    <% else %>
+      <option value="<%= unit %>" label="<%= unit %>"></option>
+    <% end %>
+  <% end %>
+  <% if session[:prefPressure] %>
+    <option value="native" label="Isotherm Default"></option>
+  <% end %>
+</select>
+</div>

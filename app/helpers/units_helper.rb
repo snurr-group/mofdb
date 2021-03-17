@@ -1,13 +1,23 @@
 module UnitsHelper
 
-  def supportedUnits
+  def supportedLoadingUnits
     # Units we can convert
-    ["cm3(STP)/g", "cm3(STP)/cm3", "g/l", "mg/g", "mmol/g", "mol/kg", "cm3/cm3"]
+    %w[cm3(STP)/g cm3(STP)/cm3 g/l mg/g mmol/g mol/kg cm3/cm3]
   end
 
-  def frontEndUnits
-    # Units we list on the frontend as conversion options
-    ["cm3(STP)/g", "cm3(STP)/cm3", "g/l", "mg/g", "mmol/g", "mol/kg"]
+  def supportedPressureUnits
+    %w[atm bar kPa mbar mmHg MPa Pa psi Torr]
+  end
+
+
+  def loadingUnits
+    # Units we list on the frontend as loading conversion options
+    %w[cm3(STP)/g cm3(STP)/cm3 g/l mg/g mmol/g mol/kg]
+  end
+
+  def pressureUnits
+    # Units we list on the frontend as pressure conversion options
+    %w[atm bar kPa mbar mmHg MPa Pa psi Torr]
   end
 
   class UnsupportedGasUnit < StandardError
@@ -33,7 +43,6 @@ module UnitsHelper
     return gasFrom, gasTo, mofFrom, mofTo
   end
 
-
   def get_pressure_in_bar(isodata)
     pressure_units = Classification.find(isodata.isotherm.pressure_units_id)
     if pressure_units.data != 0 and !pressure_units.data.nil?
@@ -41,6 +50,16 @@ module UnitsHelper
     else
       raise UnsupportedPressureUnit.new("#{pressure_units.name} is not a supported pressure unit")
     end
+  end
+
+
+  def convert_pressure_units(isodata, to)
+    bar = get_pressure_in_bar(isodata)
+    if to == nil
+      return isodata.pressure
+    end
+    pressure_units = Classification.find_by(name: to)
+    return bar / pressure_units.data
   end
 
   def convert_adsorption_units_wrapped(from, to, value, gas, mof, temp, pressureBar)
@@ -51,16 +70,17 @@ module UnitsHelper
     return numerator / denominator
 
   end
+
   def convert_adsorption_units(from, to, isodata)
-    raise UnsupportedGasUnit.new("#{from} is not a supported adsorption unit") unless supportedUnits.include?(from)
-    raise UnsupportedGasUnit.new("#{to} is not a supported adsorption unit") unless supportedUnits.include?(to)
+    raise UnsupportedGasUnit.new("#{from} is not a supported adsorption unit") unless supportedLoadingUnits.include?(from)
+    raise UnsupportedGasUnit.new("#{to} is not a supported adsorption unit") unless supportedLoadingUnits.include?(to)
 
     gas = isodata.gas
     mof = isodata.isotherm.mof
     value = isodata.loading
     tempK = isodata.isotherm.temp
     pressureBar = get_pressure_in_bar(isodata)
-    return convert_adsorption_units_wrapped(from, to, value, gas, mof, tempK, pressureBar)
+    convert_adsorption_units_wrapped(from, to, value, gas, mof, tempK, pressureBar)
   end
 
   def convert_mof_unit(from, to, value, volumeA3, unitCellMass)
@@ -71,11 +91,10 @@ module UnitsHelper
     avogadro = 6.0221409e+23
     molesOfUnitCells = nil
 
-    # volume of a mol of unit cells
+    # volume of a mol of unit cells in cm3
     volumeMolCm3 = (volumeA3 * avogadro) / 1e+24 #  [cm3/mol]
 
-    # molar mass of mof
-    molarMass = unitCellMass # [g/mol]
+    molarMass = unitCellMass
 
     if from == "cm3"
       molesOfUnitCells = value / volumeMolCm3
@@ -93,9 +112,6 @@ module UnitsHelper
       molesOfUnitCells = grams / molarMass
     end
 
-    # puts "moles of unit cells is #{molesOfUnitCells}"
-
-
     if to == "cm3"
       return molesOfUnitCells * volumeMolCm3
     elsif to == "g"
@@ -108,6 +124,7 @@ module UnitsHelper
     elsif to == "mg"
       return (molesOfUnitCells * molarMass) * 1000.0
     end
+
   end
 
   def convert_gas_unit(from, to, value, molarMass, tempK, pressureAtm)
@@ -115,13 +132,14 @@ module UnitsHelper
     tempSTP = 273.15
     atmSTP = 1
 
+    from = "cm3(STP)" if from == "cm3"
+
     supported = ["cm3", "cm3(STP)", "g", "mg", "mmol", "mol"]
     raise UnsupportedGasUnit.new("#{from} is not a supported gas unit") if supported.index(from).nil?
     raise UnsupportedGasUnit.new("#{to} is not a supported gas unit") if supported.index(to).nil?
 
     moles = nil
 
-    # Convert everything into grams
     if from == "mg"
       g = value / 1000
       moles = g / molarMass
@@ -146,7 +164,7 @@ module UnitsHelper
     elsif to == "g"
       return moles * molarMass
     elsif to == "cm3"
-      return (moles * r * tempK ) / pressureAtm
+      return (moles * r * tempK) / pressureAtm
     elsif to == "cm3(STP)"
       liters = moles * r * tempSTP / (atmSTP)
       return liters * 1000

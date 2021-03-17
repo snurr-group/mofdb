@@ -1,0 +1,21 @@
+<div class="units_selector">
+
+<p class="unitsText">Loading units</p>
+<select id="loadingUnitsSelector">
+  <% unless session[:prefLoading] %>
+    <option selected value="native" label="Isotherm Default"></option>
+  <% end %>
+  <% loadingUnits.each do |unit| %>
+    <% if session[:prefLoading] == unit  %>
+      <option selected value="<%= unit %>" label="<%= unit %>"></option>
+    <% else %>
+      <option value="<%= unit %>" label="<%= unit %>"></option>
+    <% end %>
+  <% end %>
+  <% if session[:prefLoading] %>
+    <option value="native" label="Isotherm Default"></option>
+  <% end %>
+
+
+</select>
+</div>

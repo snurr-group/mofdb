@@ -158,14 +158,9 @@ class MofsController < ApplicationController
   # GET /mofs/1
   # GET /mofs/1.json
   def show
-    # Mof has necessary data to auto-convert isotherm loading units
-    @convert = !@mof.volumeA3.nil? && !@mof.atomicMass.nil? && !session[:prefUnits].nil?
-    @cannotConvertVolMass = !@convert && session[:prefUnits]
-    @cannotConvertIsoUnits = false
-    @mof.isotherms.map { |i| Classification.find(i.adsorption_units_id).name }.each do |name|
-      @cannotConvertIsoUnits = true unless supportedUnits.include?(name)
-    end
-
+    @can_convert, @msg = @mof.can_covert()
+    @convertPressure = @can_convert && !session[:prefPressure].nil?
+    @convertLoading = @can_convert && !session[:prefLoading].nil?
   end
 
   # GET /mofs/1/cif

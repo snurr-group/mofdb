@@ -1,6 +1,37 @@
 <div id="generic_page">
   <h1>API Routes & Supported URL Parameters</h1>
+  <h3>Code Sample</h3>
+  <p>Here's an example for python3 just run</p>
+  <pre>
+  $ pip3 install requests
+  import requests
+  resp = requests.request('GET', 'https://mof.tech.northwestern.edu/mofs.json',
+          headers={'loading': 'pa', 'pressure': 'bar'},
+          params={'vf_min': 0.5, 'vf_max': 1})
+  resp = resp.json()
+  print(resp.keys())
+  >> ['results', 'pages', 'page']
+  </pre>
   <ul>
+    <li><h3>Units</h3>
+      You can customize the pressure / loading units you get back by supplying the following two headers.
+      <table class="api_table">
+        <tr>
+          <th>Header</th>
+          <th>Values</th>
+        </tr>
+        <tbody>
+        <tr>
+          <td>loading</td>
+          <td><%= loadingUnits.join(", ") %></td>
+        </tr>
+        <tr>
+          <td>pressure</td>
+          <td><%= pressureUnits.join(", ") %></td>
+        </tr>
+        </tbody>
+      </table>
+    </li>
     <li><h3>/mofs.json</h3></li>
     <p>Returns at most <%= ENV['PAGE_SIZE'] %> MOFs per page</p>
     <table class="api_table">
@@ -13,7 +44,8 @@
         <td>page</td>
         <td>integer</td>
         <td>default is 1, if you want to see the next <%= ENV['PAGE_SIZE'] %> results increment the page, (400 error if
-          page # too lage)</td>
+          page # too lage)
+        </td>
       </tr>
       <tr>
         <td>mofid</td>
@@ -101,7 +133,7 @@
         <td>name</td>
         <td>string
         </td>
-        <td>Matches any name starting with string supplied. Eg as a regex: /name.+/ </td>
+        <td>Matches any name starting with string supplied. Eg as a regex: /name.+/</td>
       </tr>
       <tr>
         <td>database</td>
@@ -111,7 +143,9 @@
       <tr>
         <td>hashkey</td>
         <td>string</td>
-        <td>(50 characters exactly) hash of the cif file. NOT a good unique id used only to help prevent duplicate uploads. See mofid/mofkey for a better primary key.</td>
+        <td>(50 characters exactly) hash of the cif file. NOT a good unique id used only to help prevent duplicate
+          uploads. See mofid/mofkey for a better primary key.
+        </td>
       </tr>
       <tr>
         <td>gases</td>
@@ -121,7 +155,9 @@
       <tr>
         <td>elements/atoms</td>
         <td>array</td>
-        <td>You specify the query param as many times as elements you want to list: eg. mofs.json?elements[]=C&elements[]=Ar</td>
+        <td>You specify the query param as many times as elements you want to list: eg.
+          mofs.json?elements[]=C&elements[]=Ar
+        </td>
       </tr>
 
       <tr>
@@ -132,7 +168,8 @@
             <li>When searching by doi <strong>all other filters are ignored</strong></li>
             <li>Returns a max of 500 mofs non paginated.</li>
           </ul>
-          If you want to download all of a database use the <%= link_to "databases page", databases_path %> instead of a doi search. (Matching strings is a slow operation!)
+          If you want to download all of a database use the <%= link_to "databases page", databases_path %> instead of a
+          doi search. (Matching strings is a slow operation!)
         </td>
       </tr>
       <tr>

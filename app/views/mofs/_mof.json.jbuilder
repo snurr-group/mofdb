@@ -8,13 +8,6 @@ gases = mof.gases.uniq
 json.url mof_url(mof, format: :json)
 json.adsorbates gases.uniq.map { |g| g.to_nist_json }
 
-# json.heats(mof.heats) do |heat|
-#   json.pressure heat.pressure
-#   json.value heat.value
-#   json.pressure_units Classification.find(heat.pressure_units_ids).name
-#   json.value_units Classification.find(heat.value_units_id).name
-# end
-
 json.isotherms(mof.isotherms) do |isotherm|
 
   json.adsorbates isotherm.gases.uniq.map { |g| g.to_nist_json }
@@ -34,19 +27,21 @@ json.isotherms(mof.isotherms) do |isotherm|
 
 
 
-  isothermaAdsorptionUnits = Classification.find(isotherm.adsorption_units_id).name
+  isothermAdsorptionUnits = Classification.find(isotherm.adsorption_units_id).name
+  isothermPressureUnits = Classification.find(isotherm.pressure_units_id).name
 
-  convertThisIsotherm = @convert && supportedUnits.include?(isothermaAdsorptionUnits)
-
-  adsUnitsName = convertThisIsotherm  ? session[:prefUnits] : isothermaAdsorptionUnits
-  json.adsorptionUnits adsUnitsName
-  json.pressureUnits Classification.find(isotherm.pressure_units_id).name
+  json.adsorptionUnits @convertLoading  ? session[:prefLoading] : isothermAdsorptionUnits
+  json.pressureUnits @convertPressure ? session[:prefPressure] : isothermPressureUnits
   json.compositionType Classification.find(isotherm.composition_type_id).name
 
   points = {}
   isotherm.isodata.each do |isodata|
-    pressure = isodata.pressure
-    loading = convertThisIsotherm ? convert_adsorption_units(isothermaAdsorptionUnits, session[:prefUnits], isodata) : isodata.loading
+    pressure = @convertPressure ?
+                 convert_pressure_units(isodata, session[:prefPressure]) :
+                 isodata.pressure
+    loading = @convertLoading ?
+                convert_adsorption_units(isothermAdsorptionUnits, session[:prefLoading], isodata) :
+                isodata.loading
     subpoint = {'InChIKey': Gas.find(isodata.gas_id).inchikey,
                 'composition': isodata.bulk_composition,
                 'adsorption': loading}

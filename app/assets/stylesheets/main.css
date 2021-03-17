@@ -125,7 +125,10 @@
 }
 
 #nav_units {
-    grid-area: nav_units
+    grid-area: nav_units;
+}
+#nav_units .units_selector {
+    display: inline-block;
 }
 
 #nav_api a, #nav_database a {
@@ -157,7 +160,7 @@
     }
 
     #nav {
-        grid-template-columns: 20px 1fr  100px 20px;
+        grid-template-columns: 20px 1fr  250px 20px;
     }
 
     #info_content {
