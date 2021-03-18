@@ -37,7 +37,6 @@ class Gas < ApplicationRecord
       gas = Gas.find_by(inchicode: name)
     end
     return gas
-
   end
 
 end

@@ -5,11 +5,11 @@
   <% unless session[:prefLoading] %>
     <option selected value="native" label="Isotherm Default"></option>
   <% end %>
-  <% loadingUnits.each do |unit| %>
-    <% if session[:prefLoading] == unit  %>
-      <option selected value="<%= unit %>" label="<%= unit %>"></option>
+  <% supportedLoadingUnits.each do |unit| %>
+    <% if session[:prefLoading] && Classification.find(session[:prefLoading]).id == unit.id  %>
+      <option selected value="<%= unit.id %>" label="<%= unit.name %>"></option>
     <% else %>
-      <option value="<%= unit %>" label="<%= unit %>"></option>
+      <option value="<%= unit.id %>" label="<%= unit.name %>"></option>
     <% end %>
   <% end %>
   <% if session[:prefLoading] %>

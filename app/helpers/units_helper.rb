@@ -2,11 +2,13 @@ module UnitsHelper
 
   def supportedLoadingUnits
     # Units we can convert
-    %w[cm3(STP)/g cm3(STP)/cm3 g/l mg/g mmol/g mol/kg cm3/cm3]
+    Classification.where(convertable: true, source: "loading")
+    # %w[cm3(STP)/g cm3(STP)/cm3 g/l mg/g mmol/g mol/kg cm3/cm3]
   end
 
   def supportedPressureUnits
-    %w[atm bar kPa mbar mmHg MPa Pa psi Torr]
+    Classification.where(convertable: true, source: "pressure")
+    # %w[atm bar kPa mbar mmHg MPa Pa psi Torr]
   end
 
 
@@ -20,16 +22,11 @@ module UnitsHelper
     %w[atm bar kPa mbar mmHg MPa Pa psi Torr]
   end
 
-  class UnsupportedGasUnit < StandardError
+  class UnsupportedUnit < StandardError
     def initialize(msg = nil)
       super
     end
-  end
 
-  class UnsupportedPressureUnit < StandardError
-    def initialize(msg = nil)
-      super
-    end
   end
 
   def parseUnits(from, to)
@@ -44,26 +41,18 @@ module UnitsHelper
   end
 
   def get_pressure_in_bar(isodata)
-    pressure_units = Classification.find(isodata.isotherm.pressure_units_id)
-    if pressure_units.data != 0 and !pressure_units.data.nil?
-      return isodata.pressure * pressure_units.data
-    else
-      raise UnsupportedPressureUnit.new("#{pressure_units.name} is not a supported pressure unit")
-    end
+    pressure_units = isodata.isotherm.pressure_units
+    return isodata.pressure * pressure_units.data
   end
 
 
   def convert_pressure_units(isodata, to)
     bar = get_pressure_in_bar(isodata)
-    if to == nil
-      return isodata.pressure
-    end
-    pressure_units = Classification.find_by(name: to)
-    return bar / pressure_units.data
+    return bar / to["data"]
   end
 
   def convert_adsorption_units_wrapped(from, to, value, gas, mof, temp, pressureBar)
-    gasFrom, gasTo, mofFrom, mofTo = parseUnits(from, to)
+    gasFrom, gasTo, mofFrom, mofTo = parseUnits(from.name, to.name)
     pressureAtm = pressureBar / 1.01325
     numerator = convert_gas_unit(gasFrom, gasTo, value, gas.molarMass, temp, pressureAtm)
     denominator = convert_mof_unit(mofFrom, mofTo, 1, mof.volumeA3, mof.atomicMass)
@@ -72,9 +61,8 @@ module UnitsHelper
   end
 
   def convert_adsorption_units(from, to, isodata)
-    raise UnsupportedGasUnit.new("#{from} is not a supported adsorption unit") unless supportedLoadingUnits.include?(from)
-    raise UnsupportedGasUnit.new("#{to} is not a supported adsorption unit") unless supportedLoadingUnits.include?(to)
-
+    raise UnsupportedUnit.new("Unsupported unit #{from.name}") if !from.convertable
+    raise UnsupportedUnit.new("Unsupported unit #{to.name}") if !to.convertable
     gas = isodata.gas
     mof = isodata.isotherm.mof
     value = isodata.loading
@@ -84,9 +72,7 @@ module UnitsHelper
   end
 
   def convert_mof_unit(from, to, value, volumeA3, unitCellMass)
-    supported = ["cm3", "g", "l", "kg", "mg"]
-    raise UnsupportedGasUnit("#{from} is not a supported MOF unit") if supported.index(from).nil?
-    raise UnsupportedGasUnit("#{to} is not a supported MOF unit") if supported.index(to).nil?
+
 
     avogadro = 6.0221409e+23
     molesOfUnitCells = nil
@@ -134,10 +120,6 @@ module UnitsHelper
 
     from = "cm3(STP)" if from == "cm3"
 
-    supported = ["cm3", "cm3(STP)", "g", "mg", "mmol", "mol"]
-    raise UnsupportedGasUnit.new("#{from} is not a supported gas unit") if supported.index(from).nil?
-    raise UnsupportedGasUnit.new("#{to} is not a supported gas unit") if supported.index(to).nil?
-
     moles = nil
 
     if from == "mg"
@@ -155,6 +137,8 @@ module UnitsHelper
       moles = atmSTP * liters / (r * tempSTP)
     elsif from == "mmol"
       moles = value / 1000.0
+    else
+      raise UnsupportedGasUnit("Unknown conversion from #{from}")
     end
 
     if to == "mg"

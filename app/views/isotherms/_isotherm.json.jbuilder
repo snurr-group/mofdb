@@ -3,7 +3,7 @@ json.DOI isotherm.doi
 json.adsorbates isotherm.gases.uniq.map{|g| g.to_nist_json}
 json.date isotherm.created_at.strftime("%Y-%M-%d")
 json.temperature isotherm.temp
-json.adsorbate_forcefield isotherm.adsorbate_forcefield.name
+json.adsorbent_forcefield isotherm.adsorbate_forcefield.name
 json.molecule_forcefield isotherm.molecule_forcefield.name
 json.adsorbent do
   json.id isotherm.mof.id
@@ -11,9 +11,9 @@ json.adsorbent do
 end
 json.category "exp"
 
-json.adsorptionUnits Classification.find(isotherm.adsorption_units_id).name
-json.pressureUnits Classification.find(isotherm.pressure_units_id).name
-json.compositionType Classification.find(isotherm.composition_type_id).name
+json.adsorptionUnits isotherm.adsorption_units.name
+json.pressureUnits isotherm.pressure_units.name
+json.compositionType isotherm.composition_type.name
 
 points = {}
 isotherm.isodata.each do |isodata|

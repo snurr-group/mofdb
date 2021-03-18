@@ -28,22 +28,21 @@ class ApplicationController < ActionController::Base
 
     loading = request.headers['loading']
     pressure = request.headers['pressure']
-    if request.headers.include?("loading")
-
+    if loading
       if loading == "native"
         session[:prefLoading] = nil
-      elsif loadingUnits.include?(loading)
-        session[:prefLoading] = loading
+      else
+        loading = Classification.find(request.headers['loading'])
+        session[:prefLoading] = loading.id
       end
     end
-
-    if request.headers.include?("pressure")
+    if pressure
       if pressure == "native"
         session[:prefPressure] = nil
-      elsif pressureUnits.include?(pressure)
-        session[:prefPressure] = pressure
+      else
+        pressure = Classification.find(request.headers['pressure'])
+        session[:prefPressure] = pressure.id
       end
-
     end
   end
 

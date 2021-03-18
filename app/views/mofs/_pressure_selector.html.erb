@@ -4,11 +4,11 @@
   <% unless session[:prefPressure] %>
     <option selected value="native" label="Isotherm Default"></option>
   <% end %>
-  <% pressureUnits.each do |unit| %>
-    <% if session[:prefPressure] == unit  %>
-      <option selected value="<%= unit %>" label="<%= unit %>"></option>
+  <% supportedPressureUnits.each do |unit| %>
+    <% if session[:prefPressure] && Classification.find(session[:prefPressure]).id == unit.id  %>
+      <option selected value="<%= unit.id %>" label="<%= unit.name %>"></option>
     <% else %>
-      <option value="<%= unit %>" label="<%= unit %>"></option>
+      <option value="<%= unit.id %>" label="<%= unit.name %>"></option>
     <% end %>
   <% end %>
   <% if session[:prefPressure] %>

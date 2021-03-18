@@ -86,8 +86,8 @@
   <div id="right">
     <% if @mof.isotherms.any? %>
       <div class="lead">Isotherms <%= link_to "<button>View JSON</button>".html_safe, mof_path(@mof, format: :json) %></div>
-      <% if (@convertLoading || @convertPressure) && @msg %>
-        <p>⚠️ <%= @msg.html_safe %>></p>
+      <% if (@msg) %>
+        <p>⚠️ <%= @msg.html_safe %></p>
       <% end %>
     <% else
          @mof.isotherms.any? %>

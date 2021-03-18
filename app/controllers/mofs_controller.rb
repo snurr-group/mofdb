@@ -26,10 +26,8 @@ class MofsController < ApplicationController
 
     get_count = request.path == "/mofs/count" || request.format.to_s == "application/json"
 
-    if params[:html]
+    if params[:html] || params[:bulk] && params[:bulk] == 'true'
       @mofs = visible.includes(:database, :elements, :gases)
-    elsif params[:bulk] && params[:bulk] == 'true'
-      @mofs = visible
     else
       respond_to do |format|
         format.html { @mofs = visible.includes(:database) }
@@ -40,7 +38,7 @@ class MofsController < ApplicationController
     begin
       filter_mofs(get_count)
     rescue PageTooLarge
-      return render :json => {error: "Page number too large"}, status: 400
+      return render :json => { error: "Page number too large" }, status: 400
     end
 
     if get_count
@@ -53,12 +51,12 @@ class MofsController < ApplicationController
     return render partial: 'mofs/rows' if params[:html]
 
     # If params[:bulk]
-    if params[:bulk] && params[:bulk] == "true" && @mofs.any?
+    if params[:bulk] && params[:bulk] == "true" # && @mofs.any?
       zip_name = "mofs-bulk-search-download.zip"
       send_file_headers!(
-          type: "application/zip",
-          disposition: "attachment",
-          filename: zip_name
+        type: "application/zip",
+        disposition: "attachment",
+        filename: zip_name
       )
       response.headers["Last-Modified"] = Time.now.httpdate.to_s
       response.headers["X-Accel-Buffering"] = "no"
@@ -67,24 +65,45 @@ class MofsController < ApplicationController
         response.stream.write(chunk)
       end
 
+      @mofs = @mofs.convertable.includes(:isotherms)
+                   .includes(:isodata)
+                   .includes(:gases)
+                   .includes(:adsorbate_forcefields)
+                   .includes(:molecule_forcefields)
+                   .includes(:adsorption_units)
+                   .includes(:pressure_units)
+                   .includes(:composition_type)
+
+      @convertPressure = session[:prefPressure] ? Classification.find(session[:prefPressure]) : nil
+      @convertLoading = session[:prefLoading] ? Classification.find(session[:prefLoading]) : nil
+      size = @mofs.size
+      count = 0
       begin
         ZipTricks::Streamer.open(writer) do |zip|
-          @mofs = @mofs.select("id, pregen_json, name, cif, database_id, hidden")
-          puts "mofs: #{@mofs.size}"
           @mofs.in_batches(of: 500).each_record do |mof|
-
-            zip.write_deflated_file("#{mof.name}-(id:#{mof.id}).json") do |file_writer|
-              file_writer << mof.pregen_json.to_json
-            end
-            next if mof.hidden
-            zip.write_deflated_file("#{mof.name}-(id:#{mof.id}).cif") do |file_writer|
-              puts "Adding cif for mof"
-              file_writer << mof.cif
+            count += 1
+            puts "#{count} #{size}" if count % 500 == 0
+            begin
+              content = mof.get_json(@convertPressure, @convertLoading)
+              cif = mof.cif
+              zip.write_deflated_file("#{mof.name}-(id:#{mof.id}).json") do |file_writer|
+                file_writer << content
+              end
+              zip.write_deflated_file("#{mof.name}-(id:#{mof.id}).cif") do |file_writer|
+                file_writer << cif
+              end
+            rescue Exception => e
+              next
             end
           end
         end
+      rescue Exception => e
+        puts "\n\n\n\n\n"
+        puts e.to_s
+        puts e.class.name
+        # puts e.backtrace.reverse.join("\n")
+        Sentry.capture_message("Error while creating a zip file #{request.url.to_s}")
       ensure
-        puts "closing stream"
         response.stream.close
         return
       end
@@ -113,18 +132,18 @@ class MofsController < ApplicationController
     rescue
     end
 
-    mof_params = {name: params[:name],
-                  hashkey: params[:hashkey],
-                  cif: params[:cif],
-                  void_fraction: params[:void_fraction],
-                  surface_area_m2g: params[:surface_area_m2g],
-                  surface_area_m2cm3: params[:surface_area_m2cm3],
-                  pld: params[:pld],
-                  lcd: params[:lcd],
-                  pxrd: params[:pxrd],
-                  mofkey: params[:mofkey],
-                  mofid: params[:mofid],
-                  pore_size_distribution: params[:pore_size_distribution]}
+    mof_params = { name: params[:name],
+                   hashkey: params[:hashkey],
+                   cif: params[:cif],
+                   void_fraction: params[:void_fraction],
+                   surface_area_m2g: params[:surface_area_m2g],
+                   surface_area_m2cm3: params[:surface_area_m2cm3],
+                   pld: params[:pld],
+                   lcd: params[:lcd],
+                   pxrd: params[:pxrd],
+                   mofkey: params[:mofkey],
+                   mofid: params[:mofid],
+                   pore_size_distribution: params[:pore_size_distribution] }
 
     if params[:db] == "hMOFs"
       mof_params[:database] = Database.find_by(name: "hMOF")
@@ -158,9 +177,30 @@ class MofsController < ApplicationController
   # GET /mofs/1
   # GET /mofs/1.json
   def show
-    @can_convert, @msg = @mof.can_covert()
-    @convertPressure = @can_convert && !session[:prefPressure].nil?
-    @convertLoading = @can_convert && !session[:prefLoading].nil?
+    @convertPressure = session[:prefPressure] ? Classification.find(session[:prefPressure]) : nil
+    @convertLoading = session[:prefLoading] ? Classification.find(session[:prefLoading]) : nil
+    if !@mof.convertable
+      @msg = "This mof is missing molarMass or volume and thus we cannot do automatic unit conversion"
+    end
+
+    if @mof.isotherms.convertable.size != @mof.isotherms.convertable.size
+      @msg = "Some isotherms for this mof use units we do not know how to convert"
+    end
+
+    respond_to do |format|
+      format.html {}
+      format.json {
+        # I am well aware this is the wrong way to render a view.
+        #
+        # We do it this way b/c in index route we need to render this same view and we need to pass
+        # in @convertPressure/@convertLoading but we cannot easily pass @ variables only locals using
+        # the ApplicationController.render in mof.rb:get_json
+        # so by doing it the same ugly way here we at least don't have two different ways of calling
+        # that same template.
+        json = @mof.get_json(@convertPressure, @convertLoading)
+        return render :json => json, status: 200
+      }
+    end
   end
 
   # GET /mofs/1/cif
@@ -185,7 +225,6 @@ class MofsController < ApplicationController
   def databases
     @combinations = get_db_doi_gas_combos
   end
-
 
   private
 
@@ -222,7 +261,6 @@ class MofsController < ApplicationController
     if params[:pld_min] && !params[:pld_min].empty? && params[:pld_min].to_f != 0
       @mofs = @mofs.where("mofs.pld >= ?", params[:pld_min])
     end
-
 
     if params[:pld_max] && !params[:pld_max].empty? && params[:pld_max].to_f != 20
       @mofs = @mofs.where("mofs.pld <= ?", params[:pld_max])

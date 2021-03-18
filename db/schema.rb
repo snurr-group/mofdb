@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_03_235846) do
+ActiveRecord::Schema.define(version: 2021_03_18_200408) do
 
   create_table "classifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name"
@@ -18,6 +18,8 @@ ActiveRecord::Schema.define(version: 2021_01_03_235846) do
     t.integer "source"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "convertable", default: false
+    t.index ["convertable"], name: "index_classifications_on_convertable"
     t.index ["name"], name: "index_classifications_on_name", unique: true
     t.index ["source"], name: "index_classifications_on_source"
   end
@@ -137,19 +139,19 @@ ActiveRecord::Schema.define(version: 2021_01_03_235846) do
     t.boolean "hidden", default: false, null: false
     t.float "atomicMass"
     t.float "volumeA3"
+    t.index ["atomicMass"], name: "index_mofs_on_atomicMass"
     t.index ["database_id"], name: "fk_rails_42b2867304"
     t.index ["hashkey"], name: "index_mofs_on_hashkey"
     t.index ["hidden"], name: "index_mofs_on_hidden"
     t.index ["lcd"], name: "index_mofs_on_lcd"
-    t.index ["mofid"], name: "index_mofs_on_mofid", type: :fulltext
     t.index ["mofid"], name: "mofid_exact_match_idx", length: 768
-    t.index ["mofkey"], name: "index_mofs_on_mofkey", type: :fulltext
     t.index ["mofkey"], name: "mofkey_exact_match_idx", length: 768
     t.index ["name"], name: "index_mofs_on_name"
     t.index ["pld"], name: "index_mofs_on_pld"
     t.index ["surface_area_m2cm3"], name: "index_mofs_on_surface_area_m2cm3"
     t.index ["surface_area_m2g"], name: "index_mofs_on_surface_area_m2g"
     t.index ["void_fraction"], name: "index_mofs_on_void_fraction"
+    t.index ["volumeA3"], name: "index_mofs_on_volumeA3"
   end
 
   create_table "synonyms", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|

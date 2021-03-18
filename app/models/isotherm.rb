@@ -1,10 +1,23 @@
+require "#{Rails.root}/app/helpers/application_helper"
+require "#{Rails.root}/app/helpers/units_helper"
+
 class Isotherm < ApplicationRecord
+  include UnitsHelper
+
   belongs_to :adsorbate_forcefield, class_name: 'Forcefield'
   belongs_to :molecule_forcefield, class_name: 'Forcefield'
+  belongs_to :adsorption_units, class_name: "Classification", :foreign_key => "adsorption_units_id"
+  belongs_to :pressure_units, class_name: "Classification", :foreign_key => "pressure_units_id"
+  belongs_to :composition_type, class_name: "Classification", :foreign_key => "composition_type_id"
   belongs_to :mof
   has_many :isodata, dependent: :delete_all
   has_many :gases, through: :isodata
   # after_save :regen_mof_json
+
+  before_save :updateConvert
+
+  scope :convertable, -> { joins("") }
+
 
   def regen_mof_json
     self.mof.regen_json
@@ -33,10 +46,3 @@ class Isotherm < ApplicationRecord
   end
 
 end
-
-
-# Isotherm.new(adsorption_units_id: Classification.find(2),
-#              forcefield: Forcefield.first,
-#              mof: Mof.first,
-#              pressure_units_id: Classification.find(10),
-#              composition_type_id: Classification.first).save!

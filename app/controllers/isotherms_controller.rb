@@ -34,7 +34,7 @@ class IsothermsController < ApplicationController
       if Rails.cache.exist?(key)
         return Rails.cache.fetch(key)
       else
-        ans = Classification.find_by(name: name).id
+        ans = Classification.find_by(name: name)
         Rails.cache.write(key, ans, expires_in: 1.hours)
         return ans
       end
@@ -69,9 +69,9 @@ class IsothermsController < ApplicationController
                              simin: params[:simin],
                              adsorbate_forcefield: ff_cache(params[:adsorbent_forcefield]),
                              molecule_forcefield: ff_cache(params[:molecule_forcefield]),
-                             adsorption_units_id: classification_cache(params[:adsorption_units]),
-                             pressure_units_id: classification_cache(params[:pressure_units]),
-                             composition_type_id: classification_cache(params[:composition_type]))
+                             adsorption_units: classification_cache(params[:adsorption_units]),
+                             pressure_units: classification_cache(params[:pressure_units]),
+                             composition_type: classification_cache(params[:composition_type]))
 
     @isotherm.save!
 
