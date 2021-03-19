@@ -98,7 +98,6 @@ class MofsController < ApplicationController
           end
         end
       rescue Exception => e
-        puts "\n\n\n\n\n"
         puts e.to_s
         puts e.class.name
         # puts e.backtrace.reverse.join("\n")

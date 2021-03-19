@@ -19,8 +19,6 @@ class Mof < ApplicationRecord
 
   after_create :storeMassAndVol
 
-  before_save :updateConvert
-
   scope :visible, -> { where(:hidden => false) }
   scope :convertable, -> { where("volumeA3 is not NULL and atomicMass is not NULL") }
 

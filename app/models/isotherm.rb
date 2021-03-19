@@ -14,8 +14,6 @@ class Isotherm < ApplicationRecord
   has_many :gases, through: :isodata
   # after_save :regen_mof_json
 
-  before_save :updateConvert
-
   scope :convertable, -> { joins("") }
 
 
