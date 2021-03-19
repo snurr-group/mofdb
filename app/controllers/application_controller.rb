@@ -28,6 +28,14 @@ class ApplicationController < ActionController::Base
 
     loading = request.headers['loading']
     pressure = request.headers['pressure']
+
+    if session[:prefLoading] && session[:prefLoading].class.name != "Integer"
+      session[:prefLoading] = nil
+    end
+    if session[:prefPressure] && session[:prefPressure].class.name != "Integer"
+      session[:prefPressure] = nil
+    end
+
     if loading
       if loading == "native"
         session[:prefLoading] = nil
