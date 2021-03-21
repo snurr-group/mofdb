@@ -73,7 +73,7 @@ module UnitsHelper
 
   def convert_mof_unit(from, to, value, volumeA3, unitCellMass)
 
-
+    from = "cm3(STP)" if from == "cm3"
     avogadro = 6.0221409e+23
     molesOfUnitCells = nil
 
@@ -82,7 +82,7 @@ module UnitsHelper
 
     molarMass = unitCellMass
 
-    if from == "cm3"
+    if from == "cm3(STP)"
       molesOfUnitCells = value / volumeMolCm3
     elsif from == "g"
       molesOfUnitCells = value / molarMass
@@ -96,6 +96,8 @@ module UnitsHelper
     elsif from == "mg"
       grams = value / 1000.0
       molesOfUnitCells = grams / molarMass
+    else
+      raise UnsupportedUnit.new("What? #{from}")
     end
 
     if to == "cm3"

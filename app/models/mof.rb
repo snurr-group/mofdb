@@ -82,7 +82,7 @@ class Mof < ApplicationRecord
   end
 
   def regen_json
-    self.pregen_json = JSON.load(get_json(false, false))
+    self.pregen_json = JSON.load(get_json(nil, nil))
     self.save
   end
 

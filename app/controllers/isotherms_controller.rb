@@ -75,10 +75,12 @@ class IsothermsController < ApplicationController
 
     @isotherm.save!
 
-    # points [inchikey, pressure, loading, bulk_comp
+    # points [inchikey, pressure, loading, bulk_comp]
     points = []
+    puts "Points"
+    puts params[:points]
     JSON.parse(params[:points]).each do |isodatum|
-      next if isodatum[2] = "NULL"
+      next if isodatum[2] == "NULL"
       gas_name = isodatum[0]
       gas = gas_cache(gas_name)
       datum = Isodatum.new(
@@ -91,8 +93,12 @@ class IsothermsController < ApplicationController
     end
 
     Isodatum.import points
-    render :json => @isotherm.id.to_json
-    @isotherm.destroy! if @isotherm.isodata.size == 0 #or @isotherm.is_duplicate
+
+    if @isotherm.isodata.size == 0 #
+      @isotherm.destroy!
+      return render :json => {status: "failed", msg: "zero point isotherm"}, status: 500
+    end
+    return render :json => {status: "success", isotherm_id: @isotherm.id}, status: 200
     @mof.regen_json
   end
 

@@ -29,6 +29,7 @@ class Isotherm < ApplicationRecord
     Isotherm.where(mof: self.mof, temp: self.temp).where.not(id: self.id).each do |iso|
       is_dupe = true if iso.isodatum_set == my_points
     end
+    puts "IS A DUPE\n\n\n\n\n"
 
     return is_dupe
   end
