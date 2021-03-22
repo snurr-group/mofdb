@@ -76,13 +76,11 @@ class MofsController < ApplicationController
 
       @convertPressure = session[:prefPressure] ? Classification.find(session[:prefPressure]) : nil
       @convertLoading = session[:prefLoading] ? Classification.find(session[:prefLoading]) : nil
-      size = @mofs.size
       count = 0
       begin
         ZipTricks::Streamer.open(writer) do |zip|
           @mofs.in_batches(of: 500).each_record do |mof|
             count += 1
-            puts "#{count} #{size}" if count % 500 == 0
             begin
               content = mof.get_json(@convertPressure, @convertLoading)
               cif = mof.cif
