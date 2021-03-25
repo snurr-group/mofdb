@@ -11,7 +11,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :forcefields, only: [:index]
+  resources :forcefields, only: [:index, :create, :update, :edit]
   resources :classifications, only: [:index]
 
   resources :isotherms, format: :json do

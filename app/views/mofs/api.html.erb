@@ -215,7 +215,7 @@
     <li><h3>/forcefields.json</h3>
       <p>Returns a JSON array of strings for all FFs mofdb knows about. Eg:</p>
       <pre>
-[<%= Forcefield.all.pluck(:name).map { |n| "'#{n}'" }.join(",\n ") %>]
+[<%= Forcefield.all.map { |ff| "{ name: '#{ff.name}', id: #{ff.id}}" }.join(",\n ") %>]
     </pre>
 
     <li><h3>/classifications.json</h3>
