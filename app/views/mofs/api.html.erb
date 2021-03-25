@@ -211,5 +211,11 @@
 
 
     <li><h3>/isotherms/#.json</h3></li>
+
+    <li><h3>/forcefields.json</h3>
+    <p>Returns a JSON array of strings for all FFs mofdb knows about. Eg:</p>
+    <p>
+      [<%= Forcefield.all.pluck(:name).map {|n| "'#{n}'"}.join(", ") %>]
+    </p>
   </ul>
 </div>
