@@ -11,7 +11,7 @@ Rails.application.configure do
   config.eager_load = false
 
   # We render templates many times in a few of the routes in mofs_controller
-  # this makes logs painful to read. So off action view logging.
+  # this makes logs painful to read. So turn off action view logging.
   config.action_view.logger = nil
 
   # Show full error reports.
