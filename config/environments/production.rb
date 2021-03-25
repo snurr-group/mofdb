@@ -11,6 +11,11 @@ Rails.application.configure do
   # Rake tasks automatically ignore this option for performance.
   config.eager_load = true
 
+
+  # We render templates many times in a few of the routes in mofs_controller
+  # this makes logs painful to read. So off action view logging.
+  config.action_view.logger = nil
+
   # Full error reports are disabled and caching is turned on.
   config.consider_all_requests_local       = false
   config.action_controller.perform_caching = true

@@ -10,6 +10,10 @@ Rails.application.configure do
   # Do not eager load code on boot.
   config.eager_load = false
 
+  # We render templates many times in a few of the routes in mofs_controller
+  # this makes logs painful to read. So off action view logging.
+  config.action_view.logger = nil
+
   # Show full error reports.
   config.cache_store = :file_store, Rails.root.join('tmp','cache'), { size: 100.megabytes }
   config.consider_all_requests_local = true
