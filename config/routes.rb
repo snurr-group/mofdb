@@ -10,6 +10,9 @@ Rails.application.routes.draw do
       get '/cif' => 'mofs#cif', as: "cif"
     end
   end
+
+  resources :forcefields, only: [:index]
+
   resources :isotherms, format: :json do
     collection do
       post '/upload' => 'isotherms#upload', as: "upload"

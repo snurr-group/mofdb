@@ -51,7 +51,7 @@ class MofsController < ApplicationController
     return render partial: 'mofs/rows' if params[:html]
 
     # If params[:bulk]
-    if params[:bulk] && params[:bulk] == "true" # && @mofs.any?
+    if params[:bulk] && params[:bulk] == "true"
       zip_name = "mofs-bulk-search-download.zip"
       send_file_headers!(
         type: "application/zip",
@@ -76,11 +76,9 @@ class MofsController < ApplicationController
 
       @convertPressure = session[:prefPressure] ? Classification.find(session[:prefPressure]) : nil
       @convertLoading = session[:prefLoading] ? Classification.find(session[:prefLoading]) : nil
-      count = 0
       begin
         ZipTricks::Streamer.open(writer) do |zip|
           @mofs.in_batches(of: 500).each_record do |mof|
-            count += 1
             begin
               content = mof.get_json(@convertPressure, @convertLoading)
               cif = mof.cif
@@ -96,9 +94,6 @@ class MofsController < ApplicationController
           end
         end
       rescue Exception => e
-        puts e.to_s
-        puts e.class.name
-        # puts e.backtrace.reverse.join("\n")
         Sentry.capture_message("Error while creating a zip file #{request.url.to_s}")
       ensure
         response.stream.close
