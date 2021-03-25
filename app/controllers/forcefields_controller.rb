@@ -1,6 +1,6 @@
 class ForcefieldsController < ApplicationController
 
-  before_action :verify_access, only: [:create]
+  before_action :verify_access, only: [:create, :update]
   skip_forgery_protection only: [:create, :update]
   before_action :set_ff, only: [:update]
 
