@@ -213,9 +213,18 @@
     <li><h3>/isotherms/#.json</h3></li>
 
     <li><h3>/forcefields.json</h3>
-    <p>Returns a JSON array of strings for all FFs mofdb knows about. Eg:</p>
-    <p>
-      [<%= Forcefield.all.pluck(:name).map {|n| "'#{n}'"}.join(", ") %>]
-    </p>
+      <p>Returns a JSON array of strings for all FFs mofdb knows about. Eg:</p>
+      <pre>
+[<%= Forcefield.all.pluck(:name).map { |n| "'#{n}'" }.join(",\n ") %>]
+    </pre>
+
+    <li><h3>/classifications.json</h3>
+      <p>Returns a JSON array of classification objects for all classifications</p>
+      <pre>
+[
+  { name: "cm3/cm3", type: "loading" },
+  { name: "kPA", type: "pressure" },
+  { name: "wt%", type: "other" },
+]
   </ul>
 </div>
