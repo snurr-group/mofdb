@@ -10,7 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_18_200408) do
+ActiveRecord::Schema.define(version: 2021_03_26_201241) do
+
+  create_table "batches", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "classifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name"
@@ -110,8 +115,10 @@ ActiveRecord::Schema.define(version: 2021_03_18_200408) do
     t.bigint "composition_type_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "batch_id"
     t.index ["adsorbate_forcefield_id"], name: "fk_rails_8886e0d88b"
     t.index ["adsorption_units_id"], name: "index_isotherms_on_adsorption_units_id"
+    t.index ["batch_id"], name: "index_isotherms_on_batch_id"
     t.index ["composition_type_id"], name: "index_isotherms_on_composition_type_id"
     t.index ["doi"], name: "index_isotherms_on_doi"
     t.index ["mof_id"], name: "index_isotherms_on_mof_id"
@@ -164,6 +171,7 @@ ActiveRecord::Schema.define(version: 2021_03_18_200408) do
   add_foreign_key "heats", "classifications", column: "value_units_id"
   add_foreign_key "isodata", "gases"
   add_foreign_key "isodata", "isotherms"
+  add_foreign_key "isotherms", "batches"
   add_foreign_key "isotherms", "classifications", column: "adsorption_units_id"
   add_foreign_key "isotherms", "classifications", column: "composition_type_id"
   add_foreign_key "isotherms", "classifications", column: "pressure_units_id"

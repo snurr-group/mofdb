@@ -9,7 +9,7 @@ json.url mof_url(mof, format: :json)
 json.adsorbates gases.uniq.map { |g| g.to_nist_json }
 
 json.isotherms(mof.isotherms) do |isotherm|
-
+  json.batch_number isotherm.batch.nil? ? nil : isotherm.batch.id
   json.adsorbates isotherm.gases.uniq.map { |g| g.to_nist_json }
 
   json.extract! isotherm, :id, :digitizer, :simin

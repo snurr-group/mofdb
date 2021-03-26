@@ -1,0 +1,18 @@
+<div id="generic_page">
+  <h1>Batches</h1>
+  <p>A batch is a collection of isotherms. When you use the modfb-interface to upload new data the interface
+  will request a new batch number, and then use this batch number for all isotherms you upload. If you need to you can later
+  delete all isotherms in the batch easily. See mofdb-interface for more. This pages is also available at
+    <a href="/batches.json">/batches.json</a> in json form.
+  </p>
+  <ul>
+    <% @batches.each do |batch| %>
+
+      <li>Batch #<%= batch.id %>, Created At: <%= batch.created_at %>
+        <br/>
+        Batch contains <%= batch.isotherms.size %> isotherms
+      </li>
+
+    <% end %>
+  </ul>
+</div>

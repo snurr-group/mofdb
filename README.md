@@ -22,7 +22,8 @@ If someone other than myself needs to do future development on this website here
 This repository is only half of mofdb. The other half is mofdb-interface, a python class that can be used to easily parse
 raspa/zeo++ output and upload them to mofdb. That interface can be [found here](https://github.com/snurr-group/mofdb-interface).
 The interface parses each mofs raspa output / pore calculations / void fraction and makes a post request to the server
-at the /mofs/upload route with the APIKEY value set to the secret key (this is stored in the .env file on the production server as well
+at the /mofs/upload route with th
+e APIKEY value set to the secret key (this is stored in the .env file on the production server as well
 as in the PRIVATE repo for the interface). This key is the same for all users and should be kept within the group. 
 
 Next the server ```app/controllers/mofs_controller.rb``` parses the post request determines if that MOF already exists, if it does it 
@@ -33,18 +34,17 @@ and then return a 200 response.
 
 So that's the general structure, best of luck future developer. I've done my best to make the code clear and follow 
 rails conventions to make your life easier. 
-I'd recommend starting by looking at ```db/schema.rb``` and then [the api routes](https://mof.tech.northwestern.edu). 
+I'd recommend starting by looking at ```db/schema.rb``` and then [the api routes](https://mof.tech.northwestern.edu/api).
 
 \- Nate
 
 # Rake tasks
 
 ## Pregen all
-Regenerate all json/zip files.
+Regenerate all json for every mof and all zip files on the databases page. This should be run after uploading new data.
 ```> bundle exec rake environment pregen:all```
 
-## Pregen datasets page
-
+### Pregen datasets page (subset of pregen all)
 ```
 cd /var/www/sites/mof
 bundle exec rake environment pregen:databases
@@ -53,7 +53,7 @@ bundle exec rake environment pregen:databases
 This job generates all the zip files for each combination of database-doi-gas you see in the databases page. This needs to be run 
 each time that data changes. 
 
-## Pregen json
+### Pregen json (subset of pregen all)
 
 ```
 cd /var/www/sites/mof

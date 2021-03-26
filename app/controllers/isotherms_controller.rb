@@ -5,7 +5,6 @@ class IsothermsController < ApplicationController
   before_action :cache, except: [:upload]
 
   def index
-
     if params[:mof_id]
       @isotherms = Mof.find(params[:mof_id]).isotherms
     elsif params[:mof_hashkey]
@@ -63,6 +62,7 @@ class IsothermsController < ApplicationController
     end
 
     @isotherm = Isotherm.new(mof: @mof,
+                             batch: Batch.find(params[:batch].to_i),
                              doi: params[:doi],
                              digitizer: params[:digitizer],
                              temp: params[:temp],
@@ -94,7 +94,7 @@ class IsothermsController < ApplicationController
 
     Isodatum.import points
 
-    if @isotherm.isodata.size == 0 #
+    if @isotherm.isodata.size == 0 # or @isotherm.is_duplicate
       @isotherm.destroy!
       return render :json => {status: "failed", msg: "zero point isotherm"}, status: 500
     end

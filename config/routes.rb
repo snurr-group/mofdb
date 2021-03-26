@@ -11,6 +11,7 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :batches, only: [:show, :index, :destroy, :create]
   resources :forcefields, only: [:index, :create, :update, :edit]
   resources :classifications, only: [:index]
 
