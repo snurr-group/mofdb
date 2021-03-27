@@ -13,9 +13,11 @@ class BatchesController < ApplicationController
 
   def destroy
     isotherms = @batch.isotherms.size
+    mofs = @batch.mofs.size
     @batch.isotherms.destroy_all
+    @batch.mofs.destroy_all
     @batch.destroy
-    return render :json => {status: 'success', msg: "Deleted all #{isotherms}"}
+    return render :json => {status: 'success', msg: "Deleted all #{isotherms} isotherms and #{mofs} mofs"}
   end
 
   def create

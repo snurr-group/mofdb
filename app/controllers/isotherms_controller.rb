@@ -93,13 +93,14 @@ class IsothermsController < ApplicationController
     end
 
     Isodatum.import points
+    @mof.regen_json
 
     if @isotherm.isodata.size == 0 # or @isotherm.is_duplicate
       @isotherm.destroy!
       return render :json => {status: "failed", msg: "zero point isotherm"}, status: 500
     end
     return render :json => {status: "success", isotherm_id: @isotherm.id}, status: 200
-    @mof.regen_json
+
   end
 
   private

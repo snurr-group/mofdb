@@ -1,11 +1,13 @@
 json.extract! mof, :id, :mofid, :mofkey, :hashkey, :name, :void_fraction, :surface_area_m2g, :surface_area_m2cm3, :pld, :lcd, :pxrd, :pore_size_distribution
 json.database mof.database.name
+json.batch_number mof.batch.nil? ? nil : mof.batch.id
+
 
 json.cif mof.hidden ? nil : mof.cif
 
 gases = mof.gases.uniq
 
-json.url mof_url(mof, format: :json)
+json.url mof_path(mof, format: :json)
 json.adsorbates gases.uniq.map { |g| g.to_nist_json }
 
 json.isotherms(mof.isotherms) do |isotherm|

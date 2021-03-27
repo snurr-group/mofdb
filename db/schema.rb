@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_26_201241) do
+ActiveRecord::Schema.define(version: 2021_03_27_002258) do
 
   create_table "batches", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -146,7 +146,9 @@ ActiveRecord::Schema.define(version: 2021_03_26_201241) do
     t.boolean "hidden", default: false, null: false
     t.float "atomicMass"
     t.float "volumeA3"
+    t.bigint "batch_id"
     t.index ["atomicMass"], name: "index_mofs_on_atomicMass"
+    t.index ["batch_id"], name: "index_mofs_on_batch_id"
     t.index ["database_id"], name: "fk_rails_42b2867304"
     t.index ["hashkey"], name: "index_mofs_on_hashkey"
     t.index ["hidden"], name: "index_mofs_on_hidden"
@@ -178,5 +180,6 @@ ActiveRecord::Schema.define(version: 2021_03_26_201241) do
   add_foreign_key "isotherms", "forcefields", column: "adsorbate_forcefield_id"
   add_foreign_key "isotherms", "forcefields", column: "molecule_forcefield_id"
   add_foreign_key "isotherms", "mofs"
+  add_foreign_key "mofs", "batches"
   add_foreign_key "mofs", "databases"
 end

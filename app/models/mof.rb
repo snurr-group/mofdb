@@ -5,6 +5,7 @@ require "#{Rails.root}/app/helpers/units_helper"
 class Mof < ApplicationRecord
   include UnitsHelper
 
+  belongs_to :batch, optional: true
   belongs_to :database
   has_many :isotherms, dependent: :delete_all
   has_many :isodata, through: :isotherms

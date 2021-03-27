@@ -1,8 +1,10 @@
 <div id="generic_page">
   <h1>Batches</h1>
-  <p>A batch is a collection of isotherms. When you use the modfb-interface to upload new data the interface
-  will request a new batch number, and then use this batch number for all isotherms you upload. If you need to you can later
-  delete all isotherms in the batch easily. See mofdb-interface for more. This pages is also available at
+  <p>A batch is a collection of isotherms  and mofs
+    (not always including the mofs that they belong to, the mofs batch is assigned to the
+    first upload referencing it). When you use the modfb-interface to upload new data the interface
+  will request a new batch number, and then use this batch number for all isotherms you upload and new mofs you create. If you need to you can later
+  delete all isotherms and mofs in the batch easily. See mofdb-interface for more. This pages is also available at
     <a href="/batches.json">/batches.json</a> in json form.
   </p>
   <ul>
@@ -11,6 +13,8 @@
       <li>Batch #<%= batch.id %>, Created At: <%= batch.created_at %>
         <br/>
         Batch contains <%= batch.isotherms.size %> isotherms
+        <br>
+        Batch contains <%= batch.mofs.size %> mofs
       </li>
 
     <% end %>

@@ -135,6 +135,7 @@ class MofsController < ApplicationController
                    pxrd: params[:pxrd],
                    mofkey: params[:mofkey],
                    mofid: params[:mofid],
+                   batch: params.include?(:batch) ? Batch.find(params[:batch]) : nil,
                    pore_size_distribution: params[:pore_size_distribution] }
 
     if params[:db] == "hMOFs"
@@ -149,21 +150,22 @@ class MofsController < ApplicationController
 
     if @mof.nil?
       @mof = Mof.new(mof_params)
+      puts "batch id:"
+      puts @mof.batch.id
       @mof.save!
     else
       non_nil_params = {}
       mof_params.each do |key, value|
-        if value.nil? || value.is_a?(String) && value.empty?
+        if value.nil? || (value.is_a?(String) && value.empty?)
         else
           non_nil_params[key] = value
         end
-        @mof.update(non_nil_params)
+        @mof.update(non_nil_params.except(:batch)) # Don't update batches for mofs, this only gets set when creating, not updating
       end
 
     end
     @mof.regen_json
     render status: 200, json: @mof.id.to_json
-
   end
 
   # GET /mofs/1
