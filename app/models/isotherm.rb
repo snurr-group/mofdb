@@ -10,10 +10,12 @@ class Isotherm < ApplicationRecord
   belongs_to :pressure_units, class_name: "Classification", :foreign_key => "pressure_units_id"
   belongs_to :composition_type, class_name: "Classification", :foreign_key => "composition_type_id"
   belongs_to :mof
+  belongs_to :batch, optional: true
   has_many :isodata, dependent: :delete_all
   has_many :gases, through: :isodata
-  belongs_to :batch, optional: true
   after_save :regen_mof_json
+
+  scope :convertable, -> { joins("") }
 
   def regen_mof_json
     self.mof.regen_json

@@ -124,19 +124,18 @@ class MofsController < ApplicationController
     rescue
     end
 
-    mof_params = { name: params[:name],
-                   hashkey: params[:hashkey],
-                   cif: params[:cif],
-                   void_fraction: params[:void_fraction],
-                   surface_area_m2g: params[:surface_area_m2g],
-                   surface_area_m2cm3: params[:surface_area_m2cm3],
-                   pld: params[:pld],
-                   lcd: params[:lcd],
-                   pxrd: params[:pxrd],
-                   mofkey: params[:mofkey],
-                   mofid: params[:mofid],
-                   batch: params.include?(:batch) ? Batch.find(params[:batch]) : nil,
-                   pore_size_distribution: params[:pore_size_distribution] }
+    options = [:name, :hashkey, :cif, :void_fraction, :surface_area_m2g, :surface_area_m2cm3, :pld,
+      :lcd, :pxrd, :mofkey, :mofid, :pore_size_distribution]
+
+    mof_params = params.class.new
+    options.each do |mof_field|
+      if params.include?(mof_field)
+        mof_params[mof_field] = params[mof_field]
+      end
+    end
+    if params.include?(:batch)
+      mof_params[:batch] = Batch.find(params[:batch])
+    end
 
     if params[:db] == "hMOFs"
       mof_params[:database] = Database.find_by(name: "hMOF")
@@ -152,15 +151,7 @@ class MofsController < ApplicationController
       @mof = Mof.new(mof_params)
       @mof.save!
     else
-      non_nil_params = {}
-      mof_params.each do |key, value|
-        if value.nil? || (value.is_a?(String) && value.empty?)
-        else
-          non_nil_params[key] = value
-        end
-        @mof.update(non_nil_params.except(:batch)) # Don't update batches for mofs, this only gets set when creating, not updating
-      end
-
+      @mof.update(mof_params.except(:batch))
     end
     @mof.regen_json
     render status: 200, json: @mof.id.to_json
