@@ -166,7 +166,8 @@ class MofsController < ApplicationController
       @msg = "This mof is missing molarMass or volume and thus we cannot do automatic unit conversion"
     end
 
-    if @mof.isotherms.convertable.size != @mof.isotherms.convertable.size
+
+    if @mof.isotherms.convertable.size != @mof.isotherms.size
       @msg = "Some isotherms for this mof use units we do not know how to convert"
     end
 

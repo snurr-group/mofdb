@@ -15,7 +15,10 @@ class Isotherm < ApplicationRecord
   has_many :gases, through: :isodata
   after_save :regen_mof_json
 
-  scope :convertable, -> { joins("") }
+  # Does this isotherm have adsorption_units and pressure_units that are marked convertable?
+  scope :convertable, -> { joins("JOIN classifications as clas_adsorp on isotherms.adsorption_units_id = clas_adsorp.id")
+                             .joins("JOIN classifications as clas_pressure on isotherms.pressure_units_id = clas_pressure.id")
+                             .where("clas_pressure.convertable  = true and clas_adsorp.convertable = true") }
 
   def regen_mof_json
     self.mof.regen_json
@@ -24,7 +27,7 @@ class Isotherm < ApplicationRecord
   def is_duplicate
     # Check if this isotherm is a duplciate of any others, if so return true
     is_dupe = false
-    my_points  = self.isodatum_set # Set of points in this isotherm
+    my_points = self.isodatum_set # Set of points in this isotherm
     Isotherm.where(mof: self.mof, temp: self.temp).where.not(id: self.id).each do |iso|
       is_dupe = true if iso.isodatum_set == my_points
     end
@@ -34,9 +37,9 @@ class Isotherm < ApplicationRecord
   def isodatum_set
     isodatum = Set.new
     self.isodata.each do |datum|
-      isodatum.add({'pressure': datum.pressure,
-                    'loading': datum.loading,
-                    'bulk_composition': datum.bulk_composition, })
+      isodatum.add({ 'pressure': datum.pressure,
+                     'loading': datum.loading,
+                     'bulk_composition': datum.bulk_composition, })
     end
     return isodatum
   end

@@ -29,13 +29,15 @@ json.isotherms(mof.isotherms) do |isotherm|
   isothermAdsorptionUnits = isotherm.adsorption_units
   isothermPressureUnits = isotherm.pressure_units
 
-
-  json.adsorptionUnits convert_loading ? convert_loading.name : isothermAdsorptionUnits.name
-  json.pressureUnits convert_pressure ? convert_pressure.name : isothermPressureUnits.name
-  json.compositionType isotherm.composition_type.name
-
   can_convert_pressure = !convert_pressure.nil? && convert_pressure.convertable && isotherm.pressure_units.convertable
   can_convert_loading = !convert_loading.nil? && convert_loading.convertable && isotherm.adsorption_units.convertable
+
+
+  json.adsorptionUnits can_convert_loading ? convert_loading.name : isothermAdsorptionUnits.name
+  json.pressureUnits can_convert_pressure ? convert_pressure.name : isothermPressureUnits.name
+
+  json.compositionType isotherm.composition_type.name
+
 
   points = {}
   isotherm.isodata.each do |isodata|
