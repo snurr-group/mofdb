@@ -78,7 +78,7 @@ class IsothermsController < ApplicationController
     # points [inchikey, pressure, loading, bulk_comp]
     points = []
     JSON.parse(params[:points]).each do |isodatum|
-      next if isodatum[2] == "NA"
+      next if isodatum[2].downcase == "na" || isodata[2].downcase == "null"
       gas_name = isodatum[0]
       gas = gas_cache(gas_name)
       datum = Isodatum.new(
