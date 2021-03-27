@@ -150,8 +150,6 @@ class MofsController < ApplicationController
 
     if @mof.nil?
       @mof = Mof.new(mof_params)
-      puts "batch id:"
-      puts @mof.batch.id
       @mof.save!
     else
       non_nil_params = {}
