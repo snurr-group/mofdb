@@ -1,5 +1,6 @@
 require 'zip'
 require 'zip_tricks'
+require "base64"
 require "#{Rails.root}/app/helpers/application_helper"
 include ApplicationHelper
 
@@ -117,41 +118,38 @@ class MofsController < ApplicationController
 
   def upload
     # Used by the mofdb_upload (on github) to add a new mof
-    name = params[:name]
+    #
+    modified_params = mof_params
+    name = modified_params[:name]
+    puts modified_params.except(:cif)
+
     begin
       elements = JSON.parse(params[:atoms]).map { |atm| Element.find_by(symbol: atm == "x" ? "Xe" : atm) }
-      mof_params[:elements] = elements
+      modified_params[:elements] = elements
     rescue
     end
+    modified_params = modified_params.except(:atoms)
 
-    options = [:name, :hashkey, :cif, :void_fraction, :surface_area_m2g, :surface_area_m2cm3, :pld,
-      :lcd, :pxrd, :mofkey, :mofid, :pore_size_distribution]
-
-    mof_params = params.class.new
-    options.each do |mof_field|
-      if params.include?(mof_field)
-        mof_params[mof_field] = params[mof_field]
-      end
-    end
-    if params.include?(:batch)
-      mof_params[:batch] = Batch.find(params[:batch])
+    if modified_params.include?(:batch)
+      modified_params[:batch] = Batch.find(modified_params[:batch])
     end
 
-    if params[:db] == "hMOFs"
-      mof_params[:database] = Database.find_by(name: "hMOF")
+    if modified_params[:database] == "hMOFs"
+      modified_params[:database] = Database.find_by(name: "hMOF")
     else
-      mof_params[:database] = Database.find_by(name: params[:db])
+      modified_params[:database] = Database.find_by(name: modified_params[:database])
     end
 
-    database = mof_params[:database]
+    database = modified_params[:database]
 
     @mof = Mof.visible.find_by(name: name, database: database)
 
+    puts modified_params.except(:cif)
     if @mof.nil?
-      @mof = Mof.new(mof_params)
+      @mof = Mof.new(modified_params)
       @mof.save!
     else
-      @mof.update(mof_params.except(:batch))
+      @mof.update(modified_params.except(:batch))
     end
     @mof.regen_json
     render status: 200, json: @mof.id.to_json
@@ -332,7 +330,6 @@ class MofsController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def mof_params
-    params.require(:mof).permit(:hashkey, :name, :db, :cif, :void_fraction, :surface_area_m2g, :surface_area_m2cm3, :pld, :lcd, :pxrd, :pore_size_distribution)
+    params.require(:mof).permit(:atoms, :mof, :batch, :mofkey, :mofid, :hashkey, :name, :database, :cif, :void_fraction, :surface_area_m2g, :surface_area_m2cm3, :pld, :lcd, :pxrd, :pore_size_distribution)
   end
-
 end
