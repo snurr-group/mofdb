@@ -299,6 +299,7 @@ function set_link(url, count) {
 
 search_cache = {};
 count_cache = {}
+last_search = "";
 
 function get_params() {
     let vf_min = vf.noUiSlider.get()[0];
@@ -392,14 +393,25 @@ function get_params() {
     } else if (active == "mofkey") {
         url_params["mofkey"] = idkey;
     }
+
     return url_params
 }
 
 function refresh() {
 
-    start_loading();
 
     const url_params = get_params()
+
+    // Don't put anything crazy in url_params
+    // b/c we use JSONify to compare them
+    const flat_params = JSON.stringify(url_params)
+    if (last_search === flat_params) {
+        console.debug("Query matches last search skipping...")
+        return;
+    }
+    last_search = flat_params
+
+    start_loading();
 
     let html_params = Object.assign({}, url_params); // Copy params to html_params and add the flag so the api returns table rows
     html_params['html'] = true;

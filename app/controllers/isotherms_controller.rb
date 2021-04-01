@@ -73,7 +73,7 @@ class IsothermsController < ApplicationController
                              pressure_units: classification_cache(params[:pressure_units]),
                              composition_type: classification_cache(params[:composition_type]))
 
-    @isotherm.save!
+    @isotherm.save
 
     # points [inchikey, pressure, loading, bulk_comp]
     points = []
@@ -97,8 +97,7 @@ class IsothermsController < ApplicationController
       @isotherm.destroy!
       return render :json => {status: "failed", msg: "zero point isotherm"}, status: 500
     end
-    return render :json => {status: "success", isotherm_id: @isotherm.id}, status: 200
-
+    render :json => {status: "success", isotherm_id: @isotherm.id}, status: 200
   end
 
   private

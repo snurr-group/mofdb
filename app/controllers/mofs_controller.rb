@@ -119,7 +119,6 @@ class MofsController < ApplicationController
   def upload
     modified_params = mof_params
     name = modified_params[:name]
-    puts modified_params.except(:cif)
 
     begin
       elements = JSON.parse(params[:atoms]).map { |atm| Element.find_by(symbol: atm == "x" ? "Xe" : atm) }
@@ -173,7 +172,7 @@ class MofsController < ApplicationController
         # I am well aware this is the wrong way to render a view.
         #
         # We do it this way b/c in index route we need to render this same view and we need to pass
-        # in @convertPressure/@convertLoading but we cannot easily pass @ variables only locals using
+        # in @convertPressure/@convertLoading but we cannot easily pass @ variables, only locals using
         # the ApplicationController.render in mof.rb:get_json
         # so by doing it the same ugly way here we at least don't have two different ways of calling
         # that same template.
@@ -297,8 +296,8 @@ class MofsController < ApplicationController
       @mofs = @mofs.where(mofkey: params[:mofkey])
     end
 
-    if params[:DOI] && !params[:DOI].empty?
-      @mofs = @mofs.includes(:isotherms).where("isotherms.doi = (?)", params[:DOI]).references(:isotherms)
+    if params[:doi] && !params[:doi].empty?
+      @mofs = @mofs.joins("JOIN isotherms on isotherms.mof_id = mofs.id and isotherms.doi = '#{Mof.sanitize_sql(params[:doi])}'").distinct
     end
 
     if get_count

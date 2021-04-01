@@ -1,5 +1,3 @@
-
-
 <div id="index_content">
 
   <!--
@@ -112,7 +110,7 @@
     <p class="hcon slider_title">DOI</p>
     <div class="hcon"><input list="doi" id="doi_label" name="doi"/></div>
     <datalist id="doi">
-      <% Isotherm.all.limit(10).pluck(:doi).each do |doi| %>
+      <% Isotherm.all.select(:doi).distinct.pluck(:doi).each do |doi| %>
         <option value="<%= doi %>"> <%= doi %></option>
       <% end %>
     </datalist>
@@ -156,7 +154,7 @@
         <br/>
 
         <div>
-          <a title="cifs + isotherms, will be slow for large #s of mofs" id="download_cifs" href="#" target="_blank" >
+          <a title="cifs + isotherms, will be slow for large #s of mofs" id="download_cifs" href="#" target="_blank">
             ⇩ Download <span id='mofdb-count'></span> Results ⇩
           </a>
         </div>

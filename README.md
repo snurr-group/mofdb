@@ -61,21 +61,3 @@ bundle exec rake environment pregen:json
 ```
 
 This job generates all the json shown on the site. Use this if those values are not appearing for some reason. You likely won't need to run this.
- 
-## Import MOFIDs
-
-First upload the .smi files somewhere to the ulam server. 
-
-Then call the rake task
- ```
-cd /var/www/sites/mof
-bundle exec rake import:mofid /SOME/PATH/core_mofid.smi
- ```
-
-## Import MOFKEYs
-
-First upload the .tsv file somewhere on teh server. Then in the /var/www/ 
-```
-cd /var/www/sites/mof
-bundle exec rake import:mofkey /SOME/PATH/core_mofid.smi
-```

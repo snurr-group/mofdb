@@ -21,14 +21,13 @@ module ApplicationHelper
   def get_db_doi_gas_combos
     combinations = Rails.cache.read("combinations")
     if (combinations.nil?)
-      puts "CACHE MISS"
       combinations = {}
       all_dois = Isotherm.distinct.pluck(:doi).uniq.select { |doi| !doi.nil? }
       Database.all.each do |db|
         puts db.name
         combinations[db] = {}
         dois = all_dois.select { |doi| Isotherm.find_by(doi: doi).mof.database == db }
-        puts "done finding dois"
+        puts "Done finding dois"
         dois.each do |doi|
           gases = Set[]
           query = "SELECT DISTINCT JSON_OBJECTAGG(isodata.gas_id,'') from isotherms
@@ -49,8 +48,8 @@ module ApplicationHelper
       end
       Rails.cache.write('combinations', combinations, expires_in: 30.days)
     else
-      puts "CACHE HIT"
+      puts "Cache hit"
     end
-    return combinations
+    combinations
   end
 end
