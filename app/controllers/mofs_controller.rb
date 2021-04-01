@@ -117,8 +117,6 @@ class MofsController < ApplicationController
   end
 
   def upload
-    # Used by the mofdb_upload (on github) to add a new mof
-    #
     modified_params = mof_params
     name = modified_params[:name]
     puts modified_params.except(:cif)
