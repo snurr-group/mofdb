@@ -28,7 +28,7 @@ class MofsController < ApplicationController
     get_count = request.path == "/mofs/count" || request.format.to_s == "application/json"
 
     if params[:html] || params[:bulk] && params[:bulk] == 'true'
-      @mofs = visible.includes(:database, :elements, :gases)
+      @mofs = visible.includes(:database, :elements, :gases, :batch)
     else
       respond_to do |format|
         format.html { @mofs = visible.includes(:database) }
@@ -74,6 +74,7 @@ class MofsController < ApplicationController
                    .includes(:adsorption_units)
                    .includes(:pressure_units)
                    .includes(:composition_type)
+                   .includes(:batch)
 
       @convertPressure = session[:prefPressure] ? Classification.find(session[:prefPressure]) : nil
       @convertLoading = session[:prefLoading] ? Classification.find(session[:prefLoading]) : nil
