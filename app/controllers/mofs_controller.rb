@@ -106,11 +106,25 @@ class MofsController < ApplicationController
 
     respond_to do |format|
       format.json {
-        # Instead of generating json on the fly we store it in a pre-generated column and just concat those columns
         if request.path == "/mofs/count"
           return render json: { count: @count }
         else
-          return render :json => { results: @mofs.pluck(:pregen_json), pages: @pages, page: @page }
+
+          result = { results: [], pages: @pages, page: @page }
+          convertPressure = session[:prefPressure] ? Classification.find(session[:prefPressure]) : nil
+          convertLoading = session[:prefLoading] ? Classification.find(session[:prefLoading]) : nil
+          if convertPressure.nil? && convertLoading.nil?
+            # Instead of generating json on the fly we store it in a pre-generated column and just concat those columns
+            result[:results] = @mofs.pluck(:pregen_json)
+            return render :json => result
+          else
+            # In this case we need to convert pressure/Loading on the fly
+            @mofs.each do |mof|
+              result[:results].append(JSON.parse(mof.get_json(convertPressure, convertLoading)))
+            end
+            return render :json => result
+          end
+
         end
       }
     end
@@ -142,7 +156,6 @@ class MofsController < ApplicationController
 
     @mof = Mof.visible.find_by(name: name, database: database)
 
-    puts modified_params.except(:cif)
     if @mof.nil?
       @mof = Mof.new(modified_params)
       @mof.save!

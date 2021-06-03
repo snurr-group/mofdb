@@ -24,36 +24,19 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def setSessionForHeader(input, session_key)
+    if input == "native" && !session[session_key].nil?
+      session.delete(session_key)
+    elsif input.to_i != 0
+      session[session_key] = Classification.find(input).id
+    elsif input.is_a?(String)
+      session[session_key] = Classification.find_by(name: input).id
+    end
+  end
+
   def setPreferredUnits
-
-    loading = request.headers['loading']
-    pressure = request.headers['pressure']
-
-    if session[:prefLoading] && session[:prefLoading].class.name != "Integer"
-      session[:prefLoading] = Classification.find_by(name: session[:prefLoading])
-    end
-    if session[:prefPressure] && session[:prefPressure].class.name != "Integer"
-      session[:prefPressure] = Classification.find_by(name: session[:prefPressure])
-    end
-
-    if loading
-      if loading == "native"
-        session[:prefLoading] = nil
-      else
-        loading = Classification.find_by(name: request.headers['loading'])
-        session[:prefLoading] = loading.id
-      end
-    end
-    if pressure
-      if pressure == "native"
-        session[:prefPressure] = nil
-      else
-        pressure = Classification.find_by(name: request.headers['pressure'])
-        session[:prefPressure] = pressure.id
-      end
-    end
-    puts session[:prefLoading]
-    puts session[:prefPressure]
+    setSessionForHeader(request.headers['loading'], :prefLoading)
+    setSessionForHeader(request.headers['pressure'], :prefPressure)
   end
 
   def setUnits
