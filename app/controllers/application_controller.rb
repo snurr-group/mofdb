@@ -30,17 +30,17 @@ class ApplicationController < ActionController::Base
     pressure = request.headers['pressure']
 
     if session[:prefLoading] && session[:prefLoading].class.name != "Integer"
-      session[:prefLoading] = nil
+      session[:prefLoading] = Classification.find_by(name: session[:prefLoading])
     end
     if session[:prefPressure] && session[:prefPressure].class.name != "Integer"
-      session[:prefPressure] = nil
+      session[:prefPressure] = Classification.find_by(name: session[:prefPressure])
     end
 
     if loading
       if loading == "native"
         session[:prefLoading] = nil
       else
-        loading = Classification.find(request.headers['loading'])
+        loading = Classification.find_by(name: request.headers['loading'])
         session[:prefLoading] = loading.id
       end
     end
@@ -48,10 +48,12 @@ class ApplicationController < ActionController::Base
       if pressure == "native"
         session[:prefPressure] = nil
       else
-        pressure = Classification.find(request.headers['pressure'])
+        pressure = Classification.find_by(name: request.headers['pressure'])
         session[:prefPressure] = pressure.id
       end
     end
+    puts session[:prefLoading]
+    puts session[:prefPressure]
   end
 
   def setUnits
