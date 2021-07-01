@@ -13,22 +13,22 @@ window.onbeforeunload = function () {
 
 function create_heat(json) {
     let heat_section = document.getElementById('heat_section');
-    create_heat_or_iso(json, heat_section)
+    create_heat_or_iso(json, heat_section, "Heat of Adsorption")
 }
 
 function create_isotherm(json) {
     let isotherms_section = document.getElementById('isotherm_section');
-    create_heat_or_iso(json, isotherms_section)
+    create_heat_or_iso(json, isotherms_section, "Loading")
 }
 
-function create_heat_or_iso(json, parentElement) {
+function create_heat_or_iso(json, parentElement, yaxis_name) {
     let child = document.createElement('div');
     let id = 'isotherm_graph_' + json.id;
     child.setAttribute('id', id);
     child.setAttribute('class', "isotherm_graph");
     parentElement.appendChild(child);
 
-    let loading_label = "Loading [" + json['adsorptionUnits'] + "]";
+    let loading_label = `${yaxis_name} [" + json['adsorptionUnits'] + "]`;
     let pressure_label = "Pressure [" + json['pressureUnits'] + "]";
     let adsorbates = [];
 
