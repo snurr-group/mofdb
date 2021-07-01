@@ -28,7 +28,7 @@ function create_heat_or_iso(json, parentElement, yaxis_name) {
     child.setAttribute('class', "isotherm_graph");
     parentElement.appendChild(child);
 
-    let loading_label = `${yaxis_name} [" + json['adsorptionUnits'] + "]`;
+    let loading_label = `${yaxis_name} [${json['adsorptionUnits']}]`;
     let pressure_label = "Pressure [" + json['pressureUnits'] + "]";
     let adsorbates = [];
 
