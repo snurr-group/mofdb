@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_27_002258) do
+ActiveRecord::Schema.define(version: 2021_07_01_002230) do
 
   create_table "batches", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -77,19 +77,6 @@ ActiveRecord::Schema.define(version: 2021_03_27_002258) do
     t.index ["inchicode"], name: "index_gases_on_inchicode"
     t.index ["inchikey"], name: "index_gases_on_inchikey"
     t.index ["name"], name: "index_gases_on_name"
-  end
-
-  create_table "heats", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.float "pressure"
-    t.float "value"
-    t.bigint "gas_id"
-    t.bigint "value_units_id"
-    t.bigint "pressure_units_id"
-    t.bigint "mof_id"
-    t.index ["gas_id"], name: "index_heats_on_gas_id"
-    t.index ["mof_id"], name: "index_heats_on_mof_id"
-    t.index ["pressure_units_id"], name: "index_heats_on_pressure_units_id"
-    t.index ["value_units_id"], name: "index_heats_on_value_units_id"
   end
 
   create_table "isodata", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -169,8 +156,6 @@ ActiveRecord::Schema.define(version: 2021_03_27_002258) do
     t.index ["gas_id"], name: "index_synonyms_on_gas_id"
   end
 
-  add_foreign_key "heats", "classifications", column: "pressure_units_id"
-  add_foreign_key "heats", "classifications", column: "value_units_id"
   add_foreign_key "isodata", "gases"
   add_foreign_key "isodata", "isotherms"
   add_foreign_key "isotherms", "batches"

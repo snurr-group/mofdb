@@ -84,15 +84,35 @@
 
   </div>
   <div id="right">
-    <% if @mof.isotherms.any? %>
+    <% if @mof.isotherms.not_heats.any? %>
       <div class="lead">Isotherms <%= link_to "<button>View JSON</button>".html_safe, mof_path(@mof, format: :json) %></div>
       <% if (@msg) %>
         <p>⚠️ <%= @msg.html_safe %></p>
       <% end %>
-    <% else
-         @mof.isotherms.any? %>
-      <p class="lead">This mof has no isotherms</p>
+    <% else %>
+      <p class="lead">This mof has no
+        isotherms <%= link_to "<button>View JSON</button>".html_safe, mof_path(@mof, format: :json) %></p>
     <% end %>
     <div class="spacer"></div>
+
+    <div id="isotherms_loading" class="hcon">
+      <img src=<%= image_path("loading.svg") %>/>
+    </div>
+    <div id="isotherm_section"></div>
+    <div class="spacer"></div>
+
+    <% if @mof.isotherms.heats.any? %>
+      <div class="lead">Heats of Adsorption</div>
+    <% else %>
+      <p class="lead">This mof has no heats of adsorption</p>
+    <% end %>
+    <div class="spacer"></div>
+
+    <div id="heats_loading" class="hcon">
+      <img src=<%= image_path("loading.svg") %>/>
+    </div>
+
+    <div id="heat_section"></div>
+
   </div>
 </div>

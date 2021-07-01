@@ -4,6 +4,8 @@ class IsothermsController < ApplicationController
   before_action :verify_access, only: [:upload]
   before_action :cache, except: [:upload]
 
+
+
   def index
     if params[:mof_id]
       @isotherms = Mof.find(params[:mof_id]).isotherms
@@ -23,6 +25,8 @@ class IsothermsController < ApplicationController
   end
 
   def show
+    @convertPressure = session[:prefPressure] ? Classification.find(session[:prefPressure]) : nil
+    @convertLoading = session[:prefLoading] ? Classification.find(session[:prefLoading]) : nil
   end
 
   def upload

@@ -129,7 +129,13 @@
   </div>
   <div id="table_outer">
     <div id="table_inner">
-      <%= render :partial => "loading.svg" %>
+      <div id="loading_holder">
+        <div id="loading">
+          <div class="hcon">
+            <img alt="Loading icon spinning" src="<%= image_path('loading.svg') %>"/>
+          </div>
+        </div>
+      </div>
       <div id="table_wrap">
         <table class="display nowrap" style='width:100%' id='mof_table'>
           <thead>

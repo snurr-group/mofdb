@@ -171,6 +171,7 @@ class MofsController < ApplicationController
   def show
     @convertPressure = session[:prefPressure] ? Classification.find(session[:prefPressure]) : nil
     @convertLoading = session[:prefLoading] ? Classification.find(session[:prefLoading]) : nil
+
     if !@mof.convertable
       @msg = "This mof is missing molarMass or volume and thus we cannot do automatic unit conversion"
     end
