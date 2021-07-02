@@ -270,7 +270,7 @@ function set_table(data) {
             responsive: true,
             dom: 'Bfrtip',
             buttons: [
-                'csv', 'pdf', 'excel',
+                // 'csv', 'excel',
             ],
             "pageLength": 15,
             "columnDefs": [

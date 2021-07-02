@@ -14,17 +14,18 @@
 //= require jquery.3.1.js
 //= require jquery.dataTables.min.js
 //= require dataTables.responsive.min.js
-//= require pdfmake.min.js
-//= require jszip.min.js
+
 //= require activestorage
 //= require_tree .
 //= require nouislider
 
-window.addEventListener('DOMContentLoaded', (event) => {
 
+
+
+window.addEventListener('DOMContentLoaded', (event) => {
     const env = document.querySelector('body').dataset['rails_env']
 
-    if (env == 'production') {
+    if (env === 'production') {
         window.dataLayer = window.dataLayer || [];
         function gtag() {dataLayer.push(arguments);}
         gtag('js', new Date());
