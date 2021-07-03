@@ -13,6 +13,7 @@ Rails.application.routes.draw do
 
   resources :batches, only: [:show, :index, :destroy, :create]
   resources :forcefields, only: [:index, :create, :update, :edit]
+  resources :force_field_zip, only: [:create, :destroy, :index]
   resources :classifications, only: [:index]
 
   resources :isotherms, format: :json do
