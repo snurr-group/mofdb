@@ -15,7 +15,7 @@
             <h4><%= doi %></h4>
             <% doiToGas[doi].to_a.each do |gases| %>
               <a title="All isotherms for this gas and this doi + relevant cif files" href='/Datasets/<%= get_zip_name(database, doi, gases) %>'>
-                <%= gases.map { |g| g.name}.join("/") %>
+                <%= gases.map { |g| g.name }.join("/") %>
               </a>
             <% end %>
             <a title="All isotherms + cifs for this doi" href='/Datasets/<%= get_zip_name(database, doi, nil) %>'>
@@ -27,15 +27,21 @@
     <% end %>
   </div>
 
+<!--  <h1>Download Forcefields</h1>-->
+<!--  <ul>-->
+<!--    <li><a href="/FF/hMOFs-CO2.zip">hMOF CO2</a></li>-->
+<!--    <li><a href="/FF/hMOFs-hydrogen.zip">hMOF Hydrogen</a></li>-->
+<!--    <li><a href="/FF/hMOFs-methane.zip">hMOF Methane</a></li>-->
+<!--    <li><a href="/FF/hMOFs-N2.zip">hMOF N2</a></li>-->
+<!--    <li><a href="/FF/hMOFs-XeKr.zip">hMOF XeKr</a></li>-->
+<!--    <li><a href="/FF/Tobacco_Hydrogen.zip">Tobacco Hydrogen</a></li>-->
+<!--    <li><a href="/FF/Tobacco_methane.zip">Tobacco Methane</a></li>-->
+<!--    <li><a href="/FF/tobacco_XeKr.zip">Tobacco XeKr</a></li>-->
+<!--  </ul>-->
   <h1>Download Forcefields</h1>
   <ul>
-    <li><a href="/FF/hMOFs-CO2.zip">hMOF CO2</a></li>
-    <li><a href="/FF/hMOFs-hydrogen.zip">hMOF Hydrogen</a></li>
-    <li><a href="/FF/hMOFs-methane.zip">hMOF Methane</a></li>
-    <li><a href="/FF/hMOFs-N2.zip">hMOF N2</a></li>
-    <li><a href="/FF/hMOFs-XeKr.zip">hMOF XeKr</a></li>
-    <li><a href="/FF/Tobacco_Hydrogen.zip">Tobacco Hydrogen</a></li>
-    <li><a href="/FF/Tobacco_methane.zip">Tobacco Methane</a></li>
-    <li><a href="/FF/tobacco_XeKr.zip">Tobacco XeKr</a></li>
+    <% ForceFieldZip.all.each do |zip| %>
+      <li><a href='<%= url_for(zip.file) %>'><%= zip.name %></a></li>
+    <% end %>
   </ul>
 </div>
