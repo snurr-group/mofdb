@@ -6,7 +6,7 @@
   $ pip3 install requests
   import requests
   resp = requests.request('GET', 'https://mof.tech.northwestern.edu/mofs.json',
-          headers={'loading': 'pa', 'pressure': 'bar'},
+          headers={'loading': 'cm3(STP)/cm3', 'pressure': 'bar'},
           params={'vf_min': 0.5, 'vf_max': 1})
   resp = resp.json()
   print(resp.keys())

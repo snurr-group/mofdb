@@ -79,7 +79,6 @@ module UnitsHelper
 
     # volume of a mol of unit cells in cm3
     volumeMolCm3 = (volumeA3 * avogadro) / 1e+24 #  [cm3/mol]
-
     molarMass = unitCellMass
 
     if from == "cm3(STP)"
@@ -97,7 +96,7 @@ module UnitsHelper
       grams = value / 1000.0
       molesOfUnitCells = grams / molarMass
     else
-      raise UnsupportedUnit.new("What? #{from}")
+      raise UnsupportedUnit.new("Can't convert mof unit '#{from}' as from unit'")
     end
 
     if to == "cm3"
@@ -111,6 +110,8 @@ module UnitsHelper
       return (molesOfUnitCells * molarMass) / 1000.0
     elsif to == "mg"
       return (molesOfUnitCells * molarMass) * 1000.0
+    else
+      raise UnsupportedUnit.new("Can't convert mof unit '#{to}' as to unit")
     end
 
   end

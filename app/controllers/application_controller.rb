@@ -24,19 +24,36 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def setSessionForHeader(input, session_key)
+  def setSessionForHeader(input, session_key, expected_classification_source)
+    # Input: What the user sent, either a number representing a classification's id or a string that is it's name
+    # session_key: :prefPressure or :prefLoading where to store the final parsed classification id
+    # expected_classification_source: either "pressure" or "loading".
+    #   Prevents someone setting "pa" as their preferred loading since that's a pressure not a loading
+    if input.nil?
+      return
+    end
     if input == "native" && !session[session_key].nil?
       session.delete(session_key)
-    elsif input.to_i != 0
-      session[session_key] = Classification.find(input).id
-    elsif input.is_a?(String)
-      session[session_key] = Classification.find_by(name: input).id
+    else
+      if input.to_i != 0
+        classification = Classification.find(input)
+      elsif input.is_a?(String)
+        classification = Classification.find_by(name: input)
+      else
+        return render json: {"error": "We don't know what unit '#{input}' is"}, status: 500
+      end
+      session[session_key] = classification.id
+      if classification.source != expected_classification_source
+        session.delete(session_key)
+        supported = Classification.where(convertable: true, source: expected_classification_source).pluck(:name)
+        return render json: {"error": "#{input} is not a known #{expected_classification_source} by id or name. Supported options are #{supported}"}, status: 500
+      end
     end
   end
 
   def setPreferredUnits
-    setSessionForHeader(request.headers['loading'], :prefLoading)
-    setSessionForHeader(request.headers['pressure'], :prefPressure)
+    setSessionForHeader(request.headers['loading'], :prefLoading, "loading")
+    setSessionForHeader(request.headers['pressure'], :prefPressure, "pressure")
   end
 
   def setUnits
