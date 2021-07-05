@@ -140,7 +140,7 @@ module UnitsHelper
     elsif from == "mmol"
       value / 1000.0
     else
-      raise UnsupportedGasUnit("Unknown conversion from #{from}")
+      raise UnsupportedUnit.new("Unknown gas conversion from #{from}")
     end
 
     if to == "mg"
@@ -157,7 +157,7 @@ module UnitsHelper
     elsif to == "mmol"
       return 1000.0 * moles
     else
-      raise UnsupportedUnit("We don't know how to convert from #{from} to #{to}")
+      raise UnsupportedUnit.new("We don't know how to convert from #{from} to --> #{to}, to is the problem")
     end
   end
 end
