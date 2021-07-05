@@ -124,21 +124,21 @@ module UnitsHelper
 
     moles = nil
 
-    if from == "mg"
+    moles = if from == "mg"
       g = value / 1000
-      moles = g / molarMass
+      g / molarMass
     elsif from == "mol"
-      moles = value
+      value
     elsif from == "g"
-      moles = value / molarMass
+      value / molarMass
     elsif from == "cm3"
       liters = value / 1000.0
-      moles = pressureAtm * liters / (r * tempK)
+      pressureAtm * liters / (r * tempK)
     elsif from == "cm3(STP)"
       liters = value / 1000.0
-      moles = atmSTP * liters / (r * tempSTP)
+      atmSTP * liters / (r * tempSTP)
     elsif from == "mmol"
-      moles = value / 1000.0
+      value / 1000.0
     else
       raise UnsupportedGasUnit("Unknown conversion from #{from}")
     end
@@ -156,6 +156,8 @@ module UnitsHelper
       return liters * 1000
     elsif to == "mmol"
       return 1000.0 * moles
+    else
+      raise UnsupportedUnit("We don't know how to convert from #{from} to #{to}")
     end
   end
 end
