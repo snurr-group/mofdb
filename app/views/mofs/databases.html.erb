@@ -38,10 +38,12 @@
 <!--    <li><a href="/FF/Tobacco_methane.zip">Tobacco Methane</a></li>-->
 <!--    <li><a href="/FF/tobacco_XeKr.zip">Tobacco XeKr</a></li>-->
 <!--  </ul>-->
-  <h1>Download Forcefields</h1>
-  <ul>
-    <% ForceFieldZip.all.each do |zip| %>
-      <li><a href='<%= url_for(zip.file) %>'><%= zip.name %></a></li>
-    <% end %>
-  </ul>
+  <% @groups.each do |name, files| %>
+  <h1><%= name %></h1>
+    <ul>
+      <% files.each do |zip| %>
+        <li><a href='<%= url_for(zip.file) %>'><%= zip.name %></a></li>
+      <% end %>
+    </ul>
+  <% end %>
 </div>

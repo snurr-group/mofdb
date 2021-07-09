@@ -191,8 +191,8 @@ class MofsController < ApplicationController
         # the ApplicationController.render in mof.rb:get_json
         # so by doing it the same ugly way here we at least don't have two different ways of calling
         # that same template.
-        json = @mof.get_json(@convertPressure, @convertLoading)
-        return render :json => json, status: 200
+        return render :json => @mof.get_json(@convertPressure, @convertLoading),
+                      status: 200
       }
     end
   end
@@ -218,6 +218,15 @@ class MofsController < ApplicationController
   # GET /databases
   def databases
     @combinations = get_db_doi_gas_combos
+
+    @groups = {}
+    DatabaseFile.all.each do |file|
+      if @groups.keys.include?(file.category)
+        @groups[file.category] << file
+      else
+        @groups[file.category] = [file]
+      end
+    end
   end
 
   private

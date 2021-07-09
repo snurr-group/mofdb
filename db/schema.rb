@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_03_194742) do
+ActiveRecord::Schema.define(version: 2021_07_09_230828) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -33,7 +33,7 @@ ActiveRecord::Schema.define(version: 2021_07_03_194742) do
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
-  create_table "batches", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "batches", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -48,6 +48,14 @@ ActiveRecord::Schema.define(version: 2021_07_03_194742) do
     t.index ["convertable"], name: "index_classifications_on_convertable"
     t.index ["name"], name: "index_classifications_on_name", unique: true
     t.index ["source"], name: "index_classifications_on_source"
+  end
+
+  create_table "database_files", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.string "name", null: false
+    t.string "category"
+    t.index ["category"], name: "index_database_files_on_category"
   end
 
   create_table "databases", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -71,12 +79,6 @@ ActiveRecord::Schema.define(version: 2021_07_03_194742) do
     t.bigint "element_id", null: false
     t.index ["element_id"], name: "index_elements_mofs_on_element_id"
     t.index ["mof_id"], name: "index_elements_mofs_on_mof_id"
-  end
-
-  create_table "force_field_zips", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.string "name", null: false
   end
 
   create_table "forcefields", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
