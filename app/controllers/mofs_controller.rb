@@ -3,6 +3,7 @@ require 'zip_tricks'
 require "base64"
 require "#{Rails.root}/app/helpers/application_helper"
 include ApplicationHelper
+include MofsHelper
 
 class MofsController < ApplicationController
   include ActionController::Live
@@ -15,7 +16,7 @@ class MofsController < ApplicationController
   # GET /mofs
   # GET /mofs.json
   def index
-    visible = Mof.all.visible
+    @mofs = Mof.all.visible
     if request.path == "/"
       # If there are no filters just render the html view
       return render 'index'
@@ -27,13 +28,9 @@ class MofsController < ApplicationController
 
     get_count = request.path == "/mofs/count" || request.format.to_s == "application/json"
 
-    if params[:html] || params[:bulk] && params[:bulk] == 'true'
-      @mofs = visible.includes(:database, :elements, :gases, :batch)
-    else
-      respond_to do |format|
-        format.html { @mofs = visible.includes(:database) }
-        format.json { @mofs = visible }
-      end
+    if params[:html]
+      # @mofs = @mofs.includes(:elements, :gases, :batch)
+      @mofs = @mofs.includes(:elements, :gases, :batch)
     end
 
     begin
@@ -48,60 +45,11 @@ class MofsController < ApplicationController
       response.headers['mofdb-pages'] = @pages
     end
 
-    # Render table rows using rails view _rows.html.erb
-    return render partial: 'mofs/rows' if params[:html]
-
-    # If params[:bulk]
-    if params[:bulk] && params[:bulk] == "true"
-      zip_name = "mofs-bulk-search-download.zip"
-      send_file_headers!(
-        type: "application/zip",
-        disposition: "attachment",
-        filename: zip_name
-      )
-      response.headers["Last-Modified"] = Time.now.httpdate.to_s
-      response.headers["X-Accel-Buffering"] = "no"
-
-      writer = ZipTricks::BlockWrite.new do |chunk|
-        response.stream.write(chunk)
-      end
-
-      @mofs = @mofs.convertable.includes(:isotherms)
-                   .includes(:isodata)
-                   .includes(:gases)
-                   .includes(:adsorbate_forcefields)
-                   .includes(:molecule_forcefields)
-                   .includes(:adsorption_units)
-                   .includes(:pressure_units)
-                   .includes(:composition_type)
-                   .includes(:batch)
-
-      @convertPressure = session[:prefPressure] ? Classification.find(session[:prefPressure]) : nil
-      @convertLoading = session[:prefLoading] ? Classification.find(session[:prefLoading]) : nil
-      begin
-        ZipTricks::Streamer.open(writer) do |zip|
-          @mofs.in_batches(of: 500).each_record do |mof|
-            begin
-              content = mof.get_json(@convertPressure, @convertLoading)
-              cif = mof.cif
-              zip.write_deflated_file("#{mof.name}-(id:#{mof.id}).json") do |file_writer|
-                file_writer << content
-              end
-              zip.write_deflated_file("#{mof.name}-(id:#{mof.id}).cif") do |file_writer|
-                file_writer << cif
-              end
-            rescue Exception => e
-              next
-            end
-          end
-        end
-      rescue Exception => e
-        Sentry.capture_message("Error while creating a zip file #{request.url.to_s}")
-      ensure
-        response.stream.close
-        return
-      end
-
+    if params[:html]
+      return render partial: 'mofs/rows'
+    elsif params[:bulk] && params[:bulk] == "true"
+      send_zip_file(@mofs)
+      return
     end
 
     respond_to do |format|
@@ -109,18 +57,18 @@ class MofsController < ApplicationController
         if request.path == "/mofs/count"
           return render json: { count: @count }
         else
-
           result = { results: [], pages: @pages, page: @page }
-          convertPressure = session[:prefPressure] ? Classification.find(session[:prefPressure]) : nil
-          convertLoading = session[:prefLoading] ? Classification.find(session[:prefLoading]) : nil
-          if convertPressure.nil? && convertLoading.nil?
+          convert_pressure = session[:prefPressure] ? Classification.find(session[:prefPressure]) : nil
+          convert_loading = session[:prefLoading] ? Classification.find(session[:prefLoading]) : nil
+          if convert_pressure.nil? && convert_loading.nil?
             # Instead of generating json on the fly we store it in a pre-generated column and just concat those columns
             result[:results] = @mofs.pluck(:pregen_json)
             return render :json => result
           else
             # In this case we need to convert pressure/Loading on the fly
             @mofs.each do |mof|
-              result[:results].append(JSON.parse(mof.get_json(convertPressure, convertLoading)))
+              puts "\n\n\n #{mof.id}"
+              result[:results].append(JSON.parse(mof.get_json(convert_pressure, convert_loading)))
             end
             return render :json => result
           end
@@ -136,10 +84,10 @@ class MofsController < ApplicationController
     name = modified_params[:name]
 
     begin
-      elements = JSON.parse(params[:atoms]).map { |atm| Element.find_by(symbol: atm == "x" ? "Xe" : atm) }
+      elements =  JSON.parse(params[:atoms]).map { |atm| Element.find_by(symbol: atm == "x" ? "Xe" : atm) }
       modified_params[:elements] = elements
-    rescue
     end
+
     modified_params = modified_params.except(:atoms)
 
     if modified_params.include?(:batch)
@@ -175,7 +123,6 @@ class MofsController < ApplicationController
     if !@mof.convertable
       @msg = "This mof is missing molarMass or volume and thus we cannot do automatic unit conversion"
     end
-
 
     if @mof.isotherms.convertable.size != @mof.isotherms.size
       @msg = "Some isotherms for this mof use units we do not know how to convert"

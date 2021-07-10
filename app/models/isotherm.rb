@@ -19,9 +19,14 @@ class Isotherm < ApplicationRecord
   # 1. Regular isotherms (not_heats)
   # 2. Heats of adsorption (any isotherm with units of kj/mol)
   # Scopes are used to separate them in ui/json responses
-  scope :not_heats, -> { where.not(adsorption_units: Classification.find_by(name:"kj/mol")) }
-  scope :heats, -> { where(adsorption_units: Classification.find_by(name:"kj/mol")) }
 
+  scope :not_heats, -> { joins("INNER JOIN classifications as clas_for_not_heats on clas_for_not_heats.id = isotherms.adsorption_units_id")
+                           .where("clas_for_not_heats.source != 'heat'") }
+
+  scope :heats, -> { joins("INNER JOIN classifications as clas_for_heats on clas_for_heats.id = isotherms.adsorption_units_id")
+                       .where("clas_for_heats.source = 'heat'") }
+
+  # scope :not_heats, -> { where.not(adsorption_units: Classification.find_by(name:"kj/mol")) }
 
   # Does this isotherm have adsorption_units and pressure_units that are marked convertable?
   scope :convertable, -> { joins("JOIN classifications as clas_adsorp on isotherms.adsorption_units_id = clas_adsorp.id")
@@ -52,10 +57,13 @@ class Isotherm < ApplicationRecord
     isodata
   end
 
-  def points(can_convert_pressure, # Do we have enough information to convert pressure units
-             can_convert_loading,  # ^
-             convert_pressure,     # A Classification object to convert to
-             convert_loading)      # ^
+  def points(
+    can_convert_pressure, # Do we have enough information to convert pressure units
+    can_convert_loading, # ^
+    convert_pressure, # A Classification object to convert pressure/loading to
+    convert_loading # ^
+  )
+
     points = {}
     self.isodata.each do |isodata|
       pressure = can_convert_pressure ?
@@ -64,7 +72,8 @@ class Isotherm < ApplicationRecord
       loading = can_convert_loading ?
                   convert_adsorption_units(self.adsorption_units, convert_loading, isodata) :
                   isodata.loading
-      subpoint = { 'gas': isodata.gas,
+      subpoint = { 'inchikey': isodata.gas.inchikey,
+                   'gas_name': isodata.gas.name,
                    'composition': isodata.bulk_composition,
                    'adsorption': loading }
       unless points.key?(pressure)

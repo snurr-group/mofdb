@@ -15,10 +15,12 @@ json.url mof_path(mof, format: :json)
 json.adsorbates gases.uniq.map { |g| g.to_nist_json }
 
 
-json.heats(mof.isotherms.heats) do |heat|
+
+isos = mof.isotherms.includes([:gases])
+json.heats(isos.heats) do |heat|
   print_iso(json, heat, convert_pressure, convert_loading)
 end
 
-json.isotherms(mof.isotherms.not_heats) do |isotherm|
+json.isotherms(isos.not_heats) do |isotherm|
   print_iso(json, isotherm, convert_pressure, convert_loading)
 end

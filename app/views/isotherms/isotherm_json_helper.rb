@@ -34,8 +34,8 @@ def print_iso(json,             # jbuilder json rendering object
     json.pressure pressure
     json.total_adsorption point['total_adsorption']
     json.species_data(point['entries']) do |subpoint|
-      json.InChIKey subpoint[:gas].inchikey
-      json.name subpoint[:gas].name
+      json.InChIKey subpoint[:inchikey]
+      json.name subpoint[:gas_name]
       json.composition subpoint[:composition]
       json.adsorption subpoint[:adsorption]
     end
