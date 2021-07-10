@@ -43,6 +43,8 @@ module MofsHelper
           end
         end
       end
+    rescue ActionController::Live::ClientDisconnected
+      return
     rescue Exception => e
       if Rails.env.production?
         Sentry.capture_message("Error while creating a zip file #{request.url.to_s}")
