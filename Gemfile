@@ -18,7 +18,8 @@ gem 'bootsnap', '>= 1.1.0', require: false
 gem 'dotenv-rails'
 gem 'nouislider-rails'
 
-gem "sentry-raven"
+gem "sentry-ruby"
+gem "sentry-rails"
 
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]

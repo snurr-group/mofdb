@@ -1,5 +1,3 @@
-require 'sentry-raven'
-
 module MofsHelper
   def send_zip_file(mofs)
 
