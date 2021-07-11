@@ -18,13 +18,14 @@ module MofsHelper
                .includes(:batch)
                .includes(:database)
                .includes(:gases)
-    # .includes({ isotherms: [:molecule_forcefield,
-    #                         :adsorbate_forcefield,
-    #                         :adsorption_units,
-    #                         :pressure_units,
-    #                         :composition_type,
-    #                         :batch,
-    #                         { isodata: [:gas] }] })
+               .includes({ isotherms: [:batch,
+                                       :adsorbate_forcefield,
+                                       :molecule_forcefield,
+                                       :adsorption_units,
+                                       :pressure_units,
+                                       :composition_type] })
+
+
     convert_pressure = session[:prefPressure] ? Classification.find(session[:prefPressure]) : nil
     convert_loading = session[:prefLoading] ? Classification.find(session[:prefLoading]) : nil
 

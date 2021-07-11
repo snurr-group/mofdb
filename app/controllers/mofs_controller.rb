@@ -13,39 +13,35 @@ class MofsController < ApplicationController
   before_action :verify_access, only: [:upload]
   before_action :cache, except: [:upload]
 
+  def count
+    # Finding the count of MOFs is the slowest part of the search
+    # to speedup the frontend we decouple this from main search query
+    # into a separate request to /mofs/count?normal_query_params
+    @mofs = filter_mofs(Mof.all.visible)
+    @count = Rails.cache.fetch("mofcount-params-#{params.to_s}") do
+      @mofs.count
+    end
+    @pages = (@count.to_f / ENV['PAGE_SIZE'].to_f).ceil
+  end
+
+  # GET /
+  def homepage
+  end
+
   # GET /mofs
   # GET /mofs.json
   def index
     @mofs = Mof.all.visible
-    if request.path == "/"
-      # If there are no filters just render the html view
-      return render 'index'
-    end
-
-    # Finding the count of MOFs is the slowest part of the search
-    # to speedup the frontend we decouple this from main search query
-    # into a separate request to /mofs/count?normal_query_params
-
-    get_count = request.path == "/mofs/count" || request.format.to_s == "application/json"
-
-    if params[:html]
-      # @mofs = @mofs.includes(:elements, :gases, :batch)
-      @mofs = @mofs.includes(:elements, :gases, :batch)
-    end
 
     begin
-      filter_mofs(get_count)
+      @mofs = filter_mofs(@mofs)
     rescue PageTooLarge
       return render :json => { error: "Page number too large" }, status: 400
     end
 
-    if get_count
-      @pages = (@count.to_f / ENV['PAGE_SIZE'].to_f).ceil
-      response.headers['mofdb-count'] = @count
-      response.headers['mofdb-pages'] = @pages
-    end
-
     if params[:html]
+      @mofs = @mofs.includes([:elements, :database])
+      @mofs = @mofs.take(100)
       return render partial: 'mofs/rows'
     elsif params[:bulk] && params[:bulk] == "true"
       send_zip_file(@mofs)
@@ -54,25 +50,32 @@ class MofsController < ApplicationController
 
     respond_to do |format|
       format.json {
-        if request.path == "/mofs/count"
-          return render json: { count: @count }
-        else
-          result = { results: [], pages: @pages, page: @page }
-          convert_pressure = session[:prefPressure] ? Classification.find(session[:prefPressure]) : nil
-          convert_loading = session[:prefLoading] ? Classification.find(session[:prefLoading]) : nil
-          if convert_pressure.nil? && convert_loading.nil?
-            # Instead of generating json on the fly we store it in a pre-generated column and just concat those columns
-            result[:results] = @mofs.pluck(:pregen_json)
-            return render :json => result
-          else
-            # In this case we need to convert pressure/Loading on the fly
-            @mofs.each do |mof|
-              puts "\n\n\n #{mof.id}"
-              result[:results].append(JSON.parse(mof.get_json(convert_pressure, convert_loading)))
-            end
-            return render :json => result
-          end
 
+
+        @page = params['page'].to_i # nil -> 0
+        @page = 1 if @page == 0
+        offset = (ENV['PAGE_SIZE'].to_i) * (@page - 1)
+        raise PageTooLarge if offset > @mofs.size
+        @mofs = @mofs.offset(offset).take(ENV['PAGE_SIZE'])
+
+        @count = Rails.cache.fetch("mofcount-params-#{params.to_s}") do
+          @mofs.count
+        end
+        @pages = (@count.to_f / ENV['PAGE_SIZE'].to_f).ceil
+
+        result = { results: [], pages: @pages, page: @page }
+        convert_pressure = session[:prefPressure] ? Classification.find(session[:prefPressure]) : nil
+        convert_loading = session[:prefLoading] ? Classification.find(session[:prefLoading]) : nil
+        if convert_pressure.nil? && convert_loading.nil?
+          # Instead of generating json on the fly we store it in a pre-generated column and just concat those columns
+          result[:results] = @mofs.pluck(:pregen_json)
+          return render :json => result
+        else
+          # In this case we need to convert pressure/Loading on the fly
+          @mofs.each do |mof|
+            result[:results].append(JSON.parse(mof.get_json(convert_pressure, convert_loading)))
+          end
+          return render :json => result
         end
       }
     end
@@ -84,7 +87,7 @@ class MofsController < ApplicationController
     name = modified_params[:name]
 
     begin
-      elements =  JSON.parse(params[:atoms]).map { |atm| Element.find_by(symbol: atm == "x" ? "Xe" : atm) }
+      elements = JSON.parse(params[:atoms]).map { |atm| Element.find_by(symbol: atm == "x" ? "Xe" : atm) }
       modified_params[:elements] = elements
     end
 
@@ -178,7 +181,7 @@ class MofsController < ApplicationController
 
   private
 
-  def filter_mofs(get_count)
+  def filter_mofs(mofs)
 
     ## Elements in MOF
     if params[:elements] && params[:elements] != ""
@@ -191,107 +194,90 @@ class MofsController < ApplicationController
               where element_id in (?)"
       sanitized = ActiveRecord::Base.send(:sanitize_sql_array, [query, el_ids])
       mof_ids = ActiveRecord::Base.connection.execute(sanitized).to_a.flatten
-      @mofs = @mofs.where("mofs.id in (?)", mof_ids)
+      mofs = mofs.where("mofs.id in (?)", mof_ids)
     end
 
     ## GASES
     if params[:gases] && !params[:gases].empty?
       gases = params[:gases].is_a?(String) ? params[:gases].split(",") : params[:gases]
       gas_ids = gases.map { |gas_name| Gas.find_gas(gas_name).id }.uniq
-      @mofs = Mof.joins(:isotherms).joins(:isodata).where("isodata.gas_id in (?)", gas_ids).distinct
+      mofs = Mof.joins(:isotherms).joins(:isodata).where("isodata.gas_id in (?)", gas_ids).distinct
     end
 
     ## VOID FRAC
     if params[:vf_min] && !params[:vf_min].empty? && params[:vf_min] && params[:vf_min].to_f != 0
-      @mofs = @mofs.where("mofs.void_fraction >= ?", params[:vf_min])
+      mofs = mofs.where("mofs.void_fraction >= ?", params[:vf_min])
     end
 
     if params[:vf_max] && !params[:vf_max].empty? && params[:vf_max].to_f != 1
-      @mofs = @mofs.where("mofs.void_fraction <= ?", params[:vf_max])
+      mofs = mofs.where("mofs.void_fraction <= ?", params[:vf_max])
     end
 
     ### PLD
     if params[:pld_min] && !params[:pld_min].empty? && params[:pld_min].to_f != 0
-      @mofs = @mofs.where("mofs.pld >= ?", params[:pld_min])
+      mofs = mofs.where("mofs.pld >= ?", params[:pld_min])
     end
 
     if params[:pld_max] && !params[:pld_max].empty? && params[:pld_max].to_f != 20
-      @mofs = @mofs.where("mofs.pld <= ?", params[:pld_max])
+      mofs = mofs.where("mofs.pld <= ?", params[:pld_max])
     end
 
     ### LCD
     if params[:lcd_min] && !params[:lcd_min].empty? && params[:lcd_min].to_f != 0
-      @mofs = @mofs.where("mofs.lcd >= ?", params[:lcd_min])
+      mofs = mofs.where("mofs.lcd >= ?", params[:lcd_min])
     end
 
     if params[:lcd_max] && !params[:lcd_max].empty? && params[:lcd_max].to_f != 100
-      @mofs = @mofs.where("mofs.lcd <= ?", params[:lcd_max])
+      mofs = mofs.where("mofs.lcd <= ?", params[:lcd_max])
     end
 
     ### SA M2G
     if params[:sa_m2g_min] && !params[:sa_m2g_min].empty? && params[:sa_m2g_min].to_f != 0
-      @mofs = @mofs.where("mofs.surface_area_m2g >= ?", params[:sa_m2g_min])
+      mofs = mofs.where("mofs.surface_area_m2g >= ?", params[:sa_m2g_min])
     end
 
     if params[:sa_m2g_max] && !params[:sa_m2g_max].empty? && params[:sa_m2g_max].to_f != 10000
-      @mofs = @mofs.where("mofs.surface_area_m2g <= ?", params[:sa_m2g_max])
+      mofs = mofs.where("mofs.surface_area_m2g <= ?", params[:sa_m2g_max])
     end
 
     ### SA M2G
     if params[:sa_m2cm3_min] && !params[:sa_m2cm3_min].empty? && params[:sa_m2cm3_min].to_f != 0
-      @mofs = @mofs.where("mofs.surface_area_m2cm3 >= ?", params[:sa_m2cm3_min])
+      mofs = mofs.where("mofs.surface_area_m2cm3 >= ?", params[:sa_m2cm3_min])
     end
 
     if params[:sa_m2cm3_max] && !params[:sa_m2cm3_max].empty? && params[:sa_m2cm3_max].to_f != 5000
-      @mofs = @mofs.where("mofs.surface_area_m2cm3 <= ?", params[:sa_m2cm3_max])
+      mofs = mofs.where("mofs.surface_area_m2cm3 <= ?", params[:sa_m2cm3_max])
     end
 
     # NAME
     if params[:name] && !params[:name].empty?
-      @mofs = @mofs.where("mofs.name LIKE ?", "#{params[:name]}%")
+      mofs = mofs.where("mofs.name LIKE ?", "#{params[:name]}%")
     end
 
     # DB
     if params[:database] && params[:database] != "Any" && !params[:database].empty?
       database = Database.find_by(name: params[:database])
-      @mofs = @mofs.where(database: database)
+      mofs = mofs.where(database: database)
     end
 
     # Hashkey
     if params[:hashkey] && !params[:hashkey].empty?
-      @mofs = @mofs.where(hashkey: params[:hashkey])
+      mofs = mofs.where(hashkey: params[:hashkey])
     end
 
     if params[:mofid] && !params[:mofid].empty?
-      @mofs = @mofs.where(mofid: params[:mofid])
+      mofs = mofs.where(mofid: params[:mofid])
     end
 
     if params[:mofkey] && !params[:mofkey].empty?
-      @mofs = @mofs.where(mofkey: params[:mofkey])
+      mofs = mofs.where(mofkey: params[:mofkey])
     end
 
     if params[:doi] && !params[:doi].empty?
-      @mofs = @mofs.joins("JOIN isotherms on isotherms.mof_id = mofs.id and isotherms.doi = '#{Mof.sanitize_sql(params[:doi])}'").distinct
+      mofs = mofs.joins("JOIN isotherms on isotherms.mof_id = mofs.id and isotherms.doi = '#{Mof.sanitize_sql(params[:doi])}'").distinct
     end
 
-    if get_count
-      @count = Rails.cache.fetch("mofcount-params-#{params.to_s}") do
-        @mofs.count
-      end
-    end
-
-    respond_to do |format|
-      format.html { @mofs = @mofs.take(100) }
-      format.json {
-        unless params[:bulk] && params[:bulk] == 'true'
-          @page = params['page'].to_i # nil -> 0
-          @page = 1 if @page == 0
-          offset = (ENV['PAGE_SIZE'].to_i) * (@page - 1)
-          raise PageTooLarge if offset > @mofs.size
-          @mofs = @mofs.offset(offset).take(ENV['PAGE_SIZE'])
-        end
-      }
-    end
+    mofs
   end
 
   # Use callbacks to share common setup or constraints between actions.

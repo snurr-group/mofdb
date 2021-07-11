@@ -434,16 +434,20 @@ function refresh() {
     }
 
     unset_link()
-    $.get("/mofs/search", html_params, function (data, status, xhr) {
+    $.get("/mofs", html_params, function (data, status, xhr) {
         // First get the mof results
         finish_search(data)
 
         // Then remove the html param and make a separate request to get the # of MOFs
         delete html_params["html"]
         $.getJSON("/mofs/count", html_params, function (data, status, xhr) {
-            const count = xhr.getResponseHeader('mofdb-count')
+            const count = data['count'];
             count_cache[url_params_as_string] = count;
             set_link(url_params, count);
         })
     });
+
+
+
+
 }
