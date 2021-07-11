@@ -1,5 +1,5 @@
 module MofsHelper
-  def send_zip_file(mofs)
+  def send_zip_file(mofs, convert_pressure, convert_loading)
 
     zip_name = "mofs-bulk-search-download.zip"
     send_file_headers!(
@@ -25,9 +25,6 @@ module MofsHelper
                                        :pressure_units,
                                        :composition_type] })
 
-
-    convert_pressure = session[:prefPressure] ? Classification.find(session[:prefPressure]) : nil
-    convert_loading = session[:prefLoading] ? Classification.find(session[:prefLoading]) : nil
 
     begin
       ZipTricks::Streamer.open(writer) do |zip|

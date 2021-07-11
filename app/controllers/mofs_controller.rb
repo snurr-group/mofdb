@@ -31,52 +31,34 @@ class MofsController < ApplicationController
   # GET /mofs
   # GET /mofs.json
   def index
-    @mofs = Mof.all.visible
+    @convert_pressure = session[:prefPressure] ? Classification.find(session[:prefPressure]) : nil
+    @convert_loading = session[:prefLoading] ? Classification.find(session[:prefLoading]) : nil
 
-    begin
-      @mofs = filter_mofs(@mofs)
-    rescue PageTooLarge
-      return render :json => { error: "Page number too large" }, status: 400
-    end
+    @mofs = Mof.all.visible
+    @mofs = filter_mofs(@mofs)
 
     if params[:html]
       @mofs = @mofs.includes([:elements, :database])
       @mofs = @mofs.take(100)
       return render partial: 'mofs/rows'
     elsif params[:bulk] && params[:bulk] == "true"
-      send_zip_file(@mofs)
+      send_zip_file(@mofs, @convert_pressure, @convert_loading)
       return
     end
 
     respond_to do |format|
       format.json {
-
-
         @page = params['page'].to_i # nil -> 0
         @page = 1 if @page == 0
         offset = (ENV['PAGE_SIZE'].to_i) * (@page - 1)
-        raise PageTooLarge if offset > @mofs.size
-        @mofs = @mofs.offset(offset).take(ENV['PAGE_SIZE'])
-
-        @count = Rails.cache.fetch("mofcount-params-#{params.to_s}") do
+        @count = Rails.cache.fetch("mof-count-params-#{params.except(:page).to_s}") do
           @mofs.count
         end
         @pages = (@count.to_f / ENV['PAGE_SIZE'].to_f).ceil
-
-        result = { results: [], pages: @pages, page: @page }
-        convert_pressure = session[:prefPressure] ? Classification.find(session[:prefPressure]) : nil
-        convert_loading = session[:prefLoading] ? Classification.find(session[:prefLoading]) : nil
-        if convert_pressure.nil? && convert_loading.nil?
-          # Instead of generating json on the fly we store it in a pre-generated column and just concat those columns
-          result[:results] = @mofs.pluck(:pregen_json)
-          return render :json => result
-        else
-          # In this case we need to convert pressure/Loading on the fly
-          @mofs.each do |mof|
-            result[:results].append(JSON.parse(mof.get_json(convert_pressure, convert_loading)))
-          end
-          return render :json => result
+        if offset > @mofs.size
+          return render :json => { error: "Page number too large", pages: @pages }, status: 400
         end
+        @mofs = @mofs.offset(offset).take(ENV['PAGE_SIZE'])
       }
     end
 
