@@ -80,12 +80,11 @@ class MofsController < ApplicationController
     end
 
     if modified_params[:database] == "hMOFs"
-      modified_params[:database] = Database.find_by(name: "hMOF")
-    else
-      modified_params[:database] = Database.find_by(name: modified_params[:database])
+      modified_params[:database] = "hMOF"
     end
 
-    database = modified_params[:database]
+    database = Database.find_by(name: modified_params[:database])
+    modified_params[:database] = database
 
     @mof = Mof.visible.find_by(name: name, database: database)
 
@@ -102,10 +101,10 @@ class MofsController < ApplicationController
   # GET /mofs/1
   # GET /mofs/1.json
   def show
-    @convertPressure = session[:prefPressure] ? Classification.find(session[:prefPressure]) : nil
-    @convertLoading = session[:prefLoading] ? Classification.find(session[:prefLoading]) : nil
+    convert_pressure = session[:prefPressure] ? Classification.find(session[:prefPressure]) : nil
+    convert_loading = session[:prefLoading] ? Classification.find(session[:prefLoading]) : nil
 
-    if !@mof.convertable
+    unless @mof.convertable
       @msg = "This mof is missing molarMass or volume and thus we cannot do automatic unit conversion"
     end
 
@@ -123,7 +122,7 @@ class MofsController < ApplicationController
         # the ApplicationController.render in mof.rb:get_json
         # so by doing it the same ugly way here we at least don't have two different ways of calling
         # that same template.
-        return render :json => @mof.get_json(@convertPressure, @convertLoading),
+        return render :json => @mof.get_json(convert_pressure, convert_loading),
                       status: 200
       }
     end
@@ -131,16 +130,21 @@ class MofsController < ApplicationController
 
   # GET /mofs/1/cif
   def cif
-    if @mof.hidden
-      return render status: 403, json: "Unavailable for CSD cifs, see: https://www.ccdc.cam.ac.uk/solutions/csd-system/components/csd/".to_json
+    begin
+      if @mof.hidden
+        return render status: 403, json: "Unavailable for CSD cifs, see: https://www.ccdc.cam.ac.uk/solutions/csd-system/components/csd/".to_json
+      end
+      temp_name = "cif-#{SecureRandom.hex(8)}.cif"
+      temp_path = Rails.root.join(Rails.root.join("tmp"), temp_name)
+      File.open(temp_path, 'w+') do |file|
+        file.write(@mof.cif)
+      end
+      send_data(temp_path.read, filename: @mof.name + ".cif")
+    rescue
+      raise
+    ensure
+      File.delete(temp_path)
     end
-    temp_name = "cif-#{SecureRandom.hex(8)}.cif"
-    temp_path = Rails.root.join(Rails.root.join("tmp"), temp_name)
-    File.open(temp_path, 'w+') do |file|
-      file.write(@mof.cif)
-    end
-    send_data(temp_path.read, filename: @mof.name + ".cif")
-    File.delete(temp_path)
   end
 
   # GET /api
