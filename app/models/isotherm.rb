@@ -21,10 +21,10 @@ class Isotherm < ApplicationRecord
   # Scopes are used to separate them in ui/json responses
 
   scope :not_heats, -> { joins("INNER JOIN classifications as clas_for_not_heats on clas_for_not_heats.id = isotherms.adsorption_units_id")
-                           .where("clas_for_not_heats.source != 'heat'") }
+                           .where("clas_for_not_heats.source != ?", Classification.sources["heat"]) }
 
   scope :heats, -> { joins("INNER JOIN classifications as clas_for_heats on clas_for_heats.id = isotherms.adsorption_units_id")
-                       .where("clas_for_heats.source = 'heat'") }
+                       .where("clas_for_heats.source = ?", Classification.sources["heat"] ) }
 
   # scope :not_heats, -> { where.not(adsorption_units: Classification.find_by(name:"kj/mol")) }
 
