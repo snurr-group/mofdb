@@ -37,13 +37,18 @@ class MofsController < ApplicationController
     @mofs = Mof.all.visible
     @mofs = filter_mofs(@mofs)
 
+    bulk = params[:bulk] && params[:bulk] == "true"
+    cifs = params[:cifs] && params[:cifs] == "true"
+
     if params[:html]
       @mofs = @mofs.includes([:elements, :database])
       @mofs = @mofs.take(100)
       return render partial: 'mofs/rows'
-    elsif params[:bulk] && params[:bulk] == "true"
-      send_zip_file(@mofs, @convert_pressure, @convert_loading)
+    elsif bulk
+      send_zip_file(@mofs, @convert_pressure, @convert_loading, cifs=true, json=true)
       return
+    elsif cifs
+      send_zip_file(@mofs, @convert_pressure, @convert_loading, cifs=true, json=false)
     end
 
     respond_to do |format|
