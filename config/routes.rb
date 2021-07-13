@@ -24,6 +24,6 @@ Rails.application.routes.draw do
     end
   end
 
-  post '/setUnits' => 'application#setUnits'
+  post '/setUnits' => 'application#set_units'
 
 end

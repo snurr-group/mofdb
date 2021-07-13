@@ -10,7 +10,7 @@
   <meta name="description" content="A database of MOFs and simulated Isotherms ">
   <meta name="keywords" content="MOF,snurr,Northwestern,isotherm,nitrogen,database,chemistry,NU,zeolites">
   <title>
-    Metal Organic Framework Database | <%= fetch_or_gen("mofcount", lambda { return Mof.all.size }, 3.days) %> Mofs
+    Metal Organic Framework Database | <%= @mof_count %> Mofs
   </title>
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>

@@ -1,9 +1,18 @@
 class ApplicationController < ActionController::Base
-  include UnitsHelper
-  before_action :setPreferredUnits
-  before_action :setHeaders
 
-  def setHeaders
+  include UnitsHelper
+
+  before_action :set_preferred_units
+  before_action :set_headers
+  before_action :set_mof_count
+
+  def set_mof_count
+    @mofs_count = Rails.cache.fetch("mofcount", expires_in: 1.days) do
+      Mof.all.size
+    end
+  end
+
+  def set_headers
     headers = { 'Referrer-Policy' => 'same-origin',
                 'X-Content-Type-Options' => 'nosniff',
                 'X-Frame-Options' => 'SAMEORIGIN',
@@ -24,10 +33,10 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def setSessionForHeader(input, session_key, expected_classification_source)
+  def set_session_for_header(input, session_key, expected_classification_src)
     # Input: What the user sent, either a number representing a classification's id or a string that is it's name
     # session_key: :prefPressure or :prefLoading where to store the final parsed classification id
-    # expected_classification_source: either "pressure" or "loading".
+    # expected_classification_src: either "pressure" or "loading".
     #   Prevents someone setting "pa" as their preferred loading since that's a pressure not a loading
     if input.nil?
       return
@@ -40,23 +49,23 @@ class ApplicationController < ActionController::Base
       elsif input.is_a?(String)
         classification = Classification.find_by(name: input)
       else
-        return render json: {"error": "We don't know what unit '#{input}' is"}, status: 500
+        return render json: { "error": "We don't know what unit '#{input}' is" }, status: 500
       end
       session[session_key] = classification.id
-      if classification.source != expected_classification_source
+      if classification.source != expected_classification_src
         session.delete(session_key)
-        supported = Classification.where(convertable: true, source: expected_classification_source).pluck(:name)
-        return render json: {"error": "#{input} is not a known #{expected_classification_source} by id or name. Supported options are #{supported}"}, status: 500
+        supported = Classification.where(convertable: true, source: expected_classification_src).pluck(:name)
+        return render json: { "error": "#{input} is not a known #{expected_classification_src} by id or name. Supported options are #{supported}" }, status: 500
       end
     end
   end
 
-  def setPreferredUnits
-    setSessionForHeader(request.headers['loading'], :prefLoading, "loading")
-    setSessionForHeader(request.headers['pressure'], :prefPressure, "pressure")
+  def set_preferred_units
+    set_session_for_header(request.headers['loading'], :prefLoading, "loading")
+    set_session_for_header(request.headers['pressure'], :prefPressure, "pressure")
   end
 
-  def setUnits
+  def set_units
     # checkUnits applies header values to session.
     # this route just jsonifyies units after that.
     render json: { loading: session[:prefLoading], pressure: session[:prefPressure] }, status: 200

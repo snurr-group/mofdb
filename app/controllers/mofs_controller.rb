@@ -18,7 +18,7 @@ class MofsController < ApplicationController
     # to speedup the frontend we decouple this from main search query
     # into a separate request to /mofs/count?normal_query_params
     @mofs = filter_mofs(Mof.all.visible)
-    @count = Rails.cache.fetch("mofcount-params-#{params.to_s}") do
+    @count = Rails.cache.fetch("mofcount-params-#{params_key}") do
       @mofs.count
     end
     @pages = (@count.to_f / ENV['PAGE_SIZE'].to_f).ceil
@@ -51,7 +51,7 @@ class MofsController < ApplicationController
         @page = params['page'].to_i # nil -> 0
         @page = 1 if @page == 0
         offset = (ENV['PAGE_SIZE'].to_i) * (@page - 1)
-        @count = Rails.cache.fetch("mof-count-params-#{params.except(:page).to_s}") do
+        @count = Rails.cache.fetch("mof-count-params-#{params_key}") do
           @mofs.count
         end
         @pages = (@count.to_f / ENV['PAGE_SIZE'].to_f).ceil
@@ -150,8 +150,7 @@ class MofsController < ApplicationController
   # GET /databases
   def databases
     @combinations = get_db_doi_gas_combos
-
-    @groups = {}
+    @groups = {} # category => array of files
     DatabaseFile.all.each do |file|
       if @groups.keys.include?(file.category)
         @groups[file.category] << file
@@ -262,13 +261,23 @@ class MofsController < ApplicationController
     mofs
   end
 
-  # Use callbacks to share common setup or constraints between actions.
   def set_mof
     @mof = Mof.find(params[:id])
   end
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def mof_params
-    params.require(:mof).permit(:atoms, :mof, :batch, :mofkey, :mofid, :hashkey, :name, :database, :cif, :void_fraction, :surface_area_m2g, :surface_area_m2cm3, :pld, :lcd, :pxrd, :pore_size_distribution)
+    params.require(:mof).permit(:atoms, :mof, :batch, :mofkey, :mofid, :hashkey, :name, :database, :cif,
+                                :void_fraction, :surface_area_m2g, :surface_area_m2cm3, :pld, :lcd, :pxrd, :pore_size_distribution)
   end
+
+  def params_key
+    # All API parameters except those that don't effect the results only the format
+    # This way we can use it as a cache key pointing to the number of mofs returuned.
+    # Counting the number of results is more expensive than returning 1 page of them
+    # so it's important to cahce the count.
+    # See the count function.
+    params.except(:page).except(:html).except(:bulk).to_s
+  end
+
 end

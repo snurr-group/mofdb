@@ -17,7 +17,8 @@ class Isotherm < ApplicationRecord
 
   # Isotherms table contains kinds of isotherms
   # 1. Regular isotherms (not_heats)
-  # 2. Heats of adsorption (any isotherm with units of kj/mol)
+  # 2. Heats of adsorption (any isotherm with adsorption_units.source == 'heat')
+  #    See Classification.rb enum source
   # Scopes are used to separate them in ui/json responses
 
   scope :not_heats, -> { joins("INNER JOIN classifications as clas_for_not_heats on clas_for_not_heats.id = isotherms.adsorption_units_id")
@@ -25,8 +26,6 @@ class Isotherm < ApplicationRecord
 
   scope :heats, -> { joins("INNER JOIN classifications as clas_for_heats on clas_for_heats.id = isotherms.adsorption_units_id")
                        .where("clas_for_heats.source = ?", Classification.sources["heat"] ) }
-
-  # scope :not_heats, -> { where.not(adsorption_units: Classification.find_by(name:"kj/mol")) }
 
   # Does this isotherm have adsorption_units and pressure_units that are marked convertable?
   scope :convertable, -> { joins("JOIN classifications as clas_adsorp on isotherms.adsorption_units_id = clas_adsorp.id")
