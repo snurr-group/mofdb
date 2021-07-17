@@ -18,4 +18,5 @@ production:
   username: mofdb
   password: <%= Rails.application.credentials.prod_mysql_pass %>
   socket: <%= ENV['SOCKET'] %>
+  timeout: 60
 

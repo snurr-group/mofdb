@@ -14,12 +14,17 @@ class MofsController < ApplicationController
   before_action :cache, except: [:upload]
 
   def count
+    Rails.cache.clear
     # Finding the count of MOFs is the slowest part of the search
     # to speedup the frontend we decouple this from main search query
     # into a separate request to /mofs/count?normal_query_params
     @mofs = filter_mofs(Mof.all.visible)
-    @count = Rails.cache.fetch("mofcount-params-#{params_key}") do
-      @mofs.count
+    begin
+      @count = Rails.cache.fetch("mofcount-params-#{params_key}") do
+        @mofs.count
+      end
+    rescue ActiveRecord::StatementTimeout
+      @count = "> 100,000 mofs"
     end
     @pages = (@count.to_f / ENV['PAGE_SIZE'].to_f).ceil
   end
@@ -45,10 +50,10 @@ class MofsController < ApplicationController
       @mofs = @mofs.take(100)
       return render partial: 'mofs/rows'
     elsif bulk
-      send_zip_file(@mofs, @convert_pressure, @convert_loading, cifs=true, json=true)
+      send_zip_file(@mofs, @convert_pressure, @convert_loading, cifs = true, json = true)
       return
     elsif cifs
-      send_zip_file(@mofs, @convert_pressure, @convert_loading, cifs=true, json=false)
+      send_zip_file(@mofs, @convert_pressure, @convert_loading, cifs = true, json = false)
     end
 
     respond_to do |format|
