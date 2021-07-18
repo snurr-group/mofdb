@@ -11,18 +11,21 @@
 // about supported directives.
 //
 
+// Don't include plotly. It's huge. We only load this on the mofs#show pages for the graphs.
+// Also skip ngl the graphis library for showing CIF files.
+// They are all in plots_bundle.js
 //= stub plotly-latest.min.js
 //= stub plots_bundle.js
+//= stub ngl.js
 
+
+// Change the order of jquery/datatables/and require_tree at your own peril.
+// I highly recommend not touching this.
 //= require "jquery.3.1.js"
 //= require "jquery.dataTables.min.js"
 //= require "dataTables.responsive.min.js"
-
 //= require activestorage
 //= require_tree .
-
-
-// Don't include plotly. It's huge. We only load this on the mofs#show pages for the graphs.
 //= require "nouislider"
 
 
