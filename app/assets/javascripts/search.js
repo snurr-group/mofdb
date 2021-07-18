@@ -40,6 +40,20 @@ function toggle(mode) {
     }
 }
 
+
+const MIN_MAXES = {
+    'pld_min': 0,
+    'pld_max': 20,
+    'lcd_min': 0,
+    'lcd_max': 100,
+    'vf_min': 0,
+    'vf_max': 1,
+    'sa_m2g_min': 0,
+    'sa_m2g_max': 10000,
+    'sa_m2cm3_min': 0,
+    'sa_m2cm3_max': 5000,
+}
+
 $(document).on('DOMContentLoaded', function () {
     // Prepare Sliders
     pld = document.getElementById('pld_slider');
@@ -65,13 +79,12 @@ $(document).on('DOMContentLoaded', function () {
     sa_m2cm3 = document.getElementById('sa_m2cm3_slider');
     limit = document.getElementById('limit');
 
-
     noUiSlider.create(pld, {
-        start: [0, 20],
+        start: [MIN_MAXES['pld_min'], MIN_MAXES['pld_max']],
         step: .1,
         range: {
-            'min': [0],
-            'max': [20]
+            'min': [MIN_MAXES['pld_min']],
+            'max': [MIN_MAXES['pld_max']]
         },
         connect: true,
         format: wNumb({
@@ -80,11 +93,11 @@ $(document).on('DOMContentLoaded', function () {
         })
     });
     noUiSlider.create(lcd, {
-        start: [0, 100],
+        start: [MIN_MAXES['lcd_min'], MIN_MAXES['lcd_max']],
         step: .1,
         range: {
-            'min': [0],
-            'max': [100]
+            'min': [MIN_MAXES['lcd_min']],
+            'max': [MIN_MAXES['lcd_max']]
         },
         connect: true,
         format: wNumb({
@@ -93,12 +106,12 @@ $(document).on('DOMContentLoaded', function () {
         })
     });
     noUiSlider.create(vf, {
-        start: [0, 1],
+        start: [MIN_MAXES['vf_min'], MIN_MAXES['vf_max']],
         step: .01,
         mark: '.',
         range: {
-            'min': [0],
-            'max': [1]
+            'min': [MIN_MAXES['vf_min']],
+            'max': [MIN_MAXES['vf_max']]
         },
         connect: true,
         format: wNumb({
@@ -107,11 +120,11 @@ $(document).on('DOMContentLoaded', function () {
         })
     });
     noUiSlider.create(sa_m2g, {
-        start: [0, 10000],
+        start: [MIN_MAXES['sa_m2g_min'], MIN_MAXES['sa_m2g_max']],
         step: 100,
         range: {
-            'min': [0],
-            'max': [10000]
+            'min': [MIN_MAXES['sa_m2g_min']],
+            'max': [MIN_MAXES['sa_m2g_max']]
         },
         connect: true,
         format: wNumb({
@@ -119,13 +132,12 @@ $(document).on('DOMContentLoaded', function () {
             thousand: '',
         })
     });
-
     noUiSlider.create(sa_m2cm3, {
-        start: [0, 5000],
+        start: [MIN_MAXES['sa_m2cm3_min'], MIN_MAXES['sa_m2cm3_max']],
         step: 100,
         range: {
-            'min': [0],
-            'max': [5000]
+            'min': [MIN_MAXES['sa_m2cm3_min']],
+            'max': [MIN_MAXES['sa_m2cm3_max']]
         },
         connect: true,
         format: wNumb({
@@ -278,7 +290,7 @@ function set_table(data) {
             ]
         }
     );
-};
+}
 
 
 function unset_link() {
@@ -286,6 +298,7 @@ function unset_link() {
     countSpan.innerHTML = "<i>(loading#)</i>"
 
 }
+
 function set_link(url, count) {
     const copy = Object.assign({}, url)
     delete copy['cifs']
@@ -302,96 +315,93 @@ search_cache = {};
 count_cache = {}
 last_search = "";
 
+const GASES_DOM_ID_AND_NAME = [
+    ["N2", "Nitrogen"],
+    ["Ar", "Argon"],
+    ["Xe", "Xenon"],
+    ["Kr", "Krypton"],
+    ["H2", "Hydrogen"],
+    ["CO2", "CarbonDioxide"],
+    ["CH4", "Methane"],
+    ["H2O", "Water"],
+];
+
 function get_params() {
-    let vf_min = vf.noUiSlider.get()[0];
-    let vf_max = vf.noUiSlider.get()[1];
 
-    let pld_min = pld.noUiSlider.get()[0];
-    let pld_max = pld.noUiSlider.get()[1];
-
-    let lcd_min = lcd.noUiSlider.get()[0];
-    let lcd_max = lcd.noUiSlider.get()[1];
-
-    let sa_m2g_min = sa_m2g.noUiSlider.get()[0];
-    let sa_m2g_max = sa_m2g.noUiSlider.get()[1];
-
-    let sa_m2cm3_min = sa_m2cm3.noUiSlider.get()[0];
-    let sa_m2cm3_max = sa_m2cm3.noUiSlider.get()[1];
-
-
-    let name = document.getElementById("name").value;
+    // mofid / mofkey
     let idkey = document.getElementById('mofidkey').value;
-    let N2 = document.getElementById("N2").checked;
-    let Ar = document.getElementById("Ar").checked;
-    let X2 = document.getElementById("Xe").checked;
-    let Kr = document.getElementById("Kr").checked;
-    let H2 = document.getElementById("H2").checked;
-    let CO2 = document.getElementById("CO2").checked;
-    let CH4 = document.getElementById("CH4").checked;
-    let H2O = document.getElementById("H2O").checked;
+
+    // gases checkboxes
     let gases = [];
+    GASES_DOM_ID_AND_NAME.forEach(function (gas) {
+        let dom_id = gas[0];
+        let name = gas[1];
+        let checked = document.getElementById(dom_id).checked;
+        if (checked) {
+            gases = gases.concat(name);
+        }
+    })
 
 
-    if (N2)
-        gases = gases.concat("Nitrogen");
-    if (X2)
-        gases = gases.concat("Xenon");
-    if (Kr)
-        gases = gases.concat("Krypton");
-    if (H2)
-        gases = gases.concat("Hydrogen");
-    if (CO2)
-        gases = gases.concat("CarbonDioxide");
-    if (CH4)
-        gases = gases.concat("Methane");
-    if (H2O)
-        gases = gases.concat("Water");
-    if (Ar)
-        gases = gases.concat("Argon");
-
-    let doi = document.getElementById("doi_label").value;
-
-
-// Get elements from select bar
+    // Get elements from select bar
     let elements_object = document.getElementById("elements_label").selectedOptions;
     let num_elements = elements_object.length;
     let elements = [];
-    let i;
-    for (i = 0; i < num_elements; i++) {
+    for (let i = 0; i < num_elements; i++) {
         elements[i] = elements_object[i].text;
     }
 
     let select_obj = document.getElementById("db_choice");
     let db_choice = select_obj.options[select_obj.selectedIndex].value;
 
+
     let url_params = {
-        "vf_min": vf_min,
-        "vf_max": vf_max,
-
-        "pld_min": pld_min,
-        "pld_max": pld_max,
-
-        "lcd_min": lcd_min,
-        "lcd_max": lcd_max,
-
-        "sa_m2g_min": sa_m2g_min,
-        "sa_m2g_max": sa_m2g_max,
-
-        "sa_m2cm3_min": sa_m2cm3_min,
-        "sa_m2cm3_max": sa_m2cm3_max,
-
-        "name": name,
-        "gases": gases,
-
-        "database": db_choice,
-        "elements": elements,
-
-        "doi": doi
+        'vf_min': vf.noUiSlider.get()[0],
+        'vf_max': vf.noUiSlider.get()[1],
+        'pld_min': pld.noUiSlider.get()[0],
+        'pld_max': pld.noUiSlider.get()[1],
+        'lcd_min': lcd.noUiSlider.get()[0],
+        'lcd_max': lcd.noUiSlider.get()[1],
+        'sa_m2g_min': sa_m2g.noUiSlider.get()[0],
+        'sa_m2g_max': sa_m2g.noUiSlider.get()[1],
+        'sa_m2cm3_min': sa_m2cm3.noUiSlider.get()[0],
+        'sa_m2cm3_max': sa_m2cm3.noUiSlider.get()[1],
     };
 
-    if (active == "mofid") {
+    let doi = document.getElementById("doi_label").value;
+    if (doi !== "") {
+        url_params['doi'] = doi;
+    }
+
+    if (gases.length !== 0) {
+        url_params["gases"] = gases;
+    }
+
+    if (elements.length !== 0) {
+        url_params['elements'] = elements;
+    }
+
+    if (db_choice !== "Any") {
+        url_params['database'] = db_choice;
+    }
+
+    let name = document.getElementById("name").value;
+    if (name !== '') {
+        url_params['name'] = name;
+    }
+
+
+    for (let key in url_params) {
+        if (key in MIN_MAXES) {
+            if (MIN_MAXES[key] == url_params[key]) {
+                delete url_params[key]
+            }
+        }
+    }
+
+    if (active === "mofid" && idkey !== "") {
         url_params["mofid"] = idkey;
-    } else if (active == "mofkey") {
+    } else if (active === "mofkey" && idkey !== "") {
         url_params["mofkey"] = idkey;
     }
 
@@ -453,8 +463,6 @@ function refresh() {
 
         })
     });
-
-
 
 
 }
