@@ -9,16 +9,15 @@ function dictToURI(dict) {
 }
 
 active = 'mofid';
+sliders = {};
 
 window.onbeforeunload = function () {
-    pld = document.getElementById('pld_slider');
-    lcd = document.getElementById('lcd_slider');
-    vf = document.getElementById('vf_slider');
-    sa_m2g = document.getElementById('sa_m2g_slider');
-    sa_m2cm3 = document.getElementById('sa_m2cm3_slider');
-    if (pld == undefined) {
-        return
-    } else {
+    let pld = document.getElementById('pld_slider');
+    let lcd = document.getElementById('lcd_slider');
+    let vf = document.getElementById('vf_slider');
+    let sa_m2g = document.getElementById('sa_m2g_slider');
+    let sa_m2cm3 = document.getElementById('sa_m2cm3_slider');
+    if (pld !== undefined) {
         pld.noUiSlider.destroy();
         lcd.noUiSlider.destroy();
         vf.noUiSlider.destroy();
@@ -29,17 +28,16 @@ window.onbeforeunload = function () {
 
 function toggle(mode) {
     console.log(mode);
-    if (mode == "mofid") {
+    if (mode === "mofid") {
         active = mode;
         document.getElementById('mofid_button').classList.add('active');
         document.getElementById('mofkey_button').classList.remove('active');
-    } else if (mode == "mofkey") {
+    } else if (mode === "mofkey") {
         active = mode;
         document.getElementById('mofkey_button').classList.add('active');
         document.getElementById('mofid_button').classList.remove('active');
     }
 }
-
 
 const MIN_MAXES = {
     'pld_min': 0,
@@ -56,11 +54,12 @@ const MIN_MAXES = {
 
 $(document).on('DOMContentLoaded', function () {
     // Prepare Sliders
-    pld = document.getElementById('pld_slider');
+    let pld = document.getElementById('pld_slider');
 
     if (!pld) {
         return
     }
+
 
     document.getElementById('mofid_button').addEventListener('click', function () {
         toggle("mofid");
@@ -69,15 +68,13 @@ $(document).on('DOMContentLoaded', function () {
         toggle("mofkey");
     });
 
-    if (pld == undefined) {
-        return
-    }
+    let lcd = document.getElementById('lcd_slider');
+    let vf = document.getElementById('vf_slider');
+    let sa_m2g = document.getElementById('sa_m2g_slider');
+    let sa_m2cm3 = document.getElementById('sa_m2cm3_slider');
 
-    lcd = document.getElementById('lcd_slider');
-    vf = document.getElementById('vf_slider');
-    sa_m2g = document.getElementById('sa_m2g_slider');
-    sa_m2cm3 = document.getElementById('sa_m2cm3_slider');
-    limit = document.getElementById('limit');
+    sliders = {vf, pld, lcd, sa_m2g, sa_m2cm3}
+
 
     noUiSlider.create(pld, {
         start: [MIN_MAXES['pld_min'], MIN_MAXES['pld_max']],
@@ -148,33 +145,19 @@ $(document).on('DOMContentLoaded', function () {
 
     $('#elements_label').chosen();
 
-    pld.noUiSlider.on('update', function (values) {
-        document.getElementById("pld_min").innerHTML = values[0];
-        document.getElementById("pld_max").innerHTML = values[1];
-    });
-    lcd.noUiSlider.on('update', function (values) {
-        document.getElementById("lcd_min").innerHTML = values[0];
-        document.getElementById("lcd_max").innerHTML = values[1];
-    });
-    vf.noUiSlider.on('update', function (values) {
-        document.getElementById("vf_min").innerHTML = values[0];
-        document.getElementById("vf_max").innerHTML = values[1];
-    });
-    sa_m2g.noUiSlider.on('update', function (values) {
-        document.getElementById("sa_m2g_min").innerHTML = values[0];
-        document.getElementById("sa_m2g_max").innerHTML = values[1];
-    });
-    sa_m2cm3.noUiSlider.on('update', function (values) {
-        document.getElementById("sa_m2cm3_min").innerHTML = values[0];
-        document.getElementById("sa_m2cm3_max").innerHTML = values[1];
-    });
+    for (const slider_name in sliders) {
+        sliders[slider_name].noUiSlider.on('update', function (values) {
+            document.getElementById(slider_name + '_min').innerHTML = values[0];
+            document.getElementById(slider_name + '_max').innerHTML = values[1];
+        });
+        sliders[slider_name].noUiSlider.on('set', function () {
+            console.log("triggered by ", slider_name);
+            refresh()
+        });
+    }
 
     $("#checkboxes").click(function () {
         console.log("triggered by Checkboxes");
-        refresh()
-    });
-    $("#limit").click(function () {
-        console.log("triggered by Limit");
         refresh()
     });
 
@@ -182,37 +165,20 @@ $(document).on('DOMContentLoaded', function () {
         console.log("triggered by database");
         refresh()
     });
-
-    pld.noUiSlider.on('set', function () {
-        console.log("triggered by PLD");
-        refresh()
-    });
-    lcd.noUiSlider.on('set', function () {
-        console.log("triggered by LCD");
-        refresh()
-    });
-    vf.noUiSlider.on('set', function () {
-        console.log("triggered by VF");
-        refresh()
-    });
-    sa_m2g.noUiSlider.on('set', function () {
-        console.log("triggered by SA");
-        refresh()
-    });
-    sa_m2cm3.noUiSlider.on('set', function () {
-        console.log("triggered by SA");
-        refresh()
+    $('#db_choice').on('change', function () {
+        console.log("triggered by db choice");
+        refresh();
     });
 
     $('#name').bind('keypress', function (e) {
-        if (e.keyCode == 13 | e.keyCode == 9) {
+        if (e.keyCode === 13 || e.keyCode === 9) {
             console.log("triggered by enter key: name");
             refresh();
         }
     });
 
     $('#mofidkey').bind('keypress', function (e) {
-        if (e.keyCode == 13 | e.keyCode == 9) {
+        if (e.keyCode === 13 || e.keyCode === 9) {
             console.log("triggered by enter key: mofid ");
             refresh();
         }
@@ -233,10 +199,7 @@ $(document).on('DOMContentLoaded', function () {
         refresh()
     });
 
-    $('#db_choice').on('change', function () {
-        console.log("triggered by db choice");
-        refresh();
-    });
+
 
     start_loading();
     set_table();
@@ -354,19 +317,23 @@ function get_params() {
     let select_obj = document.getElementById("db_choice");
     let db_choice = select_obj.options[select_obj.selectedIndex].value;
 
+    let url_params = {};
 
-    let url_params = {
-        'vf_min': vf.noUiSlider.get()[0],
-        'vf_max': vf.noUiSlider.get()[1],
-        'pld_min': pld.noUiSlider.get()[0],
-        'pld_max': pld.noUiSlider.get()[1],
-        'lcd_min': lcd.noUiSlider.get()[0],
-        'lcd_max': lcd.noUiSlider.get()[1],
-        'sa_m2g_min': sa_m2g.noUiSlider.get()[0],
-        'sa_m2g_max': sa_m2g.noUiSlider.get()[1],
-        'sa_m2cm3_min': sa_m2cm3.noUiSlider.get()[0],
-        'sa_m2cm3_max': sa_m2cm3.noUiSlider.get()[1],
-    };
+    for (let slider_name in sliders) {
+        let min_value =  sliders[slider_name].noUiSlider.get()[0];
+        let max_value = sliders[slider_name].noUiSlider.get()[1];
+
+        console.info("----", slider_name)
+        console.info(MIN_MAXES)
+        console.info(min_value, MIN_MAXES[slider_name + "_min"])
+        console.info(max_value, MIN_MAXES[slider_name + "_max"])
+        if (min_value != MIN_MAXES[slider_name + "_min"]) {
+            url_params[slider_name + "_min"] = min_value;
+        }
+        if (max_value != MIN_MAXES[slider_name + "_max"]) {
+            url_params[slider_name + "_max"] = max_value;
+        }
+    }
 
     let doi = document.getElementById("doi_label").value;
     if (doi !== "") {
@@ -388,15 +355,6 @@ function get_params() {
     let name = document.getElementById("name").value;
     if (name !== '') {
         url_params['name'] = name;
-    }
-
-
-    for (let key in url_params) {
-        if (key in MIN_MAXES) {
-            if (MIN_MAXES[key] == url_params[key]) {
-                delete url_params[key]
-            }
-        }
     }
 
     if (active === "mofid" && idkey !== "") {
