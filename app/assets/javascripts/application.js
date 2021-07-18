@@ -10,14 +10,20 @@
 // Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
 // about supported directives.
 //
-//= require rails-ujs
-//= require jquery.3.1.js
-//= require jquery.dataTables.min.js
-//= require dataTables.responsive.min.js
+
+//= stub plotly-latest.min.js
+//= stub plots_bundle.js
+
+//= require "jquery.3.1.js"
+//= require "jquery.dataTables.min.js"
+//= require "dataTables.responsive.min.js"
 
 //= require activestorage
 //= require_tree .
-//= require nouislider
+
+
+// Don't include plotly. It's huge. We only load this on the mofs#show pages for the graphs.
+//= require "nouislider"
 
 
 

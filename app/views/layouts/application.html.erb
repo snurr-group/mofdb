@@ -2,8 +2,6 @@
 <html lang="en">
 
 <head>
-  <!-- Global site tag (gtag.js) - Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-111016820-6"></script>
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Nathaniel Tracy-Amoroso n8ta.com">
@@ -16,12 +14,14 @@
   <%= csp_meta_tag %>
   <%= stylesheet_link_tag 'application', media: 'all', integrity: true %>
   <%= javascript_include_tag 'application', integrity: true %>
+  <%= preload_link_tag "plots_bundle" %>
+  <%= yield :head %>
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-111016820-6"></script>
+
 </head>
 
-
 <body data-rails_env="<%= Rails.env.to_s %>">
-
-
 
 <div id="nav">
   <h1><a href="/"><span id="mof">MOF</span><span id="db">DB</span></a>
