@@ -293,6 +293,7 @@ function set_link(url, count) {
     copy['bulk'] = true
     const link = document.getElementById('download_cifs');
     const countSpan = document.getElementById('mofdb-count');
+
     countSpan.innerText = count
     link.href = '/mofs.json?' + dictToURI(copy)
 }
@@ -440,10 +441,16 @@ function refresh() {
 
         // Then remove the html param and make a separate request to get the # of MOFs
         delete html_params["html"]
-        $.getJSON("/mofs/count", html_params, function (data, status, xhr) {
+        $.getJSON("/mofs/count.json", html_params, function (data, status, xhr) {
             const count = data['count'];
-            count_cache[url_params_as_string] = count;
-            set_link(url_params, count);
+            if (data['status'] === 'success') {
+                count_cache[url_params_as_string] = count;
+                set_link(url_params, count);
+            } else {
+                count_cache[url_params_as_string] = "Too many mofs to count...";
+                set_link(url_params, "Too many mofs to count...");
+            }
+
         })
     });
 

@@ -19,12 +19,16 @@ class MofsController < ApplicationController
     # to speedup the frontend we decouple this from main search query
     # into a separate request to /mofs/count?normal_query_params
     @mofs = filter_mofs(Mof.all.visible)
+    @status = "success"
+    @error_message = ""
     begin
       @count = Rails.cache.fetch("mofcount-params-#{params_key}") do
         @mofs.count
       end
     rescue ActiveRecord::StatementTimeout
-      @count = "> 100,000 mofs"
+      @count = nil
+      @status = "failed"
+      @error_message = "> 100,000"
     end
     @pages = (@count.to_f / ENV['PAGE_SIZE'].to_f).ceil
   end
