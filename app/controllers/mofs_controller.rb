@@ -22,7 +22,7 @@ class MofsController < ApplicationController
     @error_message = ""
     begin
       @count = Rails.cache.fetch("mofcount-params-#{params_key}") do
-        @mofs.count
+        @mofs.optimizer_hints("MAX_EXECUTION_TIME(10000)", "max_execution_time(10000)").count
       end
     rescue ActiveRecord::StatementTimeout
       @count = nil
