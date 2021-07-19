@@ -14,7 +14,6 @@ class MofsController < ApplicationController
   before_action :cache, except: [:upload]
 
   def count
-    Rails.cache.clear
     # Finding the count of MOFs is the slowest part of the search
     # to speedup the frontend we decouple this from main search query
     # into a separate request to /mofs/count?normal_query_params
