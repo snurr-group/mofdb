@@ -403,7 +403,7 @@ function refresh() {
     }
 
     unset_link()
-    $.get("/mofs", html_params, function (data, status, xhr) {
+    $.get("/mofs.html", html_params, function (data, status, xhr) {
         // First get the mof results
         finish_search(data)
 

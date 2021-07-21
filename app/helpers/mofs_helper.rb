@@ -1,4 +1,24 @@
 module MofsHelper
+
+  def symbol_to_id(elems)
+    elems.map { |symbol| Element.find_by(symbol: symbol).id }
+  end
+
+  def parse_element_ids(elements)
+    # elements is a string like "H, Cu"
+    # or an array like ["H", "Cu"]
+    # or a string like "H"
+    if elements.is_a?(Array)
+      symbol_to_id(elements)
+    elsif elements.is_a?(String) && elements.include?(",")
+      symbol_to_id(elements.split(","))
+    elsif elements.is_a?(String)
+      symbol_to_id([elements])
+    else
+      raise Exception("#{elements} could not parsed")
+    end
+  end
+
   def send_zip_file(mofs, convert_pressure, convert_loading, cifs = true, json = true)
 
     zip_name = "mofs-bulk-search-download.zip"

@@ -63,6 +63,8 @@ class ApplicationController < ActionController::Base
   def set_preferred_units
     set_session_for_header(request.headers['loading'], :prefLoading, "loading")
     set_session_for_header(request.headers['pressure'], :prefPressure, "pressure")
+    @convert_pressure = session[:prefPressure] ? Classification.find(session[:prefPressure]) : nil
+    @convert_loading = session[:prefLoading] ? Classification.find(session[:prefLoading]) : nil
   end
 
   def set_units

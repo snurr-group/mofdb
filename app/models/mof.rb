@@ -29,7 +29,6 @@ class Mof < ApplicationRecord
 
   def test
     isotherm_bad_units = false
-
     self.isotherms.map { |i| i.adsorption_units.name }.each do |name|
       unless supportedLoadingUnits.include?(name)
         isotherm_bad_units = true
@@ -74,6 +73,7 @@ class Mof < ApplicationRecord
   end
 
   def get_json(convertPressure, convertLoading)
+    # Convenience method to render the view for caching
     ApplicationController.render(template: 'mofs/_mof.json.jbuilder',
                                  locals: { mof: self, convert_pressure: convertPressure,
                                            convert_loading: convertLoading },

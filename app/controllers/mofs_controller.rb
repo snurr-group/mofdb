@@ -17,11 +17,11 @@ class MofsController < ApplicationController
     # Finding the count of MOFs is the slowest part of the search
     # to speedup the frontend we decouple this from main search query
     # into a separate request to /mofs/count?normal_query_params
-    @mofs = filter_mofs(Mof.all.visible)
+    @mofs = filter_mofs(Mof.all.visible.distinct)
     @status = "success"
     @error_message = ""
     begin
-      @count = Rails.cache.fetch("mofcount-params-#{params_key}") do
+      @count = Rails.cache.fetch("mof-count-params-#{params_key}") do
         @mofs.optimizer_hints("MAX_EXECUTION_TIME(10000)", "max_execution_time(10000)").count
       end
     rescue ActiveRecord::StatementTimeout
@@ -39,20 +39,13 @@ class MofsController < ApplicationController
   # GET /mofs
   # GET /mofs.json
   def index
-    @convert_pressure = session[:prefPressure] ? Classification.find(session[:prefPressure]) : nil
-    @convert_loading = session[:prefLoading] ? Classification.find(session[:prefLoading]) : nil
-
-    @mofs = Mof.all.visible
+    @mofs = Mof.all.visible.distinct
     @mofs = filter_mofs(@mofs)
 
     bulk = params[:bulk] && params[:bulk] == "true"
     cifs = params[:cifs] && params[:cifs] == "true"
 
-    if params[:html]
-      @mofs = @mofs.includes([:elements, :database])
-      @mofs = @mofs.take(100)
-      return render partial: 'mofs/rows'
-    elsif bulk
+    if bulk
       send_zip_file(@mofs, @convert_pressure, @convert_loading, cifs = true, json = true)
       return
     elsif cifs
@@ -61,6 +54,7 @@ class MofsController < ApplicationController
 
     respond_to do |format|
       format.json {
+        @mofs = @mofs.includes([:elements, :elements_mofs, :batch, :database])
         @page = params['page'].to_i # nil -> 0
         @page = 1 if @page == 0
         offset = (ENV['PAGE_SIZE'].to_i) * (@page - 1)
@@ -72,6 +66,11 @@ class MofsController < ApplicationController
           return render :json => { error: "Page number too large", pages: @pages }, status: 400
         end
         @mofs = @mofs.offset(offset).take(ENV['PAGE_SIZE'])
+      }
+      format.html {
+        @mofs = @mofs.includes([:elements, :database])
+        @mofs = @mofs.take(100)
+        return render partial: 'mofs/rows'
       }
     end
 
@@ -114,30 +113,12 @@ class MofsController < ApplicationController
   # GET /mofs/1
   # GET /mofs/1.json
   def show
-    convert_pressure = session[:prefPressure] ? Classification.find(session[:prefPressure]) : nil
-    convert_loading = session[:prefLoading] ? Classification.find(session[:prefLoading]) : nil
-
     unless @mof.convertable
       @msg = "This mof is missing molarMass or volume and thus we cannot do automatic unit conversion"
     end
 
-    if @mof.isotherms.convertable.size != @mof.isotherms.size
+    if @mof.isotherms.not_heats.convertable.size != @mof.isotherms.not_heats.size
       @msg = "Some isotherms for this mof use units we do not know how to convert"
-    end
-
-    respond_to do |format|
-      format.html {}
-      format.json {
-        # I am well aware this is the wrong way to render a view.
-        #
-        # We do it this way b/c in index route we need to render this same view and we need to pass
-        # in @convertPressure/@convertLoading but we cannot easily pass @ variables, only locals using
-        # the ApplicationController.render in mof.rb:get_json
-        # so by doing it the same ugly way here we at least don't have two different ways of calling
-        # that same template.
-        return render :json => @mof.get_json(convert_pressure, convert_loading),
-                      status: 200
-      }
     end
   end
 
@@ -183,23 +164,16 @@ class MofsController < ApplicationController
 
     ## Elements in MOF
     if params[:elements] && params[:elements] != ""
-      el_ids = params[:elements]
-      if el_ids.is_a?(String)
-        el_ids = [el_ids]
-      end
-      el_ids = el_ids.map { |el| Element.find_by(symbol: el).id }
-      query = "SELECT DISTINCT elements_mofs.mof_id from elements_mofs
-              where element_id in (?)"
-      sanitized = ActiveRecord::Base.send(:sanitize_sql_array, [query, el_ids])
-      mof_ids = ActiveRecord::Base.connection.execute(sanitized).to_a.flatten
-      mofs = mofs.where("mofs.id in (?)", mof_ids)
+      el_ids = parse_element_ids(params[:elements]) # [12, 73, ...]
+      list = Mof.sanitize_sql(el_ids.join(","))
+      mofs = mofs.joins("INNER JOIN elements_mofs as el_mof on el_mof.mof_id = mofs.id and el_mof.element_id in (#{list})")
     end
 
     ## GASES
     if params[:gases] && !params[:gases].empty?
       gases = params[:gases].is_a?(String) ? params[:gases].split(",") : params[:gases]
       gas_ids = gases.map { |gas_name| Gas.find_gas(gas_name).id }.uniq
-      mofs = Mof.joins(:isotherms).joins(:isodata).where("isodata.gas_id in (?)", gas_ids).distinct
+      mofs = mofs.joins(:isotherms).joins(:isodata).where("isodata.gas_id in (?)", gas_ids)
     end
 
     ## VOID FRAC
@@ -272,7 +246,8 @@ class MofsController < ApplicationController
     end
 
     if params[:doi] && !params[:doi].empty?
-      mofs = mofs.joins("JOIN isotherms on isotherms.mof_id = mofs.id and isotherms.doi = '#{Mof.sanitize_sql(params[:doi])}'").distinct
+      mofs = mofs.joins("JOIN isotherms on isotherms.mof_id = mofs.id")
+                 .where("isotherms.doi = ?", params[:doi]).distinct
     end
 
     mofs

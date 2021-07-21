@@ -5,11 +5,11 @@ class Gas < ApplicationRecord
   has_many :mofs, through: :isotherms
 
   def to_nist_json
-    {id: self.id,
-     InChIKey: self.inchikey,
-     name: self.name,
-     InChICode: self.inchicode,
-     formula: self.formula,
+    { id: self.id,
+      InChIKey: self.inchikey,
+      name: self.name,
+      InChICode: self.inchicode,
+      formula: self.formula,
     }
 
   end
