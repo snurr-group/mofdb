@@ -7,8 +7,8 @@ module ApplicationHelper
       db.name.gsub(/[^0-9a-z ]/i, ' ') + '.zip'
     else
       gas_section = gases.nil? ? "all" : gases.to_a.map { |g| g.name }.join("-")
-      path = "#{db.name}-#{doi}-#{gas_section}.zip"
-      path.gsub(/[^0-9a-z ]/i, ' ')
+      path = "#{db.name}-#{doi}-#{gas_section}"
+      path.gsub(/[^0-9a-z ]/i, ' ') + ".zip"
     end
   end
 
