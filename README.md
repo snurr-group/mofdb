@@ -6,9 +6,6 @@ This is the database + frontend for the MOF database of the Snurr Research Group
 # Citation
 
 If you use this work place cite the MofDB publication.
-DOI will be placed here after publication.
-
-If you use this work place cite the MofDB/MofID publication.
 https://pubs.acs.org/doi/abs/10.1021/acs.cgd.9b01050
 
 # Current Developer:
