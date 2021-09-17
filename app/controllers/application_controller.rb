@@ -41,6 +41,7 @@ class ApplicationController < ActionController::Base
     if input.nil?
       return
     end
+    classification = nil
     if input == "native" && !session[session_key].nil?
       session.delete(session_key)
     else
@@ -48,10 +49,14 @@ class ApplicationController < ActionController::Base
         classification = Classification.find(input)
       elsif input.is_a?(String)
         classification = Classification.find_by(name: input)
-      else
-        return render json: { "error": "We don't know what unit '#{input}' is" }, status: 500
       end
-      session[session_key] = classification.id
+      begin
+        session[session_key] = classification.id
+      rescue NoMethodError => err
+        render json: { "error": "We don't know what unit '#{input}' is" }, status: 500
+        Sentry.capture_message("Setting units - '#{input}' couldn't be found")
+        return
+      end
       if classification.source != expected_classification_src
         session.delete(session_key)
         supported = Classification.where(convertable: true, source: expected_classification_src).pluck(:name)
