@@ -5,7 +5,7 @@ unless Rails.env.development?
 
     # To activate performance monitoring, set one of these options.
     # We recommend adjusting the value in production:
-    config.traces_sample_rate = 0.5
+    config.traces_sample_rate = 0.01
     # or
     config.traces_sampler = lambda do |context|
       true
