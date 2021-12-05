@@ -1,0 +1,1 @@
+json.array! @dbs, partial: "databases/database", as: :db

@@ -15,7 +15,8 @@ print(resp.keys())
   <ul>
     <li><h3>Units</h3>
       You can customize the pressure / loading units you get back by supplying the following two headers.
-      Note: the API will be a fair bit slower if you need to it convert units for you on the fly. The databases page will be MUCH faster if you need a whole DB.
+      Note: the API will be a fair bit slower if you need to it convert units for you on the fly. The databases page
+      will be MUCH faster if you need a whole DB.
       <p> You can see a full list of the units available <a href='/classifications.json'>here</a></p>
       <table class="api_table">
         <tr>
@@ -229,5 +230,18 @@ print(resp.keys())
   { name: "kPA", type: "pressure" },
   { name: "wt%", type: "other" },
 ]
+      </pre>
+    <li><h3>/databases.json</h3>
+      <p>Returns a JSON array of the available databases and their mof counts</p>
+      <pre>
+[
+  {"id":5,"name":"CoREMOF 2014","mofs":4612},
+  {"id":4,"name":"CoREMOF 2019","mofs":11317},
+  {"id":1,"name":"CSD","mofs":0},
+  {"id":3,"name":"hMOF","mofs":137953},
+  {"id":2,"name":"Tobacco","mofs":13511}
+]
+      </pre>
+
   </ul>
 </div>

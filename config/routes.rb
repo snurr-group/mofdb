@@ -2,7 +2,6 @@ Rails.application.routes.draw do
 
   root 'mofs#homepage'
   get '/api' => 'mofs#api', as: 'api'
-  get '/databases' => 'mofs#databases', as: 'databases'
   resources :mofs do
     collection do
       get '/count' => 'mofs#count', as: "count"
@@ -12,7 +11,7 @@ Rails.application.routes.draw do
       get '/cif' => 'mofs#cif', as: "cif"
     end
   end
-
+  resources :databases, only: [:index, :create, :destroy]
   resources :batches, only: [:show, :index, :destroy, :create]
   resources :forcefields, only: [:index, :create, :update, :edit]
   resources :database_files, only: [:create, :destroy, :index]

@@ -1,5 +1,46 @@
-class DatabasesController < ApplicationRecord
+class DatabasesController < ApplicationController
+  before_action :verify_access, only: [:create, :destroy]
+  skip_forgery_protection only: [:create, :destroy]
+
+  def create
+    name = params[:name]
+    puts params.inspect
+    if !name.nil? && name.is_a?(String) && name.length > 0
+      db = Database.create(name: name)
+      db.save!
+      render :json => {success: true}, status: 200
+    else
+      render :json => {success: false, "Error": "Database name should be a non empty string"}, status: 400
+    end
+  end
+
+  def destroy
+    @db = Database.find(params[:id])
+    if @db.mofs.count == 0
+      @db.destroy!
+      render json: {success: true, msg: "Deleted!"}, status: 200
+    else
+      render json: {success: false, msg: "Database has more than 0 mofs (#{@db.mofs.count}! This is a bug in the mofdb-interface"}, status: 500
+    end
+
+  end
+
 
   # GET /databases
+  def index
+    if request.format.symbol == :json
+      @dbs = Database.all
+    else
 
+      @combinations = get_db_doi_gas_combos
+      @groups = {} # category => array of files
+      DatabaseFile.all.each do |file|
+        if @groups.keys.include?(file.category)
+          @groups[file.category] << file
+        else
+          @groups[file.category] = [file]
+        end
+      end
+    end
+  end
 end

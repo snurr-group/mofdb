@@ -146,19 +146,6 @@ class MofsController < ApplicationController
   def api
   end
 
-  # GET /databases
-  def databases
-    @combinations = get_db_doi_gas_combos
-    @groups = {} # category => array of files
-    DatabaseFile.all.each do |file|
-      if @groups.keys.include?(file.category)
-        @groups[file.category] << file
-      else
-        @groups[file.category] = [file]
-      end
-    end
-  end
-
   private
 
   def filter_mofs(mofs)
