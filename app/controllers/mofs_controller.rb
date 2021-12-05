@@ -83,6 +83,7 @@ class MofsController < ApplicationController
     begin
       elements = JSON.parse(params[:atoms]).map { |atm| Element.find_by(symbol: atm == "x" ? "Xe" : atm) }
       modified_params[:elements] = elements
+    rescue Exception
     end
 
     modified_params = modified_params.except(:atoms)
