@@ -115,11 +115,11 @@ class MofsController < ApplicationController
   # GET /mofs/1.json
   def show
     unless @mof.convertable
-      @msg = "This mof is missing molarMass or volume and thus we cannot do automatic unit conversion"
+      @msg = "This structure is missing molarMass or volume and thus we cannot do automatic unit conversion"
     end
 
     if @mof.isotherms.not_heats.convertable.size != @mof.isotherms.not_heats.size
-      @msg = "Some isotherms for this mof use units we do not know how to convert"
+      @msg = "Some isotherms for this structure use units we do not know how to convert"
     end
   end
 
