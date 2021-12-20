@@ -41,9 +41,9 @@ class Mof < ApplicationRecord
     end
 
     if isotherm_bad_units
-      msg = "Cannot covert to your preferred units because one of this mofs isotherms includes a non-convertable unit"
+      msg = "Cannot covert to your preferred units because one of this structure's isotherms includes a non-convertable unit"
     elsif !can_i_covert
-      msg = "This mof is missing it's volume or molar mass and thus we cannot covert its units"
+      msg = "This structure is missing it's volume or molar mass and thus we cannot covert its units"
     else
       msg = nil
     end
