@@ -23,6 +23,7 @@ if res['success']:
     print(json.dumps(res))
     sys.exit(-1)
 
+exit_code = -1
 new_cif_path = mof_file+".2.cif"
 try:
     # Convert read cif into pymatgen to try and standardized it
@@ -34,10 +35,10 @@ try:
     res = read_mof(new_cif_path,1)
     # If this second attempt fails, nothing we can do. Just pass on the failure
     print(json.dumps(res))
+    if (res['success']):
+        exit_code = 0
 finally:
     # remove this temp file
     os.remove(new_cif_path)
 
-if (res['success']):
-    sys.exit(0)
-sys.exit(-1)
+sys.exit(exit_code)
