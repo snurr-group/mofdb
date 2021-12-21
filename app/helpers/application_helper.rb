@@ -45,10 +45,11 @@ module ApplicationHelper
           gases = Set.new
           query = "SELECT DISTINCT JSON_OBJECTAGG(isodata.gas_id,'') from isotherms
                   INNER JOIN isodata on isodata.isotherm_id = isotherms.id
-                  WHERE doi = (?)
+                  INNER JOIN mofs on isotherms.mof_id = mofs.id
+                  WHERE isotherms.doi = (?) and mofs.database_id = (?)
                   GROUP BY  isotherms.id;"
 
-          sanitized = ActiveRecord::Base.send(:sanitize_sql_array, [query, doi])
+          sanitized = ActiveRecord::Base.send(:sanitize_sql_array, [query, doi, db.id])
           results = ActiveRecord::Base.connection.execute(sanitized)
           results.each do |result|
             gases << JSON.parse(result[0]).keys.map { |v| Gas.find(v.to_i) }.to_set
