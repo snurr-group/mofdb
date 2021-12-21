@@ -39,7 +39,8 @@ module ApplicationHelper
       all_dois = Isotherm.distinct.pluck(:doi).uniq.select { |doi| !doi.nil? }
       Database.all.each do |db|
         combinations[db] = {}
-        dois = all_dois.select { |doi| Isotherm.find_by(doi: doi).mof.database == db }
+        # Pick out the dois present on an isotherm in this database
+        dois = all_dois.select { |doi| Isotherm.joins(:mof).where("mofs.database_id = ?", db.id).where("isotherms.doi = ?", doi).exists? }
         dois.each do |doi|
           gases = Set.new
           query = "SELECT DISTINCT JSON_OBJECTAGG(isodata.gas_id,'') from isotherms
