@@ -57,13 +57,20 @@ class Mof < ApplicationRecord
     write_cif_to_file
     begin
       cmd = "python3 #{Rails.root.join("lib", "massAndVol.py")} #{cif_path}"
-      stdout_str, _, _ = Open3.capture3(cmd)
-      result = JSON.load(stdout_str)
-      self.volumeA3 = result['volumeA3']
-      self.atomicMass = result['atomicMass']
-      self.save!
-      success = true
+      stdout, stderr, status = Open3.capture3(cmd)
+      if status.exitstatus == 0
+        result = JSON.load(stdout)
+        success = result['success']
+        if success
+          self.volumeA3 = result['volumeA3']
+          self.atomicMass = result['atomicMass']
+          self.save!
+          return
+        end
+      end
+      raise Exception.new("python: '#{stderr}'")
     rescue Exception => e
+      puts "Exception happened reading mass/vol"
       puts e
       success = false
     ensure
@@ -89,14 +96,14 @@ class Mof < ApplicationRecord
 
   def cif_path
     id = 'id-' + self.id.to_s + '.cif'
-    return Rails.root.join("tmp", id)
+    Rails.root.join("tmp", id)
   end
 
   def write_cif_to_file
 
     tmp = File.open(cif_path, 'w+')
     tmp.write(self.cif)
-    tmp.close()
+    tmp.close
   end
 
   def delete_cif
