@@ -21,7 +21,7 @@ def read_mof(mof_path, attempt):
 res = read_mof(mof_file, 0)
 if res['success']:
     print(json.dumps(res))
-    sys.exit(-1)
+    sys.exit(0)
 
 exit_code = -1
 new_cif_path = mof_file+".2.cif"
