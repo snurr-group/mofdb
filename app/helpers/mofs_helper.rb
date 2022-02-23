@@ -68,7 +68,7 @@ module MofsHelper
       return
     rescue Exception => e
       if Rails.env.production?
-        Sentry.capture_message("Error while creating a zip file #{request.url.to_s}")
+        Sentry.capture_exception(e)
       else
         puts e.inspect
         puts e.backtrace.reverse.join("\n")
