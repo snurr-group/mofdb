@@ -42,7 +42,7 @@ class ApplicationController < ActionController::Base
       return
     end
     classification = nil
-    if input == "native" && !session[session_key].nil?
+    if input == "native"
       session.delete(session_key)
     else
       if input.to_i != 0
