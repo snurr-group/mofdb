@@ -123,7 +123,6 @@ $(document).on('DOMContentLoaded', function () {
             create_isotherm(data['isotherms'][i])
         }
         document.getElementById('isotherms_loading').style.display = "none";
-        console.info(document.getElementById('isotherms_loading'))
         for (let i = 0; i < data['heats'].length; i++) {
             create_heat(data['heats'][i])
         }
