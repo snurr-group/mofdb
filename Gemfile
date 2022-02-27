@@ -1,25 +1,25 @@
 source 'https://rubygems.org'
 git_source(:github) {|repo| "https://github.com/#{repo}.git"}
 
-gem 'activerecord-import'
-gem "passenger", ">= 5.3.2", require: "phusion_passenger/rack_handler"
-gem 'rubyzip'
-gem 'concurrent-ruby'
+gem 'activerecord-import', "^.1.6.0"
+gem "passenger", "~>5.3", require: "phusion_passenger/rack_handler"
+gem 'rubyzip', '~>2.3'
+gem 'concurrent-ruby' '~>1.1'
 gem 'rails', '~> 6.0'
 
 gem 'mysql2', '>= 0.4.4', '< 0.6.0'
 
-gem 'sass-rails'
-gem 'uglifier'
+gem 'sass-rails', "~>6.0"
+gem 'uglifier', "~>4.2"
 
-gem 'zip_tricks'
-gem 'jbuilder'
-gem 'bootsnap', '>= 1.1.0', require: false
-gem 'dotenv-rails'
-gem 'nouislider-rails'
+gem 'zip_tricks', "~>5.5"
+gem 'jbuilder', "~>2.11"
+gem 'bootsnap', '~>1.1.0', require: false
+gem 'dotenv-rails', "2.7.6"
+gem 'nouislider-rails', "~>8.2"
 
-gem "sentry-ruby"
-gem "sentry-rails"
+gem "sentry-ruby", "~>5.0"
+gem "sentry-rails", "~>5.0"
 
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
