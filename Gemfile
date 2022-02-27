@@ -14,7 +14,7 @@ gem 'uglifier', "~>4.2"
 
 gem 'zip_tricks', "~>5.5"
 gem 'jbuilder', "~>2.11"
-gem 'bootsnap', '~>1.1.0', require: false
+gem 'bootsnap', '~>1.7', require: false
 gem 'dotenv-rails', "2.7.6"
 gem 'nouislider-rails', "~>8.2"
 
