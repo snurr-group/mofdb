@@ -1,10 +1,10 @@
 source 'https://rubygems.org'
 git_source(:github) {|repo| "https://github.com/#{repo}.git"}
 
-gem 'activerecord-import', "^.1.6.0"
-gem "passenger", "~>5.3", require: "phusion_passenger/rack_handler"
+gem 'activerecord-import', "~>1.0"
+gem "passenger", "~>6.0", require: "phusion_passenger/rack_handler"
 gem 'rubyzip', '~>2.3'
-gem 'concurrent-ruby' '~>1.1'
+gem 'concurrent-ruby', '~>1.1'
 gem 'rails', '~> 6.0'
 
 gem 'mysql2', '>= 0.4.4', '< 0.6.0'
