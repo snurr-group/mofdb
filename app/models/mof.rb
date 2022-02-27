@@ -9,16 +9,22 @@ class Mof < ApplicationRecord
   belongs_to :database
   has_many :isotherms, dependent: :delete_all
   has_many :isodata, through: :isotherms
-  has_many :gases, through: :isotherms
   has_many :adsorbate_forcefields, through: :isotherms
   has_many :molecule_forcefields, through: :isotherms
   has_many :adsorption_units, through: :isotherms
   has_many :pressure_units, through: :isotherms
   has_many :composition_type, through: :isotherms
-  has_and_belongs_to_many :elements
   has_many :heats
 
+  # This table is built by parsing the cif files
+  has_and_belongs_to_many :elements
+
+  # This is a cache of mofs -> isotherms -> isodata -> gases
+  # querying for "all mofs with a CO2 isotherm" is too slow otherwise
+  has_and_belongs_to_many :gases
+
   after_create :storeMassAndVol
+  after_save :updateGases
 
   scope :visible, -> { where(:hidden => false) }
   scope :convertable, -> { where("volumeA3 is not NULL and atomicMass is not NULL") }
@@ -50,6 +56,11 @@ class Mof < ApplicationRecord
 
     return (can_i_covert && !isotherm_bad_units), msg
 
+  end
+
+  def updateGases
+    gas_ids = isotherms.joins(:isodata).select("isodata.gas_id").distinct("isodata.gas_id").to_a.map{|row| row.gas_id}
+    gases << Gas.where(id: gas_ids)
   end
 
   def storeMassAndVol

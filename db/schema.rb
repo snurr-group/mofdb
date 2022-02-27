@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_09_230828) do
+ActiveRecord::Schema.define(version: 2021_07_03_194742) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -50,14 +50,6 @@ ActiveRecord::Schema.define(version: 2021_07_09_230828) do
     t.index ["source"], name: "index_classifications_on_source"
   end
 
-  create_table "database_files", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.string "name", null: false
-    t.string "category"
-    t.index ["category"], name: "index_database_files_on_category"
-  end
-
   create_table "databases", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name"
     t.index ["name"], name: "index_databases_on_name"
@@ -79,6 +71,12 @@ ActiveRecord::Schema.define(version: 2021_07_09_230828) do
     t.bigint "element_id", null: false
     t.index ["element_id"], name: "index_elements_mofs_on_element_id"
     t.index ["mof_id"], name: "index_elements_mofs_on_mof_id"
+  end
+
+  create_table "force_field_zips", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.string "name", null: false
   end
 
   create_table "forcefields", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -106,6 +104,11 @@ ActiveRecord::Schema.define(version: 2021_07_09_230828) do
     t.index ["inchicode"], name: "index_gases_on_inchicode"
     t.index ["inchikey"], name: "index_gases_on_inchikey"
     t.index ["name"], name: "index_gases_on_name"
+  end
+
+  create_table "gases_mofs", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "mof_id", null: false
+    t.bigint "gas_id", null: false
   end
 
   create_table "isodata", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|

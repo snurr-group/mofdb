@@ -17,7 +17,7 @@ class MofsController < ApplicationController
     # Finding the count of MOFs is the slowest part of the search
     # to speedup the frontend we decouple this from main search query
     # into a separate request to /mofs/count?normal_query_params
-    @mofs = filter_mofs(Mof.all.visible.distinct)
+    @mofs = get_mofs
     @status = "success"
     @error_message = ""
     begin
@@ -39,8 +39,7 @@ class MofsController < ApplicationController
   # GET /mofs
   # GET /mofs.json
   def index
-    @mofs = Mof.all.visible.distinct
-    @mofs = filter_mofs(@mofs)
+    @mofs = get_mofs
 
     bulk = params[:bulk] && params[:bulk] == "true"
     cifs = params[:cifs] && params[:cifs] == "true"
@@ -148,7 +147,16 @@ class MofsController < ApplicationController
 
   private
 
-  def filter_mofs(mofs)
+  def get_mofs
+
+    mofs = Mof.all.visible
+
+    ## GASES
+    if params[:gases] && !params[:gases].empty?
+      gases = params[:gases].is_a?(String) ? params[:gases].split(",") : params[:gases]
+      # gas_ids = gases.map { |gas_name| Gas.find_gas(gas_name).id }.uniq
+      mofs = mofs.joins(:mofs_gases).where(mofs_gases: { gas_id: gases })
+    end
 
     ## Elements in MOF
     if params[:elements] && params[:elements] != ""
@@ -157,12 +165,7 @@ class MofsController < ApplicationController
       mofs = mofs.joins("INNER JOIN elements_mofs as el_mof on el_mof.mof_id = mofs.id and el_mof.element_id in (#{list})")
     end
 
-    ## GASES
-    if params[:gases] && !params[:gases].empty?
-      gases = params[:gases].is_a?(String) ? params[:gases].split(",") : params[:gases]
-      gas_ids = gases.map { |gas_name| Gas.find_gas(gas_name).id }.uniq
-      mofs = mofs.joins(:isotherms).joins(:isodata).where("isodata.gas_id in (?)", gas_ids)
-    end
+
 
     ## VOID FRAC
     if params[:vf_min] && !params[:vf_min].empty? && params[:vf_min] && params[:vf_min].to_f != 0
