@@ -269,7 +269,6 @@ function set_link(url, count) {
     copy['bulk'] = true
     const link = document.getElementById('download_cifs');
     const countSpan = document.getElementById('mofdb-count');
-
     countSpan.innerText = count
     link.href = '/mofs.json?' + dictToURI(copy)
 }
@@ -323,10 +322,6 @@ function get_params() {
         let min_value =  sliders[slider_name].noUiSlider.get()[0];
         let max_value = sliders[slider_name].noUiSlider.get()[1];
 
-        console.info("----", slider_name)
-        console.info(MIN_MAXES)
-        console.info(min_value, MIN_MAXES[slider_name + "_min"])
-        console.info(max_value, MIN_MAXES[slider_name + "_max"])
         if (min_value != MIN_MAXES[slider_name + "_min"]) {
             url_params[slider_name + "_min"] = min_value;
         }

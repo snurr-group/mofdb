@@ -53,7 +53,7 @@ class MofsController < ApplicationController
 
     respond_to do |format|
       format.json {
-        @mofs = @mofs.includes([:elements, :elements_mofs, :batch, :database])
+        @mofs = @mofs.includes([:elements, :elements_mofs, :batch, :database, :gases, :gases_mofs])
         @page = params['page'].to_i # nil -> 0
         @page = 1 if @page == 0
         offset = (ENV['PAGE_SIZE'].to_i) * (@page - 1)
@@ -67,7 +67,7 @@ class MofsController < ApplicationController
         @mofs = @mofs.offset(offset).take(ENV['PAGE_SIZE'])
       }
       format.html {
-        @mofs = @mofs.includes([:elements, :database])
+        @mofs = @mofs.includes([:elements, :elements_mofs, :batch, :database, :gases, :gases_mofs])
         @mofs = @mofs.take(100)
         return render partial: 'mofs/rows'
       }
@@ -154,8 +154,8 @@ class MofsController < ApplicationController
     ## GASES
     if params[:gases] && !params[:gases].empty?
       gases = params[:gases].is_a?(String) ? params[:gases].split(",") : params[:gases]
-      # gas_ids = gases.map { |gas_name| Gas.find_gas(gas_name).id }.uniq
-      mofs = mofs.joins(:mofs_gases).where(mofs_gases: { gas_id: gases })
+      gas_ids = gases.map { |gas_name| Gas.find_gas(gas_name).id }.uniq
+      mofs = mofs.joins(:gases).where("gases_mofs.gas_id in (?)", gas_ids)
     end
 
     ## Elements in MOF
