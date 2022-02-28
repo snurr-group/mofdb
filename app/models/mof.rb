@@ -60,7 +60,8 @@ class Mof < ApplicationRecord
 
   def updateGases
     gas_ids = isotherms.joins(:isodata).select("isodata.gas_id").distinct("isodata.gas_id").to_a.map{|row| row.gas_id}
-    gases << Gas.where(id: gas_ids)
+    self.gases = []
+    self.gases = Gas.where(id: gas_ids)
   end
 
   def storeMassAndVol
