@@ -149,7 +149,7 @@ class MofsController < ApplicationController
 
   def get_mofs
 
-    mofs = Mof.all.visible
+    mofs = Mof.all.distinct.visible
 
     ## GASES
     if params[:gases] && !params[:gases].empty?
