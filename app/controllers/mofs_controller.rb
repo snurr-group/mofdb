@@ -126,7 +126,7 @@ class MofsController < ApplicationController
   def cif
     begin
       if @mof.hidden
-        return render status: 403, json: {status: RESULTS[:error], error: "Unavailable for CSD cifs, see: https://www.ccdc.cam.ac.uk/solutions/csd-system/components/csd/".to_json }
+        return render status: 403, json: {status: RESULTS[:error], error: "Unavailable for CSD cifs, see: https://www.ccdc.cam.ac.uk/solutions/csd-system/components/csd/" }
       end
       temp_name = "cif-#{SecureRandom.hex(8)}.cif"
       temp_path = Rails.root.join(Rails.root.join("tmp"), temp_name)
