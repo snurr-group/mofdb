@@ -1,3 +1,5 @@
+include ApplicationHelper
+
 class DatabaseFilesController < ApplicationController
   before_action :verify_access, only: [:create, :destroy]
   skip_forgery_protection only: [:create, :destroy]
@@ -13,21 +15,21 @@ class DatabaseFilesController < ApplicationController
 
   def create
     unless DatabaseFile.find_by(name: params[:name]).nil?
-      return render json: { error: "There is already a file with the name #{params[:name]}"}, status: 500
+      return render json: { status: RESULTS[:error], error: "There is already a file with the name #{params[:name]}"}, status: 500
     end
     begin
       zip = DatabaseFile.create!({ name: params[:name], category: params[:category]})
       zip.file.attach(params[:file])
       zip.save!
     rescue
-      return render json: { error: "Something went wrong upload your zip." }
+      return render json: { status: RESULTS[:error], error: "Something went wrong upload your zip." }
     end
     render json: { name: zip.name, id: zip.id }
   end
 
   def destroy
     @ffzip.destroy!
-    render json: {msg: "Deleted!"}
+    render json: {status: RESULTS[:success], message: "Deleted!" }
   end
 
   private

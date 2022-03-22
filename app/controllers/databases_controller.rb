@@ -1,3 +1,5 @@
+include ApplicationHelper
+
 class DatabasesController < ApplicationController
   before_action :verify_access, only: [:create, :destroy]
   skip_forgery_protection only: [:create, :destroy]
@@ -8,9 +10,9 @@ class DatabasesController < ApplicationController
     if !name.nil? && name.is_a?(String) && name.length > 0
       db = Database.create(name: name)
       db.save!
-      render :json => {success: true}, status: 200
+      render :json => {status: RESULTS[:success]}, status: 200
     else
-      render :json => {success: false, "Error": "Database name should be a non empty string"}, status: 400
+      render :json => {status: RESULTS[:error], error: "Database name should be a non empty string"}.to_json, status: 400
     end
   end
 
@@ -18,9 +20,9 @@ class DatabasesController < ApplicationController
     @db = Database.find(params[:id])
     if @db.mofs.count == 0
       @db.destroy!
-      render json: {success: true, msg: "Deleted!"}, status: 200
+      render json: {status: RESULTS[:success], message: "Deleted!"}.to_json, status: 200
     else
-      render json: {success: false, msg: "Database has more than 0 mofs (#{@db.mofs.count}! This is a bug in the mofdb-interface"}, status: 500
+      render json: {status: RESULTS[:error], error: "Database has more than 0 mofs (#{@db.mofs.count}! This is a bug in the mofdb-interface"}.to_json, status: 500
     end
 
   end

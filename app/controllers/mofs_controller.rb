@@ -107,7 +107,7 @@ class MofsController < ApplicationController
       @mof.update(modified_params.except(:batch))
     end
     @mof.regen_json
-    render status: 200, json: @mof.id.to_json
+    render status: 200, json: { status: RESULTS[:success], id: @mof.id }.to_json
   end
 
   # GET /mofs/1
@@ -126,7 +126,7 @@ class MofsController < ApplicationController
   def cif
     begin
       if @mof.hidden
-        return render status: 403, json: "Unavailable for CSD cifs, see: https://www.ccdc.cam.ac.uk/solutions/csd-system/components/csd/".to_json
+        return render status: 403, json: {status: RESULTS[:error], error: "Unavailable for CSD cifs, see: https://www.ccdc.cam.ac.uk/solutions/csd-system/components/csd/".to_json }
       end
       temp_name = "cif-#{SecureRandom.hex(8)}.cif"
       temp_path = Rails.root.join(Rails.root.join("tmp"), temp_name)
@@ -154,6 +154,14 @@ class MofsController < ApplicationController
     ## GASES
     if params[:gases] && !params[:gases].empty?
       gases = params[:gases].is_a?(String) ? params[:gases].split(",") : params[:gases]
+      gas_ids = []
+      gases.each do |gas_name|
+        gas = Gas.find_gas(gas_name)
+        if gas.nil?
+          return render status: 400, json: {status: RESULTS[:error], error: "Gas '#{gas_name}' not found" }.to_json
+        end
+        gas_ids << gas.id
+      end
       gas_ids = gases.map { |gas_name| Gas.find_gas(gas_name).id }.uniq
       mofs = mofs.joins(:gases).where("gases_mofs.gas_id in (?)", gas_ids)
     end

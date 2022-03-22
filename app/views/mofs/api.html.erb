@@ -219,7 +219,9 @@ print(resp.keys())
     <li><h3>/forcefields.json</h3>
       <p>Returns a JSON array of strings for all FFs mofdb knows about. Eg:</p>
       <pre>
-[<%= Forcefield.all.map { |ff| "{ name: '#{ff.name}', id: #{ff.id}}" }.join(",\n ") %>]
+[
+ <%= Forcefield.all.map { |ff| "{ name: '#{ff.name}', id: #{ff.id}}" }.join(",\n ") %>
+]
     </pre>
 
     <li><h3>/classifications.json</h3>
@@ -229,17 +231,14 @@ print(resp.keys())
   { name: "cm3/cm3", type: "loading" },
   { name: "kPA", type: "pressure" },
   { name: "wt%", type: "other" },
+  ...
 ]
       </pre>
     <li><h3>/databases.json</h3>
       <p>Returns a JSON array of the available databases and their mof counts</p>
       <pre>
 [
-  {"id":5,"name":"CoREMOF 2014","mofs":4612},
-  {"id":4,"name":"CoREMOF 2019","mofs":11317},
-  {"id":1,"name":"CSD","mofs":0},
-  {"id":3,"name":"hMOF","mofs":137953},
-  {"id":2,"name":"Tobacco","mofs":13511}
+ <%= Database.all.map { |db| "{ name: '#{db.name}', mofs: #{db.mofs.size}}" }.join(",\n ") %>
 ]
       </pre>
 

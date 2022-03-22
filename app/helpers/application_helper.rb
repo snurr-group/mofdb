@@ -2,6 +2,11 @@ require 'set'
 
 module ApplicationHelper
 
+  RESULTS = {
+    :success => 'success',
+    :error => 'error',
+  }
+
   def get_zip_name(db, doi, gases)
     if doi.nil?
       db.name.gsub(/[^0-9a-z ]/i, ' ') + '.zip'

@@ -53,14 +53,14 @@ class ApplicationController < ActionController::Base
       begin
         session[session_key] = classification.id
       rescue NoMethodError => err
-        render json: { "error": "We don't know what unit '#{input}' is" }, status: 500
+        render json: { status: RESULTS[:error], error: "We don't know what unit '#{input}' is" }, status: 500
         Sentry.capture_message("Setting units - '#{input}' couldn't be found")
         return
       end
       if classification.source != expected_classification_src
         session.delete(session_key)
         supported = Classification.where(convertable: true, source: expected_classification_src).pluck(:name)
-        return render json: { "error": "#{input} is not a known #{expected_classification_src} by id or name. Supported options are #{supported}" }, status: 500
+        return render json: { status: RESULTS[:error], error: "#{input} is not a known #{expected_classification_src} by id or name. Supported options are #{supported}" }, status: 500
       end
     end
   end
@@ -75,7 +75,7 @@ class ApplicationController < ActionController::Base
   def set_units
     # checkUnits applies header values to session.
     # this route just jsonifyies units after that.
-    render json: { loading: session[:prefLoading], pressure: session[:prefPressure] }, status: 200
+    render json: { status: RESULTS[:success], loading: session[:prefLoading], pressure: session[:prefPressure] }, status: 200
   end
 
 end
