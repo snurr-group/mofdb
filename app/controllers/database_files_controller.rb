@@ -24,7 +24,7 @@ class DatabaseFilesController < ApplicationController
     rescue
       return render json: { status: RESULTS[:error], error: "Something went wrong upload your zip." }
     end
-    render json: { name: zip.name, id: zip.id }
+    render json: { status: RESULTS[:success], name: zip.name, id: zip.id }
   end
 
   def destroy
