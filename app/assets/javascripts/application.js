@@ -32,6 +32,7 @@
 
 
 window.addEventListener('DOMContentLoaded', (event) => {
+    hljs.highlightAll();
     const env = document.querySelector('body').dataset['rails_env']
 
     if (env === 'production') {

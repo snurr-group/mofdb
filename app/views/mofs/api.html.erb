@@ -1,232 +1,241 @@
 <div id="generic_page">
-  <h1>API Routes & Supported URL Parameters</h1>
-  <h3>Code Sample</h3>
-  <p>Here's an example for python3 just run</p>
+  <h1>Use the package</h1>
+  <p>Documentation on <a href="https://github.com/n8ta/mofdb-client">on Github here</a></p>
   <pre>
-$ pip3 install requests
-import requests
-resp = requests.request('GET', 'https://mof.tech.northwestern.edu/mofs.json',
-        headers={'loading': 'cm3(STP)/cm3', 'pressure': 'bar'},
-        params={'vf_min': 0.5, 'vf_max': 1})
-resp = resp.json()
-print(resp.keys())
->> ['results', 'pages', 'page']
-  </pre>
-  <ul>
-    <li><h3>Units</h3>
-      You can customize the pressure / loading units you get back by supplying the following two headers.
-      Note: the API will be a fair bit slower if you need to it convert units for you on the fly. The databases page
-      will be MUCH faster if you need a whole DB.
-      <p> You can see a full list of the units available <a href='/classifications.json'>here</a></p>
-      <table class="api_table">
-        <tr>
-          <th>Header</th>
-          <th>Values</th>
-        </tr>
-        <tbody>
-        <tr>
-          <td>loading</td>
-          <td><%= loadingUnits.join(", ") %></td>
-        </tr>
-        <tr>
-          <td>pressure</td>
-          <td><%= pressureUnits.join(", ") %></td>
-        </tr>
-        </tbody>
-      </table>
-    </li>
-    <li><h3>/mofs.json</h3></li>
-    <p>Returns at most <%= ENV['PAGE_SIZE'] %> MOFs per page</p>
+$ python3 -m pip install mofdb_client
+<code class="hljs language-python">from mofdb_client import fetch
+for mof in fetch(vf_min=0.5, vf_max=0.99):
+    print(f"Mof {mof.name} has {len(mof.isotherms)} isotherms and elements {[str(e) for e in mof.elements]}")
+    print(f"This mof's cif file starts with: '{mof.cif.splitlines()[1]}'")
+</code></pre>
+  <pre><code class="hljs language-bash">Mof UTEWUM_clean has 2 isotherms and elements ['Cu', 'H', 'C', 'N']
+This mof's cif file starts with: '_audit_creation_date              2014-07-02'
+Mof ZECKID_clean has 1 isotherms and elements ['Cu', 'H', 'C', 'N', 'O']
+This mof's cif file starts with: '_audit_creation_date              2014-07-02'
+Mof AQOMAW_clean has 2 isotherms and elements ['N', 'C', 'H', 'Co', 'Cl', 'O']
+This mof's cif file starts with: '_cell_length_a       18.8345'
+Mof AQOLOJ_clean has 2 isotherms and elements ['N', 'C', 'H', 'Co', 'Cl']
+This mof's cif file starts with: '_cell_length_a       18.794'
+Mof SENWOZ_clean has 2 isotherms and elements ['Zn', 'H', 'C', 'O']
+This mof's cif file starts with: '_audit_creation_date              2014-07-02'
+Mof IYUCIQ_clean has 2 isotherms and elements ['Dy', 'O', 'N', 'C', 'H']
+  </code></pre>
+<h1>API Routes & Supported URL Parameters</h1>
+<ul>
+  <li><h3>Units</h3>
+    You can customize the pressure / loading units you get back by supplying the following two headers.
+    Note: the API will be a fair bit slower if you need to it convert units for you on the fly. The databases page
+    will be MUCH faster if you need a whole DB.
+    <p> You can see a full list of the units available <a href='/classifications.json'>here</a></p>
     <table class="api_table">
       <tr>
-        <th>Param Name</th>
-        <th>Type</th>
-        <th>Example</th>
+        <th>Header</th>
+        <th>Values</th>
+      </tr>
+      <tbody>
+      <tr>
+        <td>loading</td>
+        <td><%= loadingUnits.join(", ") %></td>
       </tr>
       <tr>
-        <td>page</td>
-        <td>integer</td>
-        <td>default is 1, if you want to see the next <%= ENV['PAGE_SIZE'] %> results increment the page, (400 error if
-          page # too lage)
-        </td>
+        <td>pressure</td>
+        <td><%= pressureUnits.join(", ") %></td>
       </tr>
-      <tr>
-        <td>mofid</td>
-        <td>string</td>
-        <td>Returns exact mofid matches</td>
-      </tr>
-      <tr>
-        <td>mofkey</td>
-        <td>string</td>
-        <td>Returns exact mofkey matches</td>
-      </tr>
-
-      <tr>
-        <td>vf_min</td>
-        <td>float
-        </td>
-        </td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>vf_max</td>
-        <td>float
-        </td>
-        </td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>lcd_min</td>
-        <td>float
-        </td>
-        </td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>lcd_max</td>
-        <td>float
-        </td>
-        </td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>pld_min</td>
-        <td>float
-        </td>
-        </td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>pld_max</td>
-        <td>float
-        </td>
-        </td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>sa_m2g_min</td>
-        <td>float
-        </td>
-        </td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>sa_m2g_max</td>
-        <td>float
-        </td>
-        </td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>sa_m2cm3_min</td>
-        <td>float
-        </td>
-        </td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>sa_m2cm3_max</td>
-        <td>float
-        </td>
-        </td>
-        <td></td>
-      </tr>
-
-      <tr>
-        <td>name</td>
-        <td>string
-        </td>
-        <td>Matches any name starting with string supplied. Eg as a regex: /name.+/</td>
-      </tr>
-      <tr>
-        <td>database</td>
-        <td>enum</td>
-        <td>database: <%= Database.all.pluck(:name).join(", ") %></td>
-      </tr>
-      <tr>
-        <td>hashkey</td>
-        <td>string</td>
-        <td>(50 characters exactly) hash of the cif file. NOT a good unique id used only to help prevent duplicate
-          uploads. See mofid/mofkey for a better primary key.
-        </td>
-      </tr>
-      <tr>
-        <td>gases</td>
-        <td>array</td>
-        <td>eg. mofs.json?gases[]=Nitrogen&gases[]=Carbon+Dioxide</td>
-      </tr>
-      <tr>
-        <td>elements/atoms</td>
-        <td>array</td>
-        <td>You specify the query param as many times as elements you want to list: eg.
-          mofs.json?elements[]=C&elements[]=Ar
-        </td>
-      </tr>
-
-      <tr>
-        <td>DOI</td>
-        <td>string</td>
-        <td>Any mof whose isotherm's mof whose doi <em>EXACTLY</em> matches the given string.<br/>
-          If you want to download all of a database use the <%= link_to "databases page", databases_path %> instead of a
-          doi search. (Matching strings is a slow operation!)
-        </td>
-      </tr>
-      <tr>
-        <td>cifs</td>
-        <td>boolean</td>
-        <td>?cifs=true, Return a zip of the cifs satisfying the other params.
-          When this is set results are not paginated. This can be quite slow for large #s of mofs.
-      </tr>
-      <tr>
-        <td>bulk</td>
-        <td>boolean</td>
-        <td>?bulk=true, Return a zip file of the cifs + json representation of mofs.
-      </tr>
+      </tbody>
     </table>
-    </li>
-    <li><h3>/mofs/#.json</h3></li>
-    <li><h3>/isotherms.json</h3></li>
-    <p>Returns at most <%= ENV['PAGE_SIZE'] %> isotherms per page</p>
+  </li>
+  <li><h3>/mofs.json</h3></li>
+  <p>Returns at most <%= ENV['PAGE_SIZE'] %> MOFs per page</p>
+  <table class="api_table">
+    <tr>
+      <th>Param Name</th>
+      <th>Type</th>
+      <th>Example</th>
+    </tr>
+    <tr>
+      <td>page</td>
+      <td>integer</td>
+      <td>default is 1, if you want to see the next <%= ENV['PAGE_SIZE'] %> results increment the page, (400 error if
+        page # too lage)
+      </td>
+    </tr>
+    <tr>
+      <td>mofid</td>
+      <td>string</td>
+      <td>Returns exact mofid matches</td>
+    </tr>
+    <tr>
+      <td>mofkey</td>
+      <td>string</td>
+      <td>Returns exact mofkey matches</td>
+    </tr>
 
-    <table class="api_table">
-      <tr>
-        <th>Param Name</th>
-        <th>Type</th>
-        <th>Example</th>
-      </tr>
-      <tr>
-        <td>page</td>
-        <td>integer
-        <td>default is 1, if you want to see the next <%= ENV['PAGE_SIZE'] %> results increment the page, (400 error if
-          page # too lage)
-        </td>
-      </tr>
-      <tr>
-        <td>mof_id</td>
-        <td>integer
-        <td>?mof_id=123</td>
-      </tr>
-      <tr>
-        <td>mof_hashkey</td>
-        <td>string
-        <td>?hashkey=123...abc (50 characters exactly)</td>
-      </tr>
-    </table>
+    <tr>
+      <td>vf_min</td>
+      <td>float
+      </td>
+      </td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>vf_max</td>
+      <td>float
+      </td>
+      </td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>lcd_min</td>
+      <td>float
+      </td>
+      </td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>lcd_max</td>
+      <td>float
+      </td>
+      </td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>pld_min</td>
+      <td>float
+      </td>
+      </td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>pld_max</td>
+      <td>float
+      </td>
+      </td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>sa_m2g_min</td>
+      <td>float
+      </td>
+      </td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>sa_m2g_max</td>
+      <td>float
+      </td>
+      </td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>sa_m2cm3_min</td>
+      <td>float
+      </td>
+      </td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>sa_m2cm3_max</td>
+      <td>float
+      </td>
+      </td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>name</td>
+      <td>string
+      </td>
+      <td>Matches any name starting with string supplied. Eg as a regex: /name.+/</td>
+    </tr>
+    <tr>
+      <td>database</td>
+      <td>enum</td>
+      <td>database: <%= Database.all.pluck(:name).join(", ") %></td>
+    </tr>
+    <tr>
+      <td>hashkey</td>
+      <td>string</td>
+      <td>(50 characters exactly) hash of the cif file. NOT a good unique id used only to help prevent duplicate
+        uploads. See mofid/mofkey for a better primary key.
+      </td>
+    </tr>
+    <tr>
+      <td>gases</td>
+      <td>array</td>
+      <td>eg. mofs.json?gases[]=Nitrogen&gases[]=Carbon+Dioxide</td>
+    </tr>
+    <tr>
+      <td>elements/atoms</td>
+      <td>array</td>
+      <td>You specify the query param as many times as elements you want to list: eg.
+        mofs.json?elements[]=C&elements[]=Ar
+      </td>
+    </tr>
+
+    <tr>
+      <td>DOI</td>
+      <td>string</td>
+      <td>Any mof whose isotherm's mof whose doi <em>EXACTLY</em> matches the given string.<br/>
+        If you want to download all of a database use the <%= link_to "databases page", databases_path %> instead of a
+        doi search. (Matching strings is a slow operation!)
+      </td>
+    </tr>
+    <tr>
+      <td>cifs</td>
+      <td>boolean</td>
+      <td>?cifs=true, Return a zip of the cifs satisfying the other params.
+        When this is set results are not paginated. This can be quite slow for large #s of mofs.
+    </tr>
+    <tr>
+      <td>bulk</td>
+      <td>boolean</td>
+      <td>?bulk=true, Return a zip file of the cifs + json representation of mofs.
+    </tr>
+  </table>
+  </li>
+  <li><h3>/mofs/#.json</h3></li>
+  <li><h3>/isotherms.json</h3></li>
+  <p>Returns at most <%= ENV['PAGE_SIZE'] %> isotherms per page</p>
+
+  <table class="api_table">
+    <tr>
+      <th>Param Name</th>
+      <th>Type</th>
+      <th>Example</th>
+    </tr>
+    <tr>
+      <td>page</td>
+      <td>integer
+      <td>default is 1, if you want to see the next <%= ENV['PAGE_SIZE'] %> results increment the page, (400 error if
+        page # too lage)
+      </td>
+    </tr>
+    <tr>
+      <td>mof_id</td>
+      <td>integer
+      <td>?mof_id=123</td>
+    </tr>
+    <tr>
+      <td>mof_hashkey</td>
+      <td>string
+      <td>?hashkey=123...abc (50 characters exactly)</td>
+    </tr>
+  </table>
 
 
-    <li><h3>/isotherms/#.json</h3></li>
+  <li><h3>/isotherms/#.json</h3></li>
 
-    <li><h3>/forcefields.json</h3>
-      <p>Returns a JSON array of strings for all FFs mofdb knows about. Eg:</p>
-      <pre>
+  <li><h3>/forcefields.json</h3>
+    <p>Returns a JSON array of strings for all FFs mofdb knows about. Eg:</p>
+    <pre>
 [
- <%= Forcefield.all.map { |ff| "{ name: '#{ff.name}', id: #{ff.id}}" }.join(",\n ") %>
-]
+      <%= Forcefield.all.map { |ff| "{ name: '#{ff.name}', id: #{ff.id}}" }.join(",\n ") %>
+      ]
     </pre>
 
-    <li><h3>/classifications.json</h3>
-      <p>Returns a JSON array of classification objects for all classifications</p>
-      <pre>
+  <li><h3>/classifications.json</h3>
+    <p>Returns a JSON array of classification objects for all classifications</p>
+    <pre>
 [
   { name: "cm3/cm3", type: "loading" },
   { name: "kPA", type: "pressure" },
@@ -234,13 +243,13 @@ print(resp.keys())
   ...
 ]
       </pre>
-    <li><h3>/databases.json</h3>
-      <p>Returns a JSON array of the available databases and their mof counts</p>
-      <pre>
+  <li><h3>/databases.json</h3>
+    <p>Returns a JSON array of the available databases and their mof counts</p>
+    <pre>
 [
- <%= Database.all.map { |db| "{ name: '#{db.name}', mofs: #{db.mofs.size}}" }.join(",\n ") %>
-]
+      <%= Database.all.map { |db| "{ name: '#{db.name}', mofs: #{db.mofs.size}}" }.join(",\n ") %>
+      ]
       </pre>
 
-  </ul>
+</ul>
 </div>
