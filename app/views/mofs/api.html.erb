@@ -1,3 +1,4 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/highlight.min.js" integrity="sha384-kVKEmRHevryBrAUFa9TvuSD4WEMD5C6t3jukUiZwneduUqXco1QPtPeM38ShDvdT" crossorigin="anonymous"></script>
 <div id="generic_page">
   <h1>Use the package</h1>
   <p>Documentation on <a href="https://github.com/n8ta/mofdb-client">on Github here</a></p>
@@ -8,7 +9,7 @@ for mof in fetch(vf_min=0.5, vf_max=0.99):
     print(f"Mof {mof.name} has {len(mof.isotherms)} isotherms and elements {[str(e) for e in mof.elements]}")
     print(f"This mof's cif file starts with: '{mof.cif.splitlines()[1]}'")
 </code></pre>
-  <pre><code class="hljs language-bash">Mof UTEWUM_clean has 2 isotherms and elements ['Cu', 'H', 'C', 'N']
+  <pre><code class="hljs">Mof UTEWUM_clean has 2 isotherms and elements ['Cu', 'H', 'C', 'N']
 This mof's cif file starts with: '_audit_creation_date              2014-07-02'
 Mof ZECKID_clean has 1 isotherms and elements ['Cu', 'H', 'C', 'N', 'O']
 This mof's cif file starts with: '_audit_creation_date              2014-07-02'
