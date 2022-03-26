@@ -61,7 +61,7 @@ class MofsController < ApplicationController
           @mofs.count
         end
         @pages = (@count.to_f / ENV['PAGE_SIZE'].to_f).ceil
-        if offset > @mofs.size
+        if offset > @count
           return render :json => { error: "Page number too large", pages: @pages }, status: 400
         end
         @mofs = @mofs.offset(offset).take(ENV['PAGE_SIZE'])
