@@ -43,6 +43,13 @@ class MofsController < ApplicationController
 
     bulk = params[:bulk] && params[:bulk] == "true"
     cifs = params[:cifs] && params[:cifs] == "true"
+    convert_units = !@convert_pressure.nil? || !@convert_loading.nil?
+
+    if convert_units && (request.format.to_s != "text/html")
+      # If we are converting units we need to fetch all the data. EXCEPT for the homepage grid view
+      # which only displays mofs properties (see format.html section below)
+      @mofs = preload_everything(@mofs)
+    end
 
     if bulk
       send_zip_file(@mofs, @convert_pressure, @convert_loading, cifs = true, json = true)
@@ -53,18 +60,23 @@ class MofsController < ApplicationController
 
     respond_to do |format|
       format.json {
-        @mofs = @mofs.includes([:elements, :elements_mofs, :batch, :database, :gases, :gases_mofs])
         @page = params['page'].to_i # nil -> 0
         @page = 1 if @page == 0
         offset = (ENV['PAGE_SIZE'].to_i) * (@page - 1)
         @count = Rails.cache.fetch("mof-count-params-#{params_key}") do
-          @mofs.count
+          @mofs.size
         end
         @pages = (@count.to_f / ENV['PAGE_SIZE'].to_f).ceil
         if offset > @count
           return render :json => { error: "Page number too large", pages: @pages }, status: 400
         end
-        @mofs = @mofs.offset(offset).take(ENV['PAGE_SIZE'])
+        @mofs = @mofs.offset(offset)
+        if @convert_loading.nil? && @convert_pressure.nil?
+          # If we use the pre-generated json we don't need any extra columns
+          @mofs = @mofs.select("mofs.id, mofs.pregen_json")
+        end
+        @mofs = @mofs.take(ENV['PAGE_SIZE'])
+        # raise
       }
       format.html {
         @mofs = @mofs.includes([:elements, :elements_mofs, :batch, :database, :gases, :gases_mofs])
@@ -117,7 +129,7 @@ class MofsController < ApplicationController
       @msg = "This structure is missing molarMass or volume and thus we cannot do automatic unit conversion"
     end
 
-    if @mof.isotherms.not_heats.convertable.size != @mof.isotherms.not_heats.size
+    if @mof.isotherms.not_heats.where(is_convertable: false).any?
       @msg = "Some isotherms for this structure use units we do not know how to convert"
     end
   end
@@ -126,7 +138,7 @@ class MofsController < ApplicationController
   def cif
     begin
       if @mof.hidden
-        return render status: 403, json: {status: RESULTS[:error], error: "Unavailable for CSD cifs, see: https://www.ccdc.cam.ac.uk/solutions/csd-system/components/csd/" }
+        return render status: 403, json: { status: RESULTS[:error], error: "Unavailable for CSD cifs, see: https://www.ccdc.cam.ac.uk/solutions/csd-system/components/csd/" }
       end
       temp_name = "cif-#{SecureRandom.hex(8)}.cif"
       temp_path = Rails.root.join(Rails.root.join("tmp"), temp_name)
@@ -158,7 +170,7 @@ class MofsController < ApplicationController
       gases.each do |gas_name|
         gas = Gas.find_gas(gas_name)
         if gas.nil?
-          return render status: 400, json: {status: RESULTS[:error], error: "Gas '#{gas_name}' not found" }.to_json
+          return render status: 400, json: { status: RESULTS[:error], error: "Gas '#{gas_name}' not found" }.to_json
         end
         gas_ids << gas.id
       end
@@ -172,8 +184,6 @@ class MofsController < ApplicationController
       list = Mof.sanitize_sql(el_ids.join(","))
       mofs = mofs.joins("INNER JOIN elements_mofs as el_mof on el_mof.mof_id = mofs.id and el_mof.element_id in (#{list})")
     end
-
-
 
     ## VOID FRAC
     if params[:vf_min] && !params[:vf_min].empty? && params[:vf_min] && params[:vf_min].to_f != 0
@@ -269,6 +279,11 @@ class MofsController < ApplicationController
     # so it's important to cahce the count.
     # See the count function.
     params.except(:page).except(:html).except(:bulk).to_s
+  end
+
+  def preload_everything(mofs)
+    mofs.includes(:elements, :elements_mofs, :batch, :database, { isotherms: [:adsorbate_forcefield, :molecule_forcefield, :batch, :composition_type, :adsorption_units, :pressure_units, :gases] }, :gases,
+                           :isotherms)
   end
 
 end

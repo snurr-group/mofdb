@@ -11,20 +11,13 @@ json.elements mof.elements.map {|el| {symbol: el.symbol, name: el.name}}
 json.cif mof.hidden ? nil : mof.cif
 
 json.url mof_path(mof, format: :json)
-json.adsorbates mof.gases.distinct.map { |g| g.to_nist_json }
+json.adsorbates mof.gases.map { |g| g.to_nist_json }.uniq
 
-isos = mof.isotherms.includes([:gases])
-          .includes([:composition_type])
-          .includes([:pressure_units])
-          .includes([:adsorption_units])
-          .includes([:molecule_forcefield])
-          .includes([:adsorbate_forcefield])
-          .includes([:batch])
 
-json.heats(isos.heats) do |heat|
+json.heats(mof.isotherms.select{|i| i.is_heat }) do |heat|
   print_iso(json, heat, convert_pressure, nil)
 end
 
-json.isotherms(isos.not_heats) do |isotherm|
+json.isotherms(mof.isotherms.select{|i| !i.is_heat }) do |isotherm|
   print_iso(json, isotherm, convert_pressure, convert_loading)
 end

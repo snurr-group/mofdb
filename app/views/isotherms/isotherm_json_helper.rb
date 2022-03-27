@@ -1,7 +1,8 @@
-def print_iso(json,             # jbuilder json rendering object
-              isotherm,         # isotherm itself
+def print_iso(json, # jbuilder json rendering object
+              isotherm, # isotherm itself
               convert_pressure, # nil or Classification.rb
-              convert_loading)  # nil or Classification.rb
+              convert_loading)
+  # nil or Classification.rb
 
   mof = isotherm.mof
   json.batch_number isotherm.batch.nil? ? nil : isotherm.batch.id
@@ -19,8 +20,10 @@ def print_iso(json,             # jbuilder json rendering object
   end
   json.category "exp"
 
-  can_convert_pressure = !convert_pressure.nil? && convert_pressure.convertable && isotherm.pressure_units.convertable && mof.convertable
-  can_convert_loading = !convert_loading.nil? && convert_loading.convertable && isotherm.adsorption_units.convertable && mof.convertable
+  can_convert_pressure = !convert_pressure.nil? && convert_pressure.convertable &&
+    isotherm.pressure_units.convertable && mof.convertable
+  can_convert_loading = !convert_loading.nil? && convert_loading.convertable &&
+    isotherm.adsorption_units.convertable && mof.convertable
 
   json.adsorptionUnits can_convert_loading ? convert_loading.name : isotherm.adsorption_units.name
   json.pressureUnits can_convert_pressure ? convert_pressure.name : isotherm.pressure_units.name

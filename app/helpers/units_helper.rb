@@ -26,7 +26,6 @@ module UnitsHelper
     def initialize(msg = nil)
       super
     end
-
   end
 
   def parseUnits(from, to)

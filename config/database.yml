@@ -6,7 +6,7 @@ default: &default
 
 development:
   <<: *default
-  database: mofdb2_prod_dump2
+  database: mofdb2
 #  database: mofdb2_testing
   password: admin
   username: admin
