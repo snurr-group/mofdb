@@ -129,7 +129,8 @@ class MofsController < ApplicationController
       @msg = "This structure is missing molarMass or volume and thus we cannot do automatic unit conversion"
     end
 
-    if @mof.isotherms.not_heats.where(is_convertable: false).any?
+
+    if @mof.isotherms.select{|i| !i.is_heat}.select{|i| !i.is_convertable}.any?
       @msg = "Some isotherms for this structure use units we do not know how to convert"
     end
   end

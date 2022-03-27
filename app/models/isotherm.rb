@@ -14,7 +14,6 @@ class Isotherm < ApplicationRecord
   has_many :isodata, dependent: :delete_all
   has_many :gases, through: :isodata
   after_save :regen_mofs_json
-  before_save :update_cache_columns
 
   # Isotherms table contains kinds of isotherms
   # 1. Regular isotherms (not_heats)
@@ -22,16 +21,17 @@ class Isotherm < ApplicationRecord
   #    See Classification.rb enum source
   # Scopes are used to separate them in ui/json responses
 
-  scope :not_heats, -> { where.not(adsorption_units: { source: "heat" }) }
-  scope :heats, -> { where(adsorption_units: { source: "heat" }) }
+  # Does this isotherm have adsorption_units and pressure_units that are marked convertable?
+  scope :convertable, -> { joins("JOIN classifications as clas_adsorp on isotherms.adsorption_units_id = clas_adsorp.id")
+                             .joins("JOIN classifications as clas_pressure on isotherms.pressure_units_id = clas_pressure.id")
+                             .where("clas_pressure.convertable  = true and clas_adsorp.convertable = true") }
+
+  def is_convertable
+    self.adsorption_units.convertable && self.pressure_units.convertable
+  end
 
   def is_heat
     self.adsorption_units.source == "heat"
-  end
-
-  def update_cache_columns
-    self.is_heat = self.adsorption_units.source == 'heat'
-    self.is_convertable = self.adsorption_units.convertable && self.pressure_units.convertable
   end
 
   def regen_mof_json

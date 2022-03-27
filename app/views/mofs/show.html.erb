@@ -89,7 +89,7 @@
 
   </div>
   <div id="right">
-    <% if @mof.isotherms.not_heats.any? %>
+    <% if @mof.isotherms.select{|i| !i.is_heat }.any? %>
       <div class="lead">Isotherms <%= link_to "<button>View JSON</button>".html_safe, mof_path(@mof, format: :json) %></div>
       <% if (@msg) %>
         <p>⚠️ <%= @msg.html_safe %></p>
@@ -107,7 +107,7 @@
     <div id="isotherm_section"></div>
     <div class="spacer"></div>
 
-    <% if @mof.isotherms.heats.any? %>
+    <% if @mof.isotherms.select{|i| i.is_heat }.any? %>
       <div class="lead">Heats of Adsorption</div>
     <% else %>
       <p class="lead">This mof has no heats of adsorption</p>
