@@ -12,6 +12,15 @@ development:
   username: admin
   socket: <%= ENV['SOCKET'] %>
 
+test:
+  <<: *default
+  adapter: mysql2
+  database: mofdb2
+  password: admin
+  username: admin
+  socket: <%= ENV['SOCKET'] %>
+
+
 production:
   <<: *default
   database: mofdb2_production

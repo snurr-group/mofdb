@@ -38,4 +38,8 @@ group :development do
   gem 'listen', '>= 3.0.5', '< 3.2'
   gem "puma", "~> 5.3"
   # gem 'ruby-prof'
+  gem 'rspec-rails'
+  gem 'webdrivers'
+  gem 'capybara'
+
 end

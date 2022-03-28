@@ -1,5 +1,6 @@
 const post = (url, key, value) => {
-    let auth_token = document.querySelector("meta[name='csrf-token']").content;
+    const csrf = document.querySelector("meta[name='csrf-token']");
+    let auth_token = csrf ? csrf.content : null;
     $.ajax({url: url,
         method: 'POST',
         headers: {
@@ -10,6 +11,7 @@ const post = (url, key, value) => {
             [key]: value,
         },
         success: (data) => {
+            console.info("server replied, reloading page");
             window.location.reload()
         }}
     );
@@ -18,12 +20,14 @@ const post = (url, key, value) => {
 $(document).on('DOMContentLoaded', function () {
     const unitsSelect = document.getElementById('loadingUnitsSelector')
     unitsSelect.addEventListener('change', (event) => {
-        const units = event.target.value
+        const units = document.getElementById("loadingUnitsSelector").value
+        console.info("units", units)
         post(`/setUnits`, "loading", units)
     });
     const pressureSelector = document.getElementById('pressureUnitsSelector')
     pressureSelector.addEventListener('change', (event) => {
-        const units = event.target.value
+        const units = document.getElementById("pressureUnitsSelector").value
+        console.info("units", units)
         post(`/setUnits`, "pressure", units)
     });
 });

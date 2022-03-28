@@ -105,6 +105,14 @@ $(document).on('DOMContentLoaded', function () {
         return
     }
 
+    let copy_buttons = document.querySelectorAll("[data-copy]");
+    for (let i = 0; i < copy_buttons.length; i++) {
+        copy_buttons[i].addEventListener('click', function () {
+            let text = copy_buttons[i].getAttribute('data-copy');
+            navigator.clipboard.writeText(text);
+        });
+    }
+
     let vp = document.getElementById('viewport');
 
     if (vp) {
