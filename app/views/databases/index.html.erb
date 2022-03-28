@@ -1,7 +1,8 @@
 <div id="generic_page">
   <h1>Download Databases</h1>
-  <p>Each download includes CIFS + isotherms for all releavnt MOFs.
+  <p>Each download includes CIFS + isotherms for all relevant MOFs.
     <br/>The downloads listed by gas also include cifs but only a subset of the isotherms for that MOF.</p>
+
   <div id="combo-container">
     <% @combinations.each do |database, doiToGas| %>
       <% if doiToGas.keys.any? %>
@@ -12,15 +13,17 @@
             </a>
           </h3>
           <% doiToGas.keys.each do |doi| %>
-            <h4><%= doi %></h4>
+            <h4>
+              <a title="All isotherms + cifs for this doi" href='/Datasets/<%= get_zip_name(database, doi, nil) %>'>
+                <%= doi %>
+              </a>
+            </h4>
             <% doiToGas[doi].to_a.each do |gases| %>
               <a title="All isotherms for this gas and this doi + relevant cif files" href='/Datasets/<%= get_zip_name(database, doi, gases) %>'>
                 <%= gases.map { |g| g.name }.join("/") %>
               </a>
             <% end %>
-            <a title="All isotherms + cifs for this doi" href='/Datasets/<%= get_zip_name(database, doi, nil) %>'>
-              All
-            </a>
+
           <% end %>
         </div>
       <% end %>
