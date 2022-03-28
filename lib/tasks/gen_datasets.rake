@@ -1,12 +1,11 @@
 require 'base64'
 require 'zip'
 require 'set'
-require "#{Rails.root}/app/helpers/application_helper"
 include ApplicationHelper
 
 namespace :pregen do
   desc "Generate all datasets for the databases page"
-  task :databases, :environment do
+  task :databases => :environment do
     dir_path = Rails.root.join('public','Datasets')
     Dir.foreach(dir_path) {|f| File.delete(Rails.root.join(dir_path,f)) if f != '.' && f != '..'}
     combinations = get_db_doi_gas_combos

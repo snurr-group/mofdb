@@ -26,6 +26,12 @@ class Isotherm < ApplicationRecord
                              .joins("JOIN classifications as clas_pressure on isotherms.pressure_units_id = clas_pressure.id")
                              .where("clas_pressure.convertable  = true and clas_adsorp.convertable = true") }
 
+  scope :heats, -> { joins("JOIN classifications as clas_heat on isotherms.adsorption_units_id = clas_heat.id")
+                       .where("clas_heat.source = ?", Classification.sources[:heat])}
+
+  scope :not_heats, -> { joins("JOIN classifications as clas_no_heat on isotherms.adsorption_units_id = clas_no_heat.id")
+                           .where("clas_no_heat.source != ?", Classification.sources[:heat])}
+
   def is_convertable
     self.adsorption_units.convertable && self.pressure_units.convertable
   end

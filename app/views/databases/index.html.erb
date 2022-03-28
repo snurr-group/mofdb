@@ -13,16 +13,18 @@
             </a>
           </h3>
           <% doiToGas.keys.each do |doi| %>
-            <h4>
-              <a title="All isotherms + cifs for this doi" href='/Datasets/<%= get_zip_name(database, doi, nil) %>'>
-                <%= doi %>
-              </a>
-            </h4>
-            <% doiToGas[doi].to_a.each do |gases| %>
-              <a title="All isotherms for this gas and this doi + relevant cif files" href='/Datasets/<%= get_zip_name(database, doi, gases) %>'>
-                <%= gases.map { |g| g.name }.join("/") %>
-              </a>
-            <% end %>
+            <div class="combo-doi">
+              <h4>
+                <a title="All isotherms + cifs for this doi" href='/Datasets/<%= get_zip_name(database, doi, nil) %>'>
+                  <%= doi %>
+                </a>
+              </h4>
+              <% doiToGas[doi].to_a.each do |gases| %>
+                <a title="All isotherms for this gas and this doi + relevant cif files" href='/Datasets/<%= get_zip_name(database, doi, gases) %>'>
+                  <%= gases.map { |g| g.name }.join("/") %>
+                </a>
+              <% end %>
+            </div>
 
           <% end %>
         </div>
