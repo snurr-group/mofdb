@@ -33,6 +33,8 @@ rescue ActiveRecord::PendingMigrationError => e
   exit 1
 end
 RSpec.configure do |config|
+
+
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
 
@@ -68,7 +70,7 @@ end
 Capybara.register_driver :chrome do |app|
   options = Selenium::WebDriver::Chrome::Options.new
   options.add_preference('profile.content_settings.exceptions.clipboard', {
-    '*': {'setting': 1}
+    '*': { 'setting': 1 }
   })
   Capybara::Selenium::Driver.new(app, browser: :chrome, options: options)
 end
