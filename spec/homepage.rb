@@ -115,7 +115,6 @@ describe 'MofDB html ui', type: :system do
     expect(page).to have_content 'Units'
     expect(page).to have_content 'sa_m2cm3_max'
     expect(page).to have_content 'mofdb_client'
-    mofdb_client
   end
 end
 
