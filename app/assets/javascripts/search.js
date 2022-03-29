@@ -161,13 +161,9 @@ $(document).on('DOMContentLoaded', function () {
         refresh()
     });
 
-    $("#dbchoice").change(function () {
-        console.log("triggered by database");
-        refresh()
-    });
     $('#db_choice').on('change', function () {
         console.log("triggered by db choice");
-        refresh();
+        setTimeout(refresh, 200);
     });
 
     $('#name').bind('keypress', function (e) {

@@ -229,7 +229,7 @@ Mof IYUCIQ_clean has 2 isotherms and elements ['Dy', 'O', 'N', 'C', 'H']
   <li><h3>/forcefields.json</h3>
     <p>Returns a JSON array of strings for all FFs mofdb knows about. Eg:</p>
     <pre>[
-      <%= Forcefield.all.map { |ff| "{ name: '#{ff.name}', id: #{ff.id}}" }.join(",\n ") %>
+ <%= Forcefield.all.map { |ff| "{ name: '#{ff.name}', id: #{ff.id}}" }.join(",\n ") %>
 ]
     </pre>
 
@@ -245,7 +245,7 @@ Mof IYUCIQ_clean has 2 isotherms and elements ['Dy', 'O', 'N', 'C', 'H']
   <li><h3>/databases.json</h3>
     <p>Returns a JSON array of the available databases and their mof counts</p>
     <pre>[
-      <%= Database.all.map { |db| "{ name: '#{db.name}', mofs: #{db.mofs.size}}" }.join(",\n ") %>
+ <%= Database.all.map { |db| "{ name: '#{db.name}', mofs: #{db.mofs.size}}" }.join(",\n ") %>
 ]
       </pre>
 

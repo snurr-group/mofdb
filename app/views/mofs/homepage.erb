@@ -89,7 +89,7 @@
     <div class="spacer"></div>
     <p class="hcon slider_title">Database</p>
     <div id="databases" class="hcon">
-      <select id="db_choice">
+      <select id="db_choice" name="db_choice">
         <option value="Any">Any</option>
         <% Database.all.each do |db| %>
           <option value="<%= db.name %>"> <%= db.name %> </option>
