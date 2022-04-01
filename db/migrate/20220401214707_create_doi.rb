@@ -8,6 +8,6 @@ class CreateDoi < ActiveRecord::Migration[6.0]
 
     add_column :isotherms, :doi_id, :bigint
     add_index :isotherms, :doi_id
-    add_foreign_key :isotherms, :doi
+    add_foreign_key :isotherms, :Doi
   end
 end
