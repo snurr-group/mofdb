@@ -11,8 +11,9 @@ module ApplicationHelper
     if doi.nil?
       db.name.gsub(/[^0-9a-z ]/i, ' ') + '.zip'
     else
+      doi_clean = doi.doi.gsub(/[^0-9a-z ]/i, ' ')
       gas_section = gases.nil? ? "all" : gases.to_a.map { |g| g.name }.join("-")
-      path = "#{db.name}-#{doi}-#{gas_section}"
+      path = "#{db.name}-#{doi_clean}-#{gas_section}"
       path.gsub(/[^0-9a-z ]/i, ' ') + ".zip"
     end
   end
@@ -41,12 +42,10 @@ module ApplicationHelper
     #
     Rails.cache.fetch("combinations", expires_in: 3.days) do
       combinations = {}
-      all_dois = Isotherm.distinct.pluck(:doi).uniq.select { |doi| !doi.nil? }
       Database.all.each do |db|
         combinations[db] = {}
-        # Pick out the dois present on an isotherm in this database
-        dois = all_dois.select { |doi| Isotherm.joins(:mof).where("mofs.database_id = ?", db.id).where("isotherms.doi = ?", doi).exists? }
-        # FIND ALL DOIS in the dB
+        # Find all dois in the db
+        dois = db.mofs.joins(:isotherms).joins(:dois).select("dois.id").distinct.pluck("dois.id").map{|i| Doi.find(i)}
         dois.each do |doi|
           gases = Set.new
           query = "SELECT DISTINCT JSON_OBJECTAGG(isodata.gas_id,'') from isotherms

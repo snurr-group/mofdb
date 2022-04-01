@@ -9,6 +9,7 @@ class Mof < ApplicationRecord
   belongs_to :database
   has_many :isotherms, dependent: :delete_all
   has_many :isodata, through: :isotherms
+  has_many :dois, through: :isotherms
   has_many :adsorbate_forcefields, through: :isotherms
   has_many :molecule_forcefields, through: :isotherms
   has_many :adsorption_units, through: :isotherms

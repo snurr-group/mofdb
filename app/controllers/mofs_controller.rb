@@ -256,8 +256,9 @@ class MofsController < ApplicationController
     end
 
     if params[:doi] && !params[:doi].empty?
+      doi = Doi.find_by(doi: params[:doi])
       mofs = mofs.joins("JOIN isotherms on isotherms.mof_id = mofs.id")
-                 .where("isotherms.doi = ?", params[:doi]).distinct
+                 .where("isotherms.doi_id = ?", doi.id).distinct
     end
 
     mofs

@@ -14,7 +14,7 @@ namespace :pregen do
       doiToGas.keys.each do |doi|
         gen_zip(db, doi, nil)
         doiToGas[doi].each do |gases|
-          puts "database: #{db.name} - doi:#{doi} - #{gases.to_a.map{|g|g.name}.join('/')}"
+          puts "database: #{db.name} - doi:#{doi.doi} - #{gases.to_a.map{|g|g.name}.join('/')}"
           gen_zip(db, doi, gases)
         end
       end
