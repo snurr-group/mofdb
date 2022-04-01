@@ -14,7 +14,7 @@ class Isotherm < ApplicationRecord
   has_many :isodata, dependent: :delete_all
   has_many :gases, through: :isodata
   after_save :regen_mofs_json
-  belongs_to :doi, optional: true
+  belongs_to :doi
 
   # Isotherms table contains kinds of isotherms
   # 1. Regular isotherms (not_heats)
