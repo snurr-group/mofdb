@@ -9,7 +9,8 @@ def print_iso(json, # jbuilder json rendering object
   json.adsorbates isotherm.gases.uniq.map { |g| g.to_nist_json }
 
   json.extract! isotherm, :id, :digitizer, :simin
-  json.DOI isotherm.doi
+  json.DOI isotherm.doi.doi
+  json.doi_url isotherm.doi.url
   json.date isotherm.created_at.strftime("%Y-%M-%d")
   json.temperature isotherm.temp
   json.adsorbent_forcefield isotherm.adsorbate_forcefield.name

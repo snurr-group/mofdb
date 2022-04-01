@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_28_002238) do
+ActiveRecord::Schema.define(version: 2022_04_01_220953) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "name", null: false
@@ -68,6 +68,13 @@ ActiveRecord::Schema.define(version: 2022_02_28_002238) do
   create_table "databases", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name"
     t.index ["name"], name: "index_databases_on_name"
+  end
+
+  create_table "dois", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "doi", null: false
+    t.string "url", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "elements", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -145,11 +152,13 @@ ActiveRecord::Schema.define(version: 2022_02_28_002238) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "batch_id"
+    t.bigint "doi_id"
     t.index ["adsorbate_forcefield_id"], name: "fk_rails_8886e0d88b"
     t.index ["adsorption_units_id"], name: "index_isotherms_on_adsorption_units_id"
     t.index ["batch_id"], name: "index_isotherms_on_batch_id"
     t.index ["composition_type_id"], name: "index_isotherms_on_composition_type_id"
     t.index ["doi"], name: "index_isotherms_on_doi"
+    t.index ["doi_id"], name: "index_isotherms_on_doi_id"
     t.index ["mof_id"], name: "index_isotherms_on_mof_id"
     t.index ["molecule_forcefield_id"], name: "fk_rails_180e64ceb3"
     t.index ["pressure_units_id"], name: "index_isotherms_on_pressure_units_id"
@@ -206,6 +215,7 @@ ActiveRecord::Schema.define(version: 2022_02_28_002238) do
   add_foreign_key "isotherms", "classifications", column: "adsorption_units_id"
   add_foreign_key "isotherms", "classifications", column: "composition_type_id"
   add_foreign_key "isotherms", "classifications", column: "pressure_units_id"
+  add_foreign_key "isotherms", "dois"
   add_foreign_key "isotherms", "forcefields", column: "adsorbate_forcefield_id"
   add_foreign_key "isotherms", "forcefields", column: "molecule_forcefield_id"
   add_foreign_key "isotherms", "mofs"
