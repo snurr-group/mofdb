@@ -24,7 +24,6 @@
 
 
 window.addEventListener('DOMContentLoaded', (event) => {
-    hljs.highlightAll();
     const env = document.querySelector('body').dataset['rails_env']
 
     if (env === 'production') {
@@ -33,41 +32,4 @@ window.addEventListener('DOMContentLoaded', (event) => {
         gtag('js', new Date());
         gtag('config', 'UA-111016820-6');
     }
-
-    document.querySelectorAll('.copy').forEach(function (item) {
-        item.addEventListener('click',function() {
-            copyText(item.dataset.copy);
-        });
-    });
 });
-
-function copyText (textToCopy) {
-    this.copied = false;
-
-    // Create textarea element
-    const textarea = document.createElement('textarea');
-
-    // Set the value of the text
-    textarea.value = textToCopy;
-
-    // Make sure we cant change the text of the textarea
-    textarea.setAttribute('readonly', '');
-
-    // Hide the textarea off the screnn
-    textarea.style.position = 'absolute';
-    textarea.style.left = '-9999px';
-
-    // Add the textarea to the page
-    document.body.appendChild(textarea);
-
-    // Copy the textarea
-    textarea.select();
-
-    try {
-        var successful = document.execCommand('copy');
-        this.copied = true
-    } catch(err) {
-        this.copied = false
-    }
-    textarea.remove()
-}
