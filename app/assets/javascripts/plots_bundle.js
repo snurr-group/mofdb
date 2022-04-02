@@ -1,5 +1,4 @@
-// Only load plotly on the mofs#show actions
-// See app/view/mofs/show.html.erb for where this is injected.
-// It's also preloaded in the <head> of application.html.erb.
-//= require plotly-latest.min.js
-//= require ngl.js
+// Plotly (charts) and ngl (cif viewer) and very large.
+// Load them lazily on the homepage (don't block initial render) and force load them on the mofs#show page
+
+//= require_tree ./plots
