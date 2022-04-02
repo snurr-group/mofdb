@@ -21,11 +21,12 @@
 
 // Change the order of jquery/datatables/and require_tree at your own peril.
 // I highly recommend not touching this.
-//= require "jquery.3.1.js"
-//= require "jquery.dataTables.min.js"
-//= require "dataTables.responsive.min.js"
+//= require "./application/jquery.3.1.js"
+//= require "./application/jquery.dataTables.min.js"
+//= require "./application/dataTables.responsive.min.js"
 //= require activestorage
 //= require_tree .
+//= require_tree ./application
 //= require "nouislider"
 
 
