@@ -10,8 +10,7 @@ gem 'rails', '~> 6.0'
 gem 'mysql2', '>= 0.4.4', '< 0.6.0'
 
 gem 'sass-rails', "~>6.0"
-gem 'uglifier', "~>4.2"
-
+gem 'terser', '~>1.1.8'
 gem 'zip_tricks', "~>5.5"
 gem 'jbuilder', "~>2.11"
 gem 'bootsnap', '~>1.7', require: false
