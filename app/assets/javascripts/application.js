@@ -10,15 +10,16 @@
 // Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
 // about supported directives.
 //
-
 // Change the order of jquery/datatables/and require_tree at your own peril.
 // I highly recommend not touching this.
 //= require "./application/vendor/jquery.3.1.js"
 //= require "./application/vendor/jquery.dataTables.min.js"
 //= require "./application/vendor/dataTables.responsive.min.js"
+//= require "./application/vendor/chosen.jquery.js"
 //= require activestorage
-//= require_tree ./application
+//= require_tree ./application/
 //= require "nouislider"
+
 
 
 

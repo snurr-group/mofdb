@@ -185,10 +185,10 @@ $(document).on('DOMContentLoaded', function () {
         refresh();
     });
 
-    $("#doi_label").keydown(function () {
-        console.log("triggered by doi");
+    document.getElementById('doi_selector').addEventListener('change', () => {
+        console.info("triggered by doi");
         refresh()
-    });
+    })
 
     $('.chosen-select').on('change', function (evt, params) {
         console.log("triggered by elements");
@@ -326,7 +326,7 @@ function get_params() {
         }
     }
 
-    let doi = document.getElementById("doi_label").value;
+    let doi = document.getElementById("doi_selector").value;
     if (doi !== "") {
         url_params['doi'] = doi;
     }

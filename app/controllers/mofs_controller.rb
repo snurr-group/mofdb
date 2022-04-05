@@ -79,7 +79,7 @@ class MofsController < ApplicationController
         # raise
       }
       format.html {
-        @mofs = @mofs.includes([:elements, :elements_mofs, :batch, :database, :gases, :gases_mofs])
+        @mofs = @mofs.includes([:elements, :elements_mofs, :batch, :database, :gases, :gases_mofs, {isotherms: [:composition_type]}])
         @mofs = @mofs.take(100)
         return render partial: 'mofs/rows'
       }
@@ -256,7 +256,13 @@ class MofsController < ApplicationController
     end
 
     if params[:doi] && !params[:doi].empty?
-      doi = Doi.find_by(doi: params[:doi])
+      # Easy way to doi if doi passed is an integer id or a user friendly name
+      doi_is_int = params[:doi].to_i.to_s == params[:doi]
+      if doi_is_int
+        doi = Doi.find(params[:doi].to_i)
+      else
+        doi = Doi.find_by(doi: params[:doi])
+      end
       mofs = mofs.joins("JOIN isotherms on isotherms.mof_id = mofs.id")
                  .where("isotherms.doi_id = ?", doi.id).distinct
     end
@@ -278,13 +284,13 @@ class MofsController < ApplicationController
     # All API parameters except those that don't effect the results only the format
     # This way we can use it as a cache key pointing to the number of mofs returuned.
     # Counting the number of results is more expensive than returning 1 page of them
-    # so it's important to cahce the count.
+    # so it's important to cache the count.
     # See the count function.
     params.except(:page).except(:html).except(:bulk).to_s
   end
 
   def preload_everything(mofs)
-    mofs.includes(:elements, :elements_mofs, :batch, :database, { isotherms: [:adsorbate_forcefield, :molecule_forcefield, :batch, :composition_type, :adsorption_units, :pressure_units, :gases] }, :gases,
+    mofs.includes(:elements, :elements_mofs, :batch, :database, { isotherms: [:doi, :adsorbate_forcefield, :molecule_forcefield, :batch, :composition_type, :adsorption_units, :pressure_units, :gases] }, :gases,
                            :isotherms)
   end
 
