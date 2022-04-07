@@ -2,9 +2,17 @@ class ApplicationController < ActionController::Base
 
   include UnitsHelper
 
+  before_action :show_maintenance_page
   before_action :set_preferred_units
   before_action :set_headers
   before_action :set_mof_count
+
+  def show_maintenance_page
+    return if request.path.to_s.start_with?("/down") || session[:bypass_maintenance] == true || request.format.symbol == :json || request.path.to_s.include?("upload")
+    path = Rails.root.join('tmp', 'down.txt')
+    return unless File.exists?(path)
+    return redirect_to '/down'
+  end
 
   def set_mof_count
     @mofs_count = Rails.cache.fetch("mofcount", expires_in: 1.days) do

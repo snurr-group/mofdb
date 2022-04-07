@@ -23,8 +23,8 @@
   <%= csp_meta_tag %>
   <%= stylesheet_link_tag 'application', media: 'all', integrity: true %>
   <%= javascript_include_tag 'application', integrity: true %>
-  <link rel="preload" href="<%= javascript_url("plots_bundle") %>" as="script" />
-  <link rel="preload" href="<%= javascript_url("api_bundle") %>" as="script" />
+  <link rel="preload" href="<%= javascript_url("plots_bundle") %>" as="script"/>
+  <link rel="preload" href="<%= javascript_url("api_bundle") %>" as="script"/>
   <%= yield :head %>
   <!-- Global site tag (gtag.js) - Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-111016820-6"></script>
@@ -38,8 +38,10 @@
     <span id="nav_database"><a href="/databases">Databases</a></span>
   </h1>
   <span id="nav_units">
-    <%= render partial: 'mofs/loading_selector' %>
-    <%= render partial: 'mofs/pressure_selector' %>
+    <% if !@maintenance %>
+      <%= render partial: 'mofs/loading_selector' %>
+      <%= render partial: 'mofs/pressure_selector' %>
+    <% end %>
   </span>
 </div>
 <div id="page">

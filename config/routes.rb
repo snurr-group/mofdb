@@ -24,5 +24,6 @@ Rails.application.routes.draw do
   end
 
   post '/setUnits' => 'application#set_units'
+  get '/down' => 'down#index'
 
 end
