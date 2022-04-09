@@ -6,9 +6,9 @@
     <td title="<%= mof.surface_area_m2g %>"><%= mof.surface_area_m2g %></td>
     <td title="<%= mof.pld %>"><%= mof.pld %></td>
     <td title="<%= mof.lcd %>"><%= mof.lcd %></td>
-    <td><%= mof.gases.pluck(:formula).join(", ") %></td>
+    <td><%= mof.gases.map{|g| g.formula}.join(", ")%></td>
     <td><%= mof.database.name %></td>
-    <td><%= mof.elements.pluck(:symbol).join(", ") %></td>
+    <td><%= mof.elements.map{|e| e.symbol}.join(", ") %></td>
     <td><%= link_to "More info...", mof_url(mof.id) %></td>
   </tr>
 <% end %>

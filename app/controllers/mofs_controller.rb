@@ -45,21 +45,19 @@ class MofsController < ApplicationController
     cifs = params[:cifs] && params[:cifs] == "true"
     convert_units = !@convert_pressure.nil? || !@convert_loading.nil?
 
-    if convert_units && (request.format.to_s != "text/html")
-      # If we are converting units we need to fetch all the data. EXCEPT for the homepage grid view
-      # which only displays mofs properties (see format.html section below)
+    if bulk || cifs
       @mofs = preload_everything(@mofs)
-    end
-
-    if bulk
-      send_zip_file(@mofs, @convert_pressure, @convert_loading, cifs = true, json = true)
+      if bulk
+        send_zip_file(@mofs, @convert_pressure, @convert_loading, cifs = true, json = true)
+      else
+        send_zip_file(@mofs, @convert_pressure, @convert_loading, cifs = true, json = false)
+      end
       return
-    elsif cifs
-      send_zip_file(@mofs, @convert_pressure, @convert_loading, cifs = true, json = false)
     end
 
     respond_to do |format|
       format.json {
+        @mofs = preload_everything(@mofs)
         @page = params['page'].to_i # nil -> 0
         @page = 1 if @page == 0
         offset = (ENV['PAGE_SIZE'].to_i) * (@page - 1)
@@ -79,7 +77,7 @@ class MofsController < ApplicationController
         # raise
       }
       format.html {
-        @mofs = @mofs.includes([:elements, :elements_mofs, :batch, :database, :gases, :gases_mofs, {isotherms: [:composition_type]}])
+        @mofs = @mofs.includes(:database, :gases, :elements)
         @mofs = @mofs.take(100)
         return render partial: 'mofs/rows'
       }
@@ -161,9 +159,7 @@ class MofsController < ApplicationController
   private
 
   def get_mofs
-
     mofs = Mof.all.distinct.visible
-
     ## GASES
     if params[:gases] && !params[:gases].empty?
       gases = params[:gases].is_a?(String) ? params[:gases].split(",") : params[:gases]
