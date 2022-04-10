@@ -16,6 +16,8 @@ jobs:
     env:
       RAILS_ENV: test
     steps:
+      - name: Turn on mysql
+        run: sudo /etc/init.d/mysql start
       - name: Create DB
         run: mysql -uroot -proot -e "CREATE DATABASE mofdb2_test;"
       - name: Checkout code
