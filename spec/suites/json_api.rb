@@ -113,21 +113,21 @@ describe "json api", type: :request do
     gases = Set.new(["Xe", "Kr"])
     get "/mofs.json?gases[]=Xe&gases[]=Kr"
     body = JSON.parse(response.body)
-    expect(body["results"].all? { |mof| mof["isotherms"].any? { |iso| iso["adsorbates"].map { |ads| ads["formula"] }.to_set == gases } }).to be true
+    expect(body["results"].all? { |mof| mof["isotherms"].all? { |iso| iso["adsorbates"].map { |ads| ads["formula"] }.to_set.intersection(gases).size > 0 }}).to be true
   end
 
   it "uses gases param improperly" do
     gases = Set.new(["CO2"])
     get "/mofs.json?gases=CO2"
     body = JSON.parse(response.body)
-    expect(body["results"].all? { |mof| mof["isotherms"].any? { |iso| iso["adsorbates"].map { |ads| ads["formula"] }.to_set == gases } }).to be true
+    expect(body["results"].all? { |mof| mof["isotherms"].any? { |iso| iso["adsorbates"].map { |ads| ads["formula"] }.to_set.intersection(gases).size > 0 } }).to be true
   end
 
   it "uses gases param improperly multiple gases" do
     gases = Set.new(["Xe", "Kr"])
     get "/mofs.json?gases=Xe,Kr"
     body = JSON.parse(response.body)
-    expect(body["results"].all? { |mof| mof["isotherms"].any? { |iso| iso["adsorbates"].map { |ads| ads["formula"] }.to_set == gases } }).to be true
+    expect(body["results"].all? { |mof| mof["isotherms"].any? { |iso| iso["adsorbates"].map { |ads| ads["formula"] }.to_set.intersection(gases).size > 0 } }).to be true
   end
 
   def sometimes(a, b) end
