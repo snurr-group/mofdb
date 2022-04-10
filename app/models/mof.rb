@@ -26,7 +26,8 @@ class Mof < ApplicationRecord
 
   after_create :storeMassAndVol
   after_save :updateGases
-  after_create :regen_json
+
+  after_create :regen_json unless Rails.env.test?
 
   scope :visible, -> { where(:hidden => false) }
   scope :convertable, -> { where("volumeA3 is not NULL and atomicMass is not NULL") }
@@ -104,7 +105,6 @@ class Mof < ApplicationRecord
   end
 
   def regen_json
-    return if Rails.env.test?
     self.pregen_json = JSON.load(get_json(nil, nil))
     self.save
   end

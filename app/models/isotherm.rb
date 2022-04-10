@@ -13,7 +13,7 @@ class Isotherm < ApplicationRecord
   belongs_to :batch, optional: true
   has_many :isodata, dependent: :delete_all
   has_many :gases, through: :isodata
-  after_save :regen_mof_json
+  after_create :regen_json unless Rails.env.test?
   belongs_to :doi
 
   # Isotherms table contains kinds of isotherms
@@ -42,7 +42,6 @@ class Isotherm < ApplicationRecord
   end
 
   def regen_mof_json
-    puts "regen mof json"
     self.mof.regen_json unless Rails.env.test?
   end
 

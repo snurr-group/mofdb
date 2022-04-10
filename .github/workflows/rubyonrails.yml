@@ -35,4 +35,4 @@ jobs:
       - name: Pregen json / db
         run: bin/rake pregen:all
       - name: Run tests
-        run: bin/rspec spec/suites/*
+        run: bundle exec rspec spec/suites/*
