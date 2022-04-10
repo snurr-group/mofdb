@@ -13,7 +13,7 @@ class Isotherm < ApplicationRecord
   belongs_to :batch, optional: true
   has_many :isodata, dependent: :delete_all
   has_many :gases, through: :isodata
-  after_create :regen_json
+  after_create :regen_mof_json
   belongs_to :doi
 
   # Isotherms table contains kinds of isotherms
