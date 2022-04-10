@@ -7,7 +7,6 @@ default: &default
 development:
   <<: *default
   database: mofdb2
-#  database: mofdb2_testing
   password: admin
   username: admin
   socket: <%= ENV['SOCKET'] %>

@@ -9,11 +9,11 @@ Bundler.require(*Rails.groups)
 module Mofdb2
   class Application < Rails::Application
 
-    config.load_defaults 6.0
+    config.load_defaults 7.0
 
     config.hosts << "local.northwestern.edu"
     config.hosts << "mof.tech.northwestern.edu"
 
-
+    legacy_connection_handling = false
   end
 end

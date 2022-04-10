@@ -2,17 +2,16 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# This file is the source Rails uses to define your schema when running `rails
-# db:schema:load`. When creating a new database, `rails db:schema:load` tends to
+# This file is the source Rails uses to define your schema when running `bin/rails
+# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
 # be faster and is potentially less error prone than running all of your
 # migrations from scratch. Old migrations may fail to apply correctly if those
 # migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_04_01_225601) do
-
-  create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+ActiveRecord::Schema[7.0].define(version: 2022_04_10_203709) do
+  create_table "active_storage_attachments", charset: "latin1", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
     t.bigint "record_id", null: false
@@ -22,30 +21,30 @@ ActiveRecord::Schema.define(version: 2022_04_01_225601) do
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
 
-  create_table "active_storage_blobs", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+  create_table "active_storage_blobs", charset: "latin1", force: :cascade do |t|
     t.string "key", null: false
     t.string "filename", null: false
     t.string "content_type"
     t.text "metadata"
     t.bigint "byte_size", null: false
-    t.string "checksum", null: false
+    t.string "checksum"
     t.datetime "created_at", null: false
     t.string "service_name", null: false
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
-  create_table "active_storage_variant_records", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+  create_table "active_storage_variant_records", charset: "latin1", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
-  create_table "batches", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+  create_table "batches", charset: "latin1", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "classifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "classifications", charset: "utf8", force: :cascade do |t|
     t.string "name"
     t.float "data"
     t.integer "source"
@@ -57,27 +56,27 @@ ActiveRecord::Schema.define(version: 2022_04_01_225601) do
     t.index ["source"], name: "index_classifications_on_source"
   end
 
-  create_table "database_files", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+  create_table "database_files", charset: "latin1", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.string "name", null: false
     t.string "category"
     t.index ["category"], name: "index_database_files_on_category"
   end
 
-  create_table "databases", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "databases", charset: "utf8", force: :cascade do |t|
     t.string "name"
     t.index ["name"], name: "index_databases_on_name"
   end
 
-  create_table "dois", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "dois", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "doi", null: false
     t.string "url", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
-  create_table "elements", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "elements", charset: "utf8", force: :cascade do |t|
     t.integer "number"
     t.string "name"
     t.string "symbol"
@@ -88,20 +87,20 @@ ActiveRecord::Schema.define(version: 2022_04_01_225601) do
     t.index ["symbol"], name: "index_elements_on_symbol"
   end
 
-  create_table "elements_mofs", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "elements_mofs", id: false, charset: "utf8", force: :cascade do |t|
     t.bigint "mof_id", null: false
     t.bigint "element_id", null: false
     t.index ["element_id"], name: "index_elements_mofs_on_element_id"
     t.index ["mof_id"], name: "index_elements_mofs_on_mof_id"
   end
 
-  create_table "forcefields", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "forcefields", charset: "utf8", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "gas", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "gas", charset: "utf8", force: :cascade do |t|
     t.string "inchikey"
     t.string "name"
     t.text "inchicode"
@@ -110,7 +109,7 @@ ActiveRecord::Schema.define(version: 2022_04_01_225601) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "gases", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "gases", charset: "utf8", force: :cascade do |t|
     t.string "inchikey"
     t.string "name"
     t.string "inchicode", limit: 500
@@ -122,13 +121,13 @@ ActiveRecord::Schema.define(version: 2022_04_01_225601) do
     t.index ["name"], name: "index_gases_on_name"
   end
 
-  create_table "gases_mofs", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+  create_table "gases_mofs", id: false, charset: "latin1", force: :cascade do |t|
     t.bigint "mof_id", null: false
     t.bigint "gas_id", null: false
     t.index ["mof_id", "gas_id"], name: "index_gases_mofs_on_mof_id_and_gas_id", unique: true
   end
 
-  create_table "isodata", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "isodata", charset: "utf8", force: :cascade do |t|
     t.bigint "isotherm_id"
     t.bigint "gas_id"
     t.float "pressure"
@@ -138,7 +137,7 @@ ActiveRecord::Schema.define(version: 2022_04_01_225601) do
     t.index ["isotherm_id"], name: "index_isodata_on_isotherm_id"
   end
 
-  create_table "isotherms", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "isotherms", charset: "utf8", force: :cascade do |t|
     t.string "digitizer"
     t.float "temp"
     t.text "simin"
@@ -162,7 +161,7 @@ ActiveRecord::Schema.define(version: 2022_04_01_225601) do
     t.index ["pressure_units_id"], name: "index_isotherms_on_pressure_units_id"
   end
 
-  create_table "mofs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "mofs", charset: "utf8", force: :cascade do |t|
     t.string "hashkey"
     t.string "name"
     t.bigint "database_id"
@@ -199,7 +198,7 @@ ActiveRecord::Schema.define(version: 2022_04_01_225601) do
     t.index ["volumeA3"], name: "index_mofs_on_volumeA3"
   end
 
-  create_table "synonyms", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "synonyms", charset: "utf8", force: :cascade do |t|
     t.string "name"
     t.bigint "gas_id"
     t.index ["gas_id"], name: "index_synonyms_on_gas_id"

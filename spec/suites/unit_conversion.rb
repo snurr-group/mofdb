@@ -84,11 +84,9 @@ describe 'MofDB json api unit conversion', type: :request do
   pressures = {}
   loadings = {}
   pressure_names.each do |pres|
-    puts pres
     pressures[pres] = Classification.find_by(name: pres).id
   end
   loading_names.each do |load|
-    puts load
     loadings[load] = Classification.find_by(name: load).id
   end
 

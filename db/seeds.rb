@@ -2961,3 +2961,4 @@ if do_it
 end
 
 require_relative 'seed_test_data'
+seed_test_mofs

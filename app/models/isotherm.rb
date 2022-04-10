@@ -42,8 +42,8 @@ class Isotherm < ApplicationRecord
   end
 
   def regen_mof_json
-
-    self.mof.regen_json
+    puts "regen mof json"
+    self.mof.regen_json unless Rails.env.test?
   end
 
   def is_duplicate

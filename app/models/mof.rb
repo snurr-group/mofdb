@@ -104,6 +104,7 @@ class Mof < ApplicationRecord
   end
 
   def regen_json
+    return if Rails.env.test?
     self.pregen_json = JSON.load(get_json(nil, nil))
     self.save
   end
