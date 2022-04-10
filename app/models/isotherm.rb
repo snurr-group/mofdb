@@ -13,7 +13,7 @@ class Isotherm < ApplicationRecord
   belongs_to :batch, optional: true
   has_many :isodata, dependent: :delete_all
   has_many :gases, through: :isodata
-  after_create :regen_json unless Rails.env.test?
+  after_create :regen_json
   belongs_to :doi
 
   # Isotherms table contains kinds of isotherms

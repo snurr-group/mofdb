@@ -27,7 +27,7 @@ class Mof < ApplicationRecord
   after_create :storeMassAndVol
   after_save :updateGases
 
-  after_create :regen_json unless Rails.env.test?
+  after_create :regen_json
 
   scope :visible, -> { where(:hidden => false) }
   scope :convertable, -> { where("volumeA3 is not NULL and atomicMass is not NULL") }
@@ -96,7 +96,7 @@ class Mof < ApplicationRecord
 
   def get_json(convertPressure, convertLoading)
     # Convenience method to render the view for caching
-    ApplicationController.render(template: 'mofs/_mof.json.jbuilder',
+    ApplicationController.render(template: 'mofs/_mof',
                                  locals: { mof: self, convert_pressure: convertPressure,
                                            convert_loading: convertLoading },
                                  format: :json,
