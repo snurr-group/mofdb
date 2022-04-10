@@ -17,7 +17,8 @@ test:
   database: mofdb2_test
   password: admin
   username: admin
-  socket: <%= ENV['SOCKET'] %>
+  host: mysql://127.0.0.1:3306
+#  socket: <%#= ENV['SOCKET'] %>
 
 
 production:
