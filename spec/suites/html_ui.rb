@@ -45,35 +45,35 @@ describe 'MofDB html ui', type: :system do
   #   mofkey = page.evaluate_async_script(clipboard_text)
   #   expect(mofkey).to eq 'Fe.PVNIIMVLHYAWGP.MOFkey-v1.ERROR'
   # end
-  #
-  # it 'Changes preferred loading unit' do
-  #   m = Mof.find_by(name: "test_mof2")
-  #   cm3 = 'cm3(STP)/cm3'
-  #   mg = 'mg/g'
-  #   str = "Loading ["+cm3+"]"
-  #   visit '/mofs/' + m.id.to_s
-  #   select(mg, from: 'loading-selector')
-  #   expect(page).to have_content mg
-  #   visit '/mofs/' + m.id.to_s
-  #   expect(page).to have_content mg
-  #   select(cm3, from: 'loading-selector')
-  #   expect(page).to have_content cm3
-  #   expect(page).to have_content str
-  #   expect(page).to_not have_content "Loading [cm3(STP)/g]"
-  # end
-  #
-  # it 'Changes preferred pressure unit' do
-  #   m = Mof.find_by(name: "test_mof2")
-  #   visit '/mofs/'+m.id.to_s
-  #   atm = 'atm'
-  #   bar = 'bar'
-  #   str = "Pressure ["+bar+"]"
-  #   select(atm, from: 'pressure-selector')
-  #   select(bar, from: 'pressure-selector')
-  #   expect(page).to have_content bar
-  #   expect(page).to have_content str
-  #   expect(page).to_not have_content "Pressure [Pa]"
-  # end
+
+  it 'Changes preferred loading unit' do
+    m = Mof.find_by(name: "test_mof2")
+    cm3 = 'cm3(STP)/cm3'
+    mg = 'mg/g'
+    str = "Loading ["+cm3+"]"
+    visit '/mofs/' + m.id.to_s
+    select(mg, from: 'loading-selector')
+    expect(page).to have_content mg
+    visit '/mofs/' + m.id.to_s
+    expect(page).to have_content mg
+    select(cm3, from: 'loading-selector')
+    expect(page).to have_content cm3
+    expect(page).to have_content str
+    expect(page).to_not have_content "Loading [cm3(STP)/g]"
+  end
+
+  it 'Changes preferred pressure unit' do
+    m = Mof.find_by(name: "test_mof2")
+    visit '/mofs/'+m.id.to_s
+    atm = 'atm'
+    bar = 'bar'
+    str = "Pressure ["+bar+"]"
+    select(atm, from: 'pressure-selector')
+    select(bar, from: 'pressure-selector')
+    expect(page).to have_content bar
+    expect(page).to have_content str
+    expect(page).to_not have_content "Pressure [Pa]"
+  end
 
   it "Changes both units" do
     m = Mof.find_by(name: "test_mof2")
