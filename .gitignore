@@ -1,4 +1,7 @@
 # See https://help.github.com/articles/ignoring-files for more about ignoring files.
+conifg/initializers/rubymine_passenger_debug.rb
+config/initializers/rubymine_passenger_debug.rb
+passenger.3000.pid.lock
 .idea
 Output
 mofid
