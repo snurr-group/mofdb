@@ -16,6 +16,8 @@ jobs:
     env:
       RAILS_ENV: test
     steps:
+      - name: Install python ase dep
+        run: python3 -m pip install ase
       - name: Turn on mysql
         run: sudo /etc/init.d/mysql start
       - name: Create DB
