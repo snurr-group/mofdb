@@ -19,6 +19,9 @@ gem 'nouislider-rails', "~>8.2"
 gem "sentry-ruby", "~>5.2.1"
 gem "sentry-rails", "~>5.2.1"
 
+
+gem "strscan", "3.0.0"
+
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
 end
