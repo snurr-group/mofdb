@@ -40,7 +40,8 @@ module ApplicationHelper
     #
     # Just be sure you know what this does before you edit it.
     #
-    Rails.cache.fetch("combinations", expires_in: 3.days) do
+    expiry = Rails.env.test?  ? 0.days : 3.days
+    Rails.cache.fetch("combinations", expires_in: expiry) do
       combinations = {}
       Database.all.each do |db|
         combinations[db] = {}

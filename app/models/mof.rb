@@ -26,6 +26,7 @@ class Mof < ApplicationRecord
 
   after_create :storeMassAndVol
   after_save :updateGases
+  after_create :regen_json
 
   scope :visible, -> { where(:hidden => false) }
   scope :convertable, -> { where("volumeA3 is not NULL and atomicMass is not NULL") }

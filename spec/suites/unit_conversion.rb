@@ -26,7 +26,7 @@ describe 'MofDB json api unit conversion', type: :request do
     get '/mofs.json', headers: units1
     expect(response.status).to eq(200)
     body = JSON.parse(response.body)
-    expect(body["pages"]).to be > 100
+    expect(body["pages"]).to eq(1)
     expect(body["page"]).to eq(1)
     validate_units(body["results"], atm, cm3g)
 
@@ -40,7 +40,7 @@ describe 'MofDB json api unit conversion', type: :request do
     units1 = { pressure: "atm", "ACCEPT": json_content_type }
     get '/mofs.json', headers: units1
     body = JSON.parse(response.body)
-    expect(body["pages"]).to be > 100
+    expect(body["pages"]).to eq 1
     validate_units(body["results"], "atm", nil)
   end
 
@@ -48,12 +48,12 @@ describe 'MofDB json api unit conversion', type: :request do
     units1 = { loading: "cm3(STP)/g", "ACCEPT": json_content_type }
     get '/mofs.json', headers: units1
     body = JSON.parse(response.body)
-    expect(body["pages"]).to be > 100
+    expect(body["pages"]).to eq 1
     validate_units(body["results"], nil, "cm3(STP)/g")
   end
 
   it "validates pressure only using id # instead of name" do
-    atm_id = 6
+    atm_id = Classification.find_by(name: "atm").id
     units = { pressure: atm_id, "ACCEPT": json_content_type }
     get '/mofs.json', headers: units
     body = JSON.parse(response.body)
@@ -61,9 +61,9 @@ describe 'MofDB json api unit conversion', type: :request do
   end
 
   it "validates loading only using id # instead of name" do
-    loading_id = 12
-    loading = "cm3(STP)/cm3"
-    units = { loading: loading_id, "ACCEPT": json_content_type }
+    model = Classification.find_by(name: "cm3(STP)/cm3")
+    loading = model.name
+    units = { loading: model.id, "ACCEPT": json_content_type }
     get '/mofs.json', headers: units
     body = JSON.parse(response.body)
     validate_units(body["results"], nil, loading)
@@ -79,28 +79,24 @@ describe 'MofDB json api unit conversion', type: :request do
     validate_units(body["results"], pressure_in_json.to_s, loading_in_json.to_s)
   end
 
-  pressures = {
-    "atm": 6,
-    "bar": 9,
-    "kPa": 36,
-    "mbar": 41,
-    "mmHg": 47,
-    "MPa": 82,
-    "Pa": 84,
-    "psi": 86,
-    "Torr": 92
-  }
-  loadings = {
-    "cm3(STP)/g": 13,
-    "cm3(STP)/cm3": 12,
-    "g/l": 27,
-    "mg/g": 42,
-    "mmol/g": 50,
-    "mol/kg": 52,
-  }
+  pressure_names = %w[ atm bar kPa mbar mmHg MPa Pa psi Torr ]
+  loading_names = %w[ cm3(STP)/g cm3(STP)/cm3 g/l mg/g mmol/g mmol/kg ]
+  pressures = {}
+  loadings = {}
+  pressure_names.each do |pres|
+    puts pres
+    pressures[pres] = Classification.find_by(name: pres).id
+  end
+  loading_names.each do |load|
+    puts load
+    loadings[load] = Classification.find_by(name: load).id
+  end
+
   loadings.each do |loading, loading_id|
     pressures.each do |pressure, pressure_id|
       it "Tests conversion between #{pressure} and #{loading}" do
+        puts "Testing #{pressure} and #{loading}"
+        puts "With ids #{pressure_id} and #{loading_id}"
         test_unit_pair(pressure, loading, pressure, loading)
         test_unit_pair(pressure_id, loading, pressure, loading)
         test_unit_pair(pressure_id, loading_id, pressure, loading)

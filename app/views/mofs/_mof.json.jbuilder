@@ -6,7 +6,7 @@ require_relative '../isotherms/isotherm_json_helper.rb'
 
 json.extract! mof, :id, :mofid, :mofkey, :hashkey, :name, :void_fraction, :surface_area_m2g, :surface_area_m2cm3, :pld, :lcd, :pxrd, :pore_size_distribution
 json.database mof.database.name
-json.batch_number mof.batch.nil? ? nil : mof.batch.id
+json.batch_number mof.batch_id
 json.elements mof.elements.map {|el| {symbol: el.symbol, name: el.name}}
 json.cif mof.hidden ? nil : mof.cif
 

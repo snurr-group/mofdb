@@ -11,7 +11,6 @@ module UnitsHelper
     # %w[atm bar kPa mbar mmHg MPa Pa psi Torr]
   end
 
-
   def loadingUnits
     # Units we list on the frontend as loading conversion options
     %w[cm3(STP)/g cm3(STP)/cm3 g/l mg/g mmol/g mol/kg]
@@ -28,30 +27,29 @@ module UnitsHelper
     end
   end
 
-  def parseUnits(from, to)
-    def parseUnit(unit)
+  def parse_units(from, to)
+    def parse_unit(unit)
       split = unit.split("/")
-      return split[0], split[1]
+      [split[0], split[1]]
     end
 
-    gasFrom, mofFrom = parseUnit(from)
-    gasTo, mofTo = parseUnit(to)
-    return gasFrom, gasTo, mofFrom, mofTo
+    gas_from, mof_from = parse_unit(from)
+    gas_to, mof_to = parse_unit(to)
+    [gas_from, gas_to, mof_from, mof_to]
   end
 
   def get_pressure_in_bar(isodata)
     pressure_units = isodata.isotherm.pressure_units
-    return isodata.pressure * pressure_units.data
+    isodata.pressure * pressure_units.data
   end
-
 
   def convert_pressure_units(isodata, to)
     bar = get_pressure_in_bar(isodata)
-    return bar / to["data"]
+    bar / to["data"]
   end
 
   def convert_adsorption_units_wrap(from, to, value, gas_molar_mass, mof, temp, pressure_bar)
-    gas_from, gas_to, mof_from, mof_to = parseUnits(from.name, to.name)
+    gas_from, gas_to, mof_from, mof_to = parse_units(from.name, to.name)
     pressure_atm = pressure_bar / 1.01325
     numerator = convert_gas_unit(gas_from, gas_to, value, gas_molar_mass, temp, pressure_atm)
     denominator = convert_mof_unit(mof_from, mof_to, 1, mof.volumeA3, mof.atomicMass)
@@ -66,6 +64,10 @@ module UnitsHelper
     value = isodata.loading
     temp_k = isodata.isotherm.temp
     pressure_bar = get_pressure_in_bar(isodata)
+    if isodata.gas.molarMass.nil?
+      Sentry.capture_message("Gas does not have a molar mass id #{isodata.gas.id}")
+      raise "Gas should have molar mass!" unless Rails.env.production?
+    end
     convert_adsorption_units_wrap(from, to, value, isodata.gas.molarMass, mof, temp_k, pressure_bar)
   end
 
@@ -121,23 +123,23 @@ module UnitsHelper
     moles = nil
 
     moles = if from == "mg"
-      g = value / 1000
-      g / molar_mass
-    elsif from == "mol"
-      value
-    elsif from == "g"
-      value / molar_mass
-    elsif from == "cm3"
-      liters = value / 1000.0
-      pressure_atm * liters / (r * temp_k)
-    elsif from == "cm3(STP)"
-      liters = value / 1000.0
-      atm_stp * liters / (r * temp_stp)
-    elsif from == "mmol"
-      value / 1000.0
-    else
-      raise UnsupportedUnit.new("Unknown gas conversion from #{from}")
-    end
+              g = value / 1000
+              g / molar_mass
+            elsif from == "mol"
+              value
+            elsif from == "g"
+              value / molar_mass
+            elsif from == "cm3"
+              liters = value / 1000.0
+              pressure_atm * liters / (r * temp_k)
+            elsif from == "cm3(STP)"
+              liters = value / 1000.0
+              atm_stp * liters / (r * temp_stp)
+            elsif from == "mmol"
+              value / 1000.0
+            else
+              raise UnsupportedUnit.new("Unknown gas conversion from #{from}")
+            end
 
     if to == "mg"
       return moles * molar_mass * 1000.0

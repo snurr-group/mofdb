@@ -15,7 +15,7 @@ development:
 test:
   <<: *default
   adapter: mysql2
-  database: mofdb2
+  database: mofdb2_test
   password: admin
   username: admin
   socket: <%= ENV['SOCKET'] %>

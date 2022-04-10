@@ -72,9 +72,9 @@ class MofsController < ApplicationController
         if @convert_loading.nil? && @convert_pressure.nil?
           # If we use the pre-generated json we don't need any extra columns
           @mofs = @mofs.select("mofs.id, mofs.pregen_json")
+          return render status: 200, json: {pages: @pages, page: @page, results: @mofs.pluck(:pregen_json)}
         end
         @mofs = @mofs.take(ENV['PAGE_SIZE'])
-        # raise
       }
       format.html {
         @mofs = @mofs.includes(:database, :gases, :elements)

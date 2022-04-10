@@ -3,7 +3,9 @@ require 'rails_helper'
 describe "json api", type: :request do
   it "uses mofid param" do
     mofid = "[Fe]O[Fe].[O-]C(=O)c1cccnc1 MOFid-v1.ERROR.cat0"
-    get "/mofs.json?mofid=" + CGI.escape(mofid)
+    url = "/mofs.json?mofid=" + mofid
+    puts url
+    get url
     body = JSON.parse(response.body)
     expect(body["results"].length).to be < 10
     expect(body["results"].any? { |mof| mof["mofid"] == mofid }).to be true
@@ -46,52 +48,52 @@ describe "json api", type: :request do
   end
 
   it "uses pld_min param" do
-    get "/mofs.json?pld_min=13.7"
+    get "/mofs.json?pld_min=23.7"
     body = JSON.parse(response.body)
-    expect(body["results"].all? { |mof| mof["pld"] >= 13.7 }).to be true
-    expect(body["results"].length + body["pages"] * ENV['PAGE_SIZE'].to_i).to be > 10
+    expect(body["results"].all? { |mof| mof["pld"] >= 23.7 }).to be true
+    expect(body["results"].length + (body["pages"]-1) * ENV['PAGE_SIZE'].to_i).to eq(2)
   end
 
   it "uses pld_max param" do
-    get "/mofs.json?pld_max=13.7"
+    get "/mofs.json?pld_max=31"
     body = JSON.parse(response.body)
-    expect(body["results"].all? { |mof| mof["pld"] <= 13.7 }).to be true
-    expect(body["results"].length + body["pages"] * ENV['PAGE_SIZE'].to_i).to be > 10
+    expect(body["results"].all? { |mof| mof["pld"] <= 31 }).to be true
+    expect(body["results"].length + (body["pages"]-1) * ENV['PAGE_SIZE'].to_i).to eq(2)
   end
 
   it "uses sa_m2g_min param" do
-    get "/mofs.json?sa_m2g_min=3000"
+    get "/mofs.json?sa_m2g_min=2000"
     body = JSON.parse(response.body)
-    expect(body["results"].all? { |mof| mof["surface_area_m2g"] >= 3000 }).to be true
-    expect(body["results"].length + body["pages"] * ENV['PAGE_SIZE'].to_i).to be > 10
+    expect(body["results"].all? { |mof| mof["surface_area_m2g"] >= 2000 }).to be true
+    expect(body["results"].length + (body["pages"]-1) * ENV['PAGE_SIZE'].to_i).to eq(2)
   end
 
   it "uses sa_m2g_max param" do
-    get "/mofs.json?sa_m2g_max=100"
+    get "/mofs.json?sa_m2g_max=1100"
     body = JSON.parse(response.body)
-    expect(body["results"].all? { |mof| mof["surface_area_m2g"] <= 100 }).to be true
-    expect(body["results"].length + body["pages"] * ENV['PAGE_SIZE'].to_i).to be > 10
+    expect(body["results"].all? { |mof| mof["surface_area_m2g"] <= 1100 }).to be true
+    expect(body["results"].length + (body["pages"]-1) * ENV['PAGE_SIZE'].to_i).to eq(1)
   end
 
   it "uses sa_m2cm3_min param" do
-    get "/mofs.json?sa_m2cm3_min=1000"
+    get "/mofs.json?sa_m2cm3_min=2001"
     body = JSON.parse(response.body)
-    expect(body["results"].all? { |mof| mof["surface_area_m2cm3"] >= 1000 }).to be true
-    expect(body["results"].length + body["pages"] * ENV['PAGE_SIZE'].to_i).to be > 10
+    expect(body["results"].all? { |mof| mof["surface_area_m2cm3"] >= 2001 }).to be true
+    expect(body["results"].length + (body["pages"]-1) * ENV['PAGE_SIZE'].to_i).to eq(1)
   end
 
   it "uses sa_m2cm3_max param" do
-    get "/mofs.json?sa_m2cm3_max=1400"
+    get "/mofs.json?sa_m2cm3_max=1999"
     body = JSON.parse(response.body)
-    expect(body["results"].all? { |mof| mof["surface_area_m2cm3"] <= 1400 }).to be true
-    expect(body["results"].length + body["pages"] * ENV['PAGE_SIZE'].to_i).to be > 10
+    expect(body["results"].all? { |mof| mof["surface_area_m2cm3"] <= 1999 }).to be true
+    expect(body["results"].length + (body["pages"]-1) * ENV['PAGE_SIZE'].to_i).to eq(1)
   end
 
   it "uses the name param" do
-    get "/mofs.json?name=RIGPEE01_clean"
+    get "/mofs.json?name=test_mof3"
     body = JSON.parse(response.body)
     expect(body["results"].length).to eq(1)
-    expect(body["results"].any? { |mof| mof["name"] == "RIGPEE01_clean" }).to be true
+    expect(body["results"].any? { |mof| mof["name"] == "test_mof3" }).to be true
   end
 
   it "uses the database param for 'CoREMOF 2014'" do
@@ -131,32 +133,28 @@ describe "json api", type: :request do
   def sometimes(a, b) end
 
   it "uses the doi param" do
-    doi = "10.1021/acs.jpcc.6b08729"
-    get "/mofs.json?doi=" + doi
+    doi = "test_doi1"
+    doi_model = Doi.find_by(doi: doi)
+    get "/mofs.json?doi=" + doi_model.id.to_s
     body = JSON.parse(response.body)
-    expect(body["results"].all? { |mof| mof["isotherms"].any? { |iso| iso["DOI"] == doi } }).to be true
-    expect(body["results"].all? { |mof| mof["isotherms"].any? { |iso| iso["DOI"] == doi } }).to be true
-    expect(body["results"].all? { |mof| mof["database"] == "hMOF" }).to be true
+    expect(body["results"].all? { |mof| mof["isotherms"].all? { |iso| iso["DOI"] == doi } }).to be true
+    expect(body["results"].all? { |mof| mof["isotherms"].all? { |iso| iso["DOI"] == doi } }).to be true
+    puts body["results"].map{|mof|mof["database"]}
+    expect(body["results"].all? { |mof| mof["database"] == "testdb1" || mof["database"] == "testdb2" }).to be true
   end
 
   it "has DOI and doi_url in resonse" do
-    get "/mofs.json?page=10&vf_min=0.001"
+    get "/mofs.json?page=1&vf_min=0.001"
     body = JSON.parse(response.body)
     expect(body["results"].all?{|mof| mof["isotherms"].all?{|iso| iso["DOI"] && iso["doi_url"] }}).to be true
   end
 
   it "can query doi by id #" do
-    get "/mofs.json?doi=1"
-    doi = Doi.find(1)
+    doi = Doi.find_by(doi: "test_doi1")
+    get "/mofs.json?doi=" + doi.id.to_s
     body = JSON.parse(response.body)
-    expect(body["results"].all? { |mof| mof["isotherms"].any? { |iso| iso["DOI"] == doi.doi } }).to be true
-  end
-
-  it "can query doi by id #" do
-    doi = Doi.find(1)
-    get "/mofs.json?doi="+doi.doi
-    body = JSON.parse(response.body)
-    expect(body["results"].all? { |mof| mof["isotherms"].any? { |iso| iso["DOI"] == doi.doi } }).to be true
+    puts body["results"].map { |mof| mof["isotherms"].any? { |iso| iso["DOI"] == doi.doi } }
+    expect(body["results"].all? { |mof| mof["isotherms"].all? { |iso| iso["DOI"] == doi.doi } }).to be true
   end
 
 end
