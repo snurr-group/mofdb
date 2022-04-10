@@ -268,7 +268,7 @@ DEPENDENCIES
   nouislider-rails (~> 8.2)
   passenger (~> 6.0)
   puma (~> 5.3)
-  rails (~> 6.0)
+  rails (= 6.1.5)
   rspec-rails
   rubyzip (~> 2.3)
   sass-rails (~> 6.0)

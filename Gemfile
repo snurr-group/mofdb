@@ -5,7 +5,7 @@ gem 'activerecord-import', "~>1.0"
 gem "passenger", "~>6.0", require: "phusion_passenger/rack_handler"
 gem 'rubyzip', '~>2.3'
 gem 'concurrent-ruby', '~>1.1'
-gem 'rails', '~> 6.0'
+gem 'rails', '6.1.5'
 
 gem 'mysql2', '>= 0.4.4', '< 0.6.0'
 
