@@ -11,7 +11,6 @@ class MofsController < ApplicationController
   before_action :set_mof, only: [:show, :cif]
   skip_forgery_protection only: [:upload]
   before_action :verify_access, only: [:upload]
-  before_action :cache, except: [:upload]
 
   def count
     # Finding the count of MOFs is the slowest part of the search
@@ -39,7 +38,6 @@ class MofsController < ApplicationController
   # GET /mofs
   # GET /mofs.json
   def index
-    expires_in 0.seconds, public: true
     @mofs = get_mofs
 
     bulk = params[:bulk] && params[:bulk] == "true"
