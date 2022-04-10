@@ -15,12 +15,10 @@ test:
   <<: *default
   adapter: mysql2
   database: mofdb2_test
-  password: admin
-  username: admin
+  password: root
+  username: root
   host: 127.0.0.1
   port: 3306
-#  socket: <%#= ENV['SOCKET'] %>
-
 
 production:
   <<: *default
