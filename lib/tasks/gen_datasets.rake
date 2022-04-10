@@ -64,6 +64,7 @@ def gen_zip(db, doi, gases)
         io.write(mof.cif)
       rescue Exception => e
         puts e
+        puts e.stacktrace
         failures += 1
       end
     end
