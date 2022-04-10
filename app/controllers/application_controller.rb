@@ -21,7 +21,8 @@ class ApplicationController < ActionController::Base
   end
 
   def set_headers
-    headers = { 'Referrer-Policy' => 'same-origin',
+    headers = {
+                'Referrer-Policy' => 'same-origin',
                 'X-Content-Type-Options' => 'nosniff',
                 'X-Frame-Options' => 'SAMEORIGIN',
                 'X-XSS-Protection' => '1; mode=block',
@@ -84,6 +85,7 @@ class ApplicationController < ActionController::Base
       session[:prefLoading] = nil
       Sentry.capture_message("Someone sent us a pressure unit '#{session[:prefPressure]}' or a loading unit '#{session[:prefLoading]}' that doesn't exist")
     end
+    x=1
   end
 
   def set_units

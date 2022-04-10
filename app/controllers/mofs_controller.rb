@@ -39,6 +39,7 @@ class MofsController < ApplicationController
   # GET /mofs
   # GET /mofs.json
   def index
+    expires_in 0.seconds, public: true
     @mofs = get_mofs
 
     bulk = params[:bulk] && params[:bulk] == "true"
@@ -123,6 +124,7 @@ class MofsController < ApplicationController
   # GET /mofs/1
   # GET /mofs/1.json
   def show
+    expires_in 0.seconds, public: true
     unless @mof.convertable
       @msg = "This structure is missing molarMass or volume and thus we cannot do automatic unit conversion"
     end
