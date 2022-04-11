@@ -8,7 +8,8 @@ class ApplicationController < ActionController::Base
   before_action :set_mof_count
 
   def show_maintenance_page
-    return if request.path.to_s.start_with?("/down") || session[:bypass_maintenance] == true || request.format.symbol == :json || request.path.to_s.include?("upload")
+    return if request.path.to_s.start_with?("/down") || request.path.to_s.include?("batches") || session[:bypass_maintenance] == true || request.format.symbol == :json || request.path.to_s.include?("upload")
+    return if params[:passkey] == Rails.application.credentials.api_passkey
     path = Rails.root.join('tmp', 'down.txt')
     return unless File.exists?(path)
     return redirect_to '/down'
