@@ -1,9 +1,6 @@
 require 'rails_helper'
 
 describe "json api", type: :request do
-  before do
-    driven_by(:headless_chrome_custom)
-  end
   it "uses mofid param" do
     mofid = "[Fe]O[Fe].[O-]C(=O)c1cccnc1 MOFid-v1.ERROR.cat0"
     url = "/mofs.json?mofid=" + mofid
