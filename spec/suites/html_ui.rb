@@ -16,6 +16,9 @@ def wait_until(&block)
 end
 
 describe 'MofDB html ui', type: :system do
+  before do
+    driven_by(:headless_chrome_custom)
+  end
   it "Loads at all" do
     visit '/'
     expect(page).to have_content 'API'
