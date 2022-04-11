@@ -93,8 +93,6 @@ describe 'MofDB json api unit conversion', type: :request do
   loadings.each do |loading, loading_id|
     pressures.each do |pressure, pressure_id|
       it "Tests conversion between #{pressure} and #{loading}" do
-        puts "Testing #{pressure} and #{loading}"
-        puts "With ids #{pressure_id} and #{loading_id}"
         test_unit_pair(pressure, loading, pressure, loading)
         test_unit_pair(pressure_id, loading, pressure, loading)
         test_unit_pair(pressure_id, loading_id, pressure, loading)

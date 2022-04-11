@@ -4,7 +4,6 @@ describe "json api", type: :request do
   it "uses mofid param" do
     mofid = "[Fe]O[Fe].[O-]C(=O)c1cccnc1 MOFid-v1.ERROR.cat0"
     url = "/mofs.json?mofid=" + mofid
-    puts url
     get url
     body = JSON.parse(response.body)
     expect(body["results"].length).to be < 10
@@ -139,7 +138,6 @@ describe "json api", type: :request do
     body = JSON.parse(response.body)
     expect(body["results"].all? { |mof| mof["isotherms"].all? { |iso| iso["DOI"] == doi } }).to be true
     expect(body["results"].all? { |mof| mof["isotherms"].all? { |iso| iso["DOI"] == doi } }).to be true
-    puts body["results"].map{|mof|mof["database"]}
     expect(body["results"].all? { |mof| mof["database"] == "testdb1" || mof["database"] == "testdb2" }).to be true
   end
 
@@ -153,7 +151,6 @@ describe "json api", type: :request do
     doi = Doi.find_by(doi: "test_doi1")
     get "/mofs.json?doi=" + doi.id.to_s
     body = JSON.parse(response.body)
-    puts body["results"].map { |mof| mof["isotherms"].any? { |iso| iso["DOI"] == doi.doi } }
     expect(body["results"].all? { |mof| mof["isotherms"].all? { |iso| iso["DOI"] == doi.doi } }).to be true
   end
 
