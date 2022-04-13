@@ -1,4 +1,3 @@
-
 # README
 
 [![Build](https://github.com/snurr-group/mofdb/actions/workflows/rubyonrails.yml/badge.svg)](https://github.com/snurr-group/mofdb2/actions)
@@ -43,17 +42,6 @@ I'd recommend starting by looking at ```db/schema.rb``` and then [the api routes
 
 There is a fairly comprehensive test suite in `spec/suites/*` run it with `bundle exec rspec spec/suites/*`.
 It tests all api params except bulk/cif and exercises a bit of the ui.
-
-# Maintenance Mode
-
-You can turn on maintenance mode by creating the file `tmp/down.txt` with whatever message you want to show. This is helpful if you
-want to be sure no one sees bad data while you are in the process of uploading.
-
-If you need to use mofdb while it's in maintenance mode just go to `/down?bypass` and you'll be able to access the site.
-To disable the bypass just go to `/down?end_bypass`.  
-All /upload routes are still live in maintenance mode as are all json routes (the uploading tools use them to validate data).
-
-Just the html front end is disabled.
 
 # Rake tasks
 

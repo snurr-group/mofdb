@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_04_10_203709) do
+ActiveRecord::Schema[7.0].define(version: 2022_04_13_014548) do
   create_table "active_storage_attachments", charset: "latin1", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -196,6 +196,14 @@ ActiveRecord::Schema[7.0].define(version: 2022_04_10_203709) do
     t.index ["surface_area_m2g"], name: "index_mofs_on_surface_area_m2g"
     t.index ["void_fraction"], name: "index_mofs_on_void_fraction"
     t.index ["volumeA3"], name: "index_mofs_on_volumeA3"
+  end
+
+  create_table "reports", charset: "utf8", force: :cascade do |t|
+    t.string "email"
+    t.string "description"
+    t.string "ip"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "synonyms", charset: "utf8", force: :cascade do |t|

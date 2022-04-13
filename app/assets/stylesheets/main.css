@@ -1,3 +1,15 @@
+
+#message {
+    position: relative;
+    background-color: rgb(200, 166, 251);
+    grid-area: message;
+
+}
+#message figure {
+    right: 0;
+    bottom: 0;
+}
+
 #download_cifs {
     margin-bottom:.5rem;
     background-color: #4e2a84;
@@ -101,17 +113,12 @@
     grid-area: content;
     grid-column-gap: 20px;
     /*grid-template-rows: min-content 1fr;*/
-    grid-template-rows: 1fr;
+    grid-template-rows: min-content 1fr;
     grid-template-columns: minmax(200px, 250px) minmax(600px, 900px);
     /*grid-template-areas: "warning warning" "search tbl";*/
-    grid-template-areas: "search tbl";
+    grid-template-areas: "message message" "search tbl";
 }
 
-/*#warning {*/
-/*    grid-area: warning;*/
-/*    background-color: #fdfffc;*/
-/*    padding: 20px;*/
-/*}*/
 
 .unitsText {
     margin-bottom: 0;
@@ -168,7 +175,7 @@
         grid-area: content;
         grid-template-columns: 100%;
         grid-template-rows: min-content auto auto;
-        grid-template-areas: "warning" "search" "tbl";
+        grid-template-areas: "message" "search" "tbl";
     }
 
     #nav {

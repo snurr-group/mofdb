@@ -16,6 +16,7 @@ Rails.application.routes.draw do
   resources :forcefields, only: [:index, :create, :update, :edit]
   resources :database_files, only: [:create, :destroy, :index]
   resources :classifications, only: [:index]
+  resources :reports, only: [:create]
 
   resources :isotherms, format: :json do
     collection do

@@ -1,4 +1,12 @@
 <div id="index_content">
+  <% if flash[:message] %>
+    <div id="message">
+      <figure class="warning" role="alert">
+        ✓&nbsp;<%= flash[:message] %>
+      </figure>
+    </div>
+  <% end %>
+
   <div id="search">
     <div>
       <label for="name" class="slider_title">Name</label>
