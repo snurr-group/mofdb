@@ -46,6 +46,7 @@ class MofsController < ApplicationController
 
     if bulk || cifs
       @mofs = preload_everything(@mofs)
+      raise
       if bulk
         send_zip_file(@mofs, @convert_pressure, @convert_loading, cifs = true, json = true)
       else
@@ -56,7 +57,6 @@ class MofsController < ApplicationController
 
     respond_to do |format|
       format.json {
-        @mofs = preload_everything(@mofs)
         @page = params['page'].to_i # nil -> 0
         @page = 1 if @page == 0
         offset = (ENV['PAGE_SIZE'].to_i) * (@page - 1)
@@ -71,9 +71,13 @@ class MofsController < ApplicationController
         if @convert_loading.nil? && @convert_pressure.nil?
           # If we use the pre-generated json we don't need any extra columns
           @mofs = @mofs.select("mofs.id, mofs.pregen_json")
+          @mofs = @mofs.take(ENV['PAGE_SIZE'])
           return render status: 200, json: {pages: @pages, page: @page, results: @mofs.pluck(:pregen_json)}
+        else
+          @mofs = @mofs.take(ENV['PAGE_SIZE'])
+          @mofs = preload_everything(@mofs)
         end
-        @mofs = @mofs.take(ENV['PAGE_SIZE'])
+
       }
       format.html {
         @mofs = @mofs.includes(:database, :gases, :elements)
