@@ -46,7 +46,6 @@ class MofsController < ApplicationController
 
     if bulk || cifs
       @mofs = preload_everything(@mofs)
-      raise
       if bulk
         send_zip_file(@mofs, @convert_pressure, @convert_loading, cifs = true, json = true)
       else
