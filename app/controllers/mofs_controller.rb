@@ -73,8 +73,8 @@ class MofsController < ApplicationController
           @mofs = @mofs.take(ENV['PAGE_SIZE'])
           return render status: 200, json: {pages: @pages, page: @page, results: @mofs.pluck(:pregen_json)}
         else
-          @mofs = @mofs.take(ENV['PAGE_SIZE'])
           @mofs = preload_everything(@mofs)
+          @mofs = @mofs.take(ENV['PAGE_SIZE'])
         end
 
       }
