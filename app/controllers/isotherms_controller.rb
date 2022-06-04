@@ -62,7 +62,7 @@ class IsothermsController < ApplicationController
       end
     end
 
-    doi = Doi.find_or_create_by(doi: params[:doi])
+    doi = Doi.find_or_create_by(url: params[:doi_url], doi: params[:doi])
     @isotherm = Isotherm.new(mof: @mof,
                              batch: Batch.find(params[:batch].to_i),
                              doi: doi,
