@@ -19,6 +19,7 @@ namespace :pregen do
         end
       end
     end
+    Rails.cache.clear
   end
 end
 
