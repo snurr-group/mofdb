@@ -1,0 +1,3 @@
+[submodule "archival/mofdbx-archive"]
+	path = archival/mofdbx-archive
+	url = git@github.com:snurr-group/mofdb-x-archive.git
