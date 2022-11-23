@@ -4,12 +4,15 @@ if @convert_pressure.nil? && @convert_loading.nil?
 elsif
 
   # In this case we need to convert pressure/Loading on the fly
-  json.results do |_|
-    # render partial: 'mofs/mof', collection: @mofs, locals: { convert_pressure: @convert_pressure, convert_loading: @convert_loading }
-    json.array!(@mofs, partial: 'mofs/mof', as: :mof,
-                locals: { convert_pressure: @convert_pressure,
-                          convert_loading: @convert_loading })
-  end
+json.results do |_|
+  # render partial: 'mofs/mof', collection: @mofs, locals: { convert_pressure: @convert_pressure, convert_loading: @convert_loading }
+  json.array!(@mofs, partial: 'mofs/mof', as: :mof,
+              locals: {
+                convert_pressure: @convert_pressure,
+                convert_loading: @convert_loading,
+                version: @version
+              })
+end
 end
 
 json.pages @pages

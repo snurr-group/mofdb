@@ -21,3 +21,4 @@ end
 json.isotherms(mof.isotherms.select{|i| !i.is_heat }) do |isotherm|
   print_iso(json, isotherm, convert_pressure, convert_loading)
 end
+json.mofdb_version @version

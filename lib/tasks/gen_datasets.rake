@@ -47,10 +47,10 @@ def gen_zip(db, doi, gases)
       begin
         jsn = mof.pregen_json
         if gases.nil?
-          io.put_next_entry(mof.name + ".json")
+          io.put_next_entry("#{mof.name}.json")
           io.write(jsn.to_json)
           next if mof.hidden
-          io.put_next_entry(mof.name + ".cif")
+          io.put_next_entry("#{mof.name}.cif")
           io.write(mof.cif)
           next
         end

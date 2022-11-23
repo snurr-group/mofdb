@@ -19,9 +19,9 @@ module MofsHelper
     end
   end
 
-  def send_zip_file(mofs, convert_pressure, convert_loading, cifs = true, json = true)
+  def send_zip_file(mofs, convert_pressure, convert_loading, version, cifs = true, json = true)
 
-    zip_name = "mofs-bulk-search-download.zip"
+    zip_name = "bulk-dl-mofdb-version-#{version}.zip"
     send_file_headers!(
       type: "application/zip",
       disposition: "attachment",
@@ -49,7 +49,7 @@ module MofsHelper
       ZipTricks::Streamer.open(writer) do |zip|
         mofs.find_in_batches(batch_size: 100).each do |batch|
           batch.each do |mof|
-            content = mof.get_json(convert_pressure, convert_loading)
+            content = mof.get_json(convert_pressure, convert_loading, version)
             cif = mof.cif
             if json
               zip.write_deflated_file("#{mof.name}-(id:#{mof.id}).json") do |file_writer|

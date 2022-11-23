@@ -42,15 +42,10 @@ class MofsController < ApplicationController
 
     bulk = params[:bulk] && params[:bulk] == "true"
     cifs = params[:cifs] && params[:cifs] == "true"
-    convert_units = !@convert_pressure.nil? || !@convert_loading.nil?
 
     if bulk || cifs
       @mofs = preload_everything(@mofs)
-      if bulk
-        send_zip_file(@mofs, @convert_pressure, @convert_loading, cifs = true, json = true)
-      else
-        send_zip_file(@mofs, @convert_pressure, @convert_loading, cifs = true, json = false)
-      end
+      send_zip_file(@mofs, @convert_pressure, @convert_loading, @version, cifs = true, json = bulk)
       return
     end
 

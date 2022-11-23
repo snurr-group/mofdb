@@ -4,6 +4,7 @@ require "#{Rails.root}/app/helpers/units_helper"
 
 class Mof < ApplicationRecord
   include UnitsHelper
+  include ApplicationHelper
 
   belongs_to :batch, optional: true
   belongs_to :database
@@ -62,7 +63,7 @@ class Mof < ApplicationRecord
   end
 
   def updateGases
-    gas_ids = isotherms.joins(:isodata).select("isodata.gas_id").distinct("isodata.gas_id").to_a.map{|row| row.gas_id}
+    gas_ids = isotherms.joins(:isodata).select("isodata.gas_id").distinct("isodata.gas_id").to_a.map { |row| row.gas_id }
     # self.gases = []
     self.gases = Gas.where(id: gas_ids)
   end
@@ -94,18 +95,26 @@ class Mof < ApplicationRecord
     end
   end
 
-  def get_json(convertPressure, convertLoading)
+  def get_json(convertPressure, convertLoading, version)
     # Convenience method to render the view for caching
     ApplicationController.render(template: 'mofs/_mof',
-                                 locals: { mof: self, convert_pressure: convertPressure,
-                                           convert_loading: convertLoading },
+                                 locals: {
+                                   mof: self, convert_pressure: convertPressure,
+                                   convert_loading: convertLoading,
+                                   version: version
+                                 },
                                  format: :json,
-                                 assigns: { mof: self, convert_pressure: convertPressure,
-                                            convert_loading: convertLoading })
+                                 assigns: {
+                                   mof: self,
+                                   convert_pressure: convertPressure,
+                                   convert_loading: convertLoading,
+                                   version: version
+                                 })
   end
 
   def regen_json
-    self.pregen_json = JSON.load(get_json(nil, nil))
+    version = get_version
+    self.pregen_json = JSON.load(get_json(nil, nil, version))
     self.save
   end
 

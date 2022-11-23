@@ -5,6 +5,7 @@ class ApplicationController < ActionController::Base
   before_action :set_preferred_units
   before_action :set_headers
   before_action :set_mof_count
+  before_action :set_version
 
   def set_mof_count
     @mofs_count = Rails.cache.fetch("mofcount", expires_in: 1.days) do
@@ -14,11 +15,11 @@ class ApplicationController < ActionController::Base
 
   def set_headers
     headers = {
-                'Referrer-Policy' => 'same-origin',
-                'X-Content-Type-Options' => 'nosniff',
-                'X-Frame-Options' => 'SAMEORIGIN',
-                'X-XSS-Protection' => '1; mode=block',
-                'Feature-Policy' => "accelerometer 'none'; ambient-light-sensor 'none'; autoplay 'none'; camera 'none'; encrypted-media 'none'; fullscreen 'self'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; midi 'none'; payment 'none'; picture-in-picture 'none'; speaker 'self'; sync-xhr 'none'; usb 'none'; vr 'none'" }
+      'Referrer-Policy' => 'same-origin',
+      'X-Content-Type-Options' => 'nosniff',
+      'X-Frame-Options' => 'SAMEORIGIN',
+      'X-XSS-Protection' => '1; mode=block',
+      'Feature-Policy' => "accelerometer 'none'; ambient-light-sensor 'none'; autoplay 'none'; camera 'none'; encrypted-media 'none'; fullscreen 'self'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; midi 'none'; payment 'none'; picture-in-picture 'none'; speaker 'self'; sync-xhr 'none'; usb 'none'; vr 'none'" }
     headers.each do |k, v|
       response.set_header(k, v)
     end
@@ -73,13 +74,17 @@ class ApplicationController < ActionController::Base
       session[:prefLoading] = nil
       Sentry.capture_message("Someone sent us a pressure unit '#{session[:prefPressure]}' or a loading unit '#{session[:prefLoading]}' that doesn't exist")
     end
-    x=1
+    x = 1
   end
 
   def set_units
     # checkUnits applies header values to session.
     # this route just jsonifyies units after that.
     render json: { status: RESULTS[:success], loading: session[:prefLoading], pressure: session[:prefPressure] }, status: 200
+  end
+
+  def set_version
+    @version = get_version
   end
 
 end

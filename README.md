@@ -43,6 +43,11 @@ I'd recommend starting by looking at ```db/schema.rb``` and then [the api routes
 There is a fairly comprehensive test suite in `spec/suites/*` run it with `bundle exec rspec spec/suites/*`.
 It tests all api params except bulk/cif and exercises a bit of the ui.
 
+# Archive
+
+Mofdb archives past versions of itself [in a separate repo](https://github.com/snurr-group/mofdb-x-archive). A cron job kicks off 
+an update of that repo weekly. The code for this is in `./archival/main.py`. It utilizes the mofdb-client mentioned above.
+
 # Rake tasks
 
 ## Pregen all

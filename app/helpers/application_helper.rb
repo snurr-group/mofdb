@@ -7,15 +7,28 @@ module ApplicationHelper
     :error => 'error',
   }
 
-  def get_zip_name(db, doi, gases)
-    if doi.nil?
-      db.name.gsub(/[^0-9a-z ]/i, ' ') + '.zip'
-    else
-      doi_clean = doi.doi.gsub(/[^0-9a-z ]/i, ' ')
-      gas_section = gases.nil? ? "all" : gases.to_a.map { |g| g.name }.join("-")
-      path = "#{db.name}-#{doi_clean}-#{gas_section}"
-      path.gsub(/[^0-9a-z ]/i, ' ') + ".zip"
+  def get_version
+    Rails.cache.fetch("mofdb-version-v4", expires_in: 1.second) do
+      archive = Rails.root.join("archival", "mofdbx-archive")
+      res = Dir.chdir archive do
+        %x(git rev-parse --short HEAD)
+      end
+      res.strip # Remove trailing \n
     end
+  end
+
+  def get_zip_name(db, doi, gases)
+    version = get_version
+    path = if doi.nil?
+             db.name.gsub(/[^0-9a-z ]/i, ' ')
+
+           else
+             doi_clean = doi.doi.gsub(/[^0-9a-z ]/i, ' ')
+             gas_section = gases.nil? ? "all" : gases.to_a.map { |g| g.name }.join("-")
+             path = "#{db.name}-#{doi_clean}-#{gas_section}"
+             path.gsub(/[^0-9a-z -]/i, ' ')
+           end
+    path + "-mofdb-version:#{version}.zip"
   end
 
   def get_db_doi_gas_combos
@@ -40,13 +53,13 @@ module ApplicationHelper
     #
     # Just be sure you know what this does before you edit it.
     #
-    expiry = Rails.env.test?  ? 0.days : 3.days
+    expiry = Rails.env.test? ? 0.days : 3.days
     Rails.cache.fetch("combinations", expires_in: expiry) do
       combinations = {}
       Database.all.each do |db|
         combinations[db] = {}
         # Find all dois in the db
-        dois = db.mofs.joins(:isotherms).joins(:dois).select("dois.id").distinct.pluck("dois.id").map{|i| Doi.find(i)}
+        dois = db.mofs.joins(:isotherms).joins(:dois).select("dois.id").distinct.pluck("dois.id").map { |i| Doi.find(i) }
         dois.each do |doi|
           gases = Set.new
           query = "SELECT DISTINCT JSON_OBJECTAGG(isodata.gas_id,'') from isotherms
