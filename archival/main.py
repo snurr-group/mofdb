@@ -10,13 +10,12 @@ def write_if_changed(expected_content, path):
             if file.read() == expected_content:
                 return False
     with open(path, "w+") as file:
-        file.truncate(0)
         file.write(expected_content)
         return True
 
 
 directory = pathlib.Path(__file__).parent.resolve()
-mofs_dir = os.path.join(directory, "mofdb-x-archive", "mofs")
+mofs_dir = os.path.join(directory, "mofdbx-archive", "mofs")
 
 count = 1
 updates = 0
@@ -24,7 +23,8 @@ for mof in mofdb_client.fetch():
     if count % 25 == 0:
         print(f"{count} out of 168,000")
     count += 1
-    if write_if_changed(str(mof.json_repr), os.path.join(mofs_dir, f"{mof.name}.json")):
+    mof_path = os.path.join(mofs_dir, f"{mof.name}.json")
+    if write_if_changed(str(mof.json_repr), mof_path):
         updates += 1
 
 print("f{updates} mof(s) where updated")
