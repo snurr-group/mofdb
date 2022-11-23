@@ -36,3 +36,6 @@ if updates != 0:
     subprocess.run(["git", "add", "."])
     print(f"Running `git commit -m \"Updated {updates} mofs\"")
     subprocess.run(["git", "commit", "-m", f"Updated {updates} mofs"])
+    print(f"Running `git push`")
+    subprocess.run(["git", "push"])
+
