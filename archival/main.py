@@ -20,7 +20,7 @@ mofs_dir = os.path.join(directory, "mofdb-x-archive", "mofs")
 
 count = 1
 updates = 0
-for mof in mofdb_client.fetch(limit=10):
+for mof in mofdb_client.fetch():
     if count % 25 == 0:
         print(f"{count} out of 168,000")
     count += 1
