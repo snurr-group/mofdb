@@ -8,10 +8,10 @@ module ApplicationHelper
   }
 
   def get_version
-    Rails.cache.fetch("mofdb-version-v4", expires_in: 1.second) do
+    Rails.cache.fetch("mofdb-version-v4", expires_in: 30.second) do
       archive = Rails.root.join("archival", "get_version.sh")
       res = %x("#{archive}")
-      res.strip # Remove trailing \n
+      res.strip
     end
   end
 
