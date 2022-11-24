@@ -95,9 +95,9 @@ class Mof < ApplicationRecord
     end
   end
 
-  def get_json(convert_pressure, convert_loading, version)
+  def get_json(convert_pressure, convert_loading, version, force_refresh = false)
     # Convenience method to render the view
-    if convert_loading == nil && convert_pressure == nil
+    if convert_loading == nil && convert_pressure == nil && !force_refresh
       # Use cache if we can
       self.pregen_json.to_json
     else
@@ -119,7 +119,7 @@ class Mof < ApplicationRecord
 
   def regen_json
     version = get_version
-    self.pregen_json = JSON.load(get_json(nil, nil, version))
+    self.pregen_json = JSON.load(get_json(nil, nil, version, force_refresh = true))
     self.save
   end
 

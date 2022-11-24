@@ -44,7 +44,8 @@ class MofsController < ApplicationController
     cifs = params[:cifs] && params[:cifs] == "true"
 
     if bulk || cifs
-      if !(@convert_pressure == nil && @convert_loading == nil)
+      # Only preload if we aren't going to use the cache colum for this request
+      unless @convert_pressure == nil && @convert_loading == nil
         @mofs = preload_everything(@mofs)
       end
       send_zip_file(@mofs, @convert_pressure, @convert_loading, @version, cifs = true, json = bulk)

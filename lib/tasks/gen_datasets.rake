@@ -40,7 +40,7 @@ def gen_zip(db, doi, gases)
   failures = 0
 
   Zip::OutputStream.open(path) do |io|
-    puts "Openning zip"
+    puts "Opening zip"
     mofs.find_each do |mof|
       i += 1
       puts i if i%1000 == 0

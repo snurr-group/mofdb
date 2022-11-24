@@ -33,7 +33,7 @@ module MofsHelper
     end
 
     if convert_loading == nil && convert_pressure == nil
-      mofs = mofs.select(:id,:pregen_json,:cif,:name, :batch_id, :database_id)
+      mofs = mofs.select(:id, :pregen_json, :cif, :name, :batch_id, :database_id)
     else
       mofs = mofs.convertable
                  .includes(:batch)
