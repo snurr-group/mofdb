@@ -8,11 +8,19 @@ This is the database + frontend for the MOF database of the Snurr Research Group
 # Citation
 
 If you use this work please cite the MofDB publication.
+
 https://pubs.acs.org/doi/abs/10.1021/acs.cgd.9b01050
 
 # Current Developer:
 Nate Tracy-Amoroso (Northwestern University)
 [github.com/n8ta](https://github.com/n8ta) [n8ta.com](https://n8ta.com)
+
+# Archival Data
+
+Mofdb archives past versions of itself [in a separate repo](https://github.com/snurr-group/mofdb-x-archive). A cron job kicks off
+an update of that repo weekly. The code for this is in `./archival/main.py`. It utilizes the mofdb-client mentioned above.
+
+---
 
 # Future Developers:
 
@@ -42,11 +50,6 @@ I'd recommend starting by looking at ```db/schema.rb``` and then [the api routes
 
 There is a fairly comprehensive test suite in `spec/suites/*` run it with `bundle exec rspec spec/suites/*`.
 It tests all api params except bulk/cif and exercises a bit of the ui.
-
-# Archive
-
-Mofdb archives past versions of itself [in a separate repo](https://github.com/snurr-group/mofdb-x-archive). A cron job kicks off 
-an update of that repo weekly. The code for this is in `./archival/main.py`. It utilizes the mofdb-client mentioned above.
 
 # Rake tasks
 
