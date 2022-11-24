@@ -98,7 +98,8 @@
 }
 
 #footer_grid a {
-    color: #e7e791;
+    color:white;
+    font-weight:500;
     text-decoration: underline;
 }
 

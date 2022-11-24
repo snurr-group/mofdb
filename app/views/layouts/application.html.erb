@@ -49,7 +49,7 @@
 
   <div id="footer_grid">
     <div id="footer_left">
-    <span>Built for the Snurr Research lab by<br/><a style='color:white;font-weight:500' target="_blank" href="https://n8ta.com">Nathaniel Tracy-Amoroso</a> in collaboration with<br/>Benjamin Bucior,<br/>Daniel Siderius,<br/> and Scotty Bobbitt
+    <span>Built for the Snurr Research lab by<br/><a target="_blank" href="https://n8ta.com">Nathaniel Tracy-Amoroso</a> in collaboration with<br/>Benjamin Bucior,<br/>Daniel Siderius,<br/> and Scotty Bobbitt
     </span>
       <br/>
       <br/>
@@ -68,6 +68,7 @@
         <%= form.text_field :version, minlength: 7, placeholder: @version, required: true %>
         <%= form.button "View", type: "submit" %>
       <% end %>
+      <p>Read more <a href="/api#versioning">here</a></p>
     </div>
   </div>
 </div>
