@@ -9,10 +9,11 @@ module ApplicationHelper
 
   def get_version
     Rails.cache.fetch("mofdb-version-v4", expires_in: 1.second) do
-      archive = Rails.root.join("archival", "mofdbx-archive")
-      res = Dir.chdir archive do
-        %x(git rev-parse --short HEAD)
-      end
+      archive = Rails.root.join("archival", "get_version.sh")
+      res = %x("#{archive}")
+      puts "RES IS ", res
+      puts "RES IS ", res
+      puts "RES IS ", res
       res.strip # Remove trailing \n
     end
   end
