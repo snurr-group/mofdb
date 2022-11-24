@@ -95,21 +95,26 @@ class Mof < ApplicationRecord
     end
   end
 
-  def get_json(convertPressure, convertLoading, version)
-    # Convenience method to render the view for caching
-    ApplicationController.render(template: 'mofs/_mof',
-                                 locals: {
-                                   mof: self, convert_pressure: convertPressure,
-                                   convert_loading: convertLoading,
-                                   version: version
-                                 },
-                                 format: :json,
-                                 assigns: {
-                                   mof: self,
-                                   convert_pressure: convertPressure,
-                                   convert_loading: convertLoading,
-                                   version: version
-                                 })
+  def get_json(convert_pressure, convert_loading, version)
+    # Convenience method to render the view
+    if convert_loading == nil && convert_pressure == nil
+      # Use cache if we can
+      self.pregen_json.to_json
+    else
+      ApplicationController.render(template: 'mofs/_mof',
+                                   locals: {
+                                     mof: self, convert_pressure: convert_pressure,
+                                     convert_loading: convert_loading,
+                                     version: version
+                                   },
+                                   format: :json,
+                                   assigns: {
+                                     mof: self,
+                                     convert_pressure: convert_pressure,
+                                     convert_loading: convert_loading,
+                                     version: version
+                                   })
+    end
   end
 
   def regen_json
@@ -124,7 +129,6 @@ class Mof < ApplicationRecord
   end
 
   def write_cif_to_file
-
     tmp = File.open(cif_path, 'w+')
     tmp.write(self.cif)
     tmp.close

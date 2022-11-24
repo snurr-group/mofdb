@@ -1,5 +1,4 @@
 module MofsHelper
-
   def symbol_to_id(elems)
     elems.map { |symbol| Element.find_by(symbol: symbol).id }
   end
@@ -20,7 +19,6 @@ module MofsHelper
   end
 
   def send_zip_file(mofs, convert_pressure, convert_loading, version, cifs = true, json = true)
-
     zip_name = "bulk-dl-mofdb-version-#{version}.zip"
     send_file_headers!(
       type: "application/zip",
@@ -34,17 +32,21 @@ module MofsHelper
       response.stream.write(chunk)
     end
 
-    mofs = mofs.convertable
-               .includes(:batch)
-               .includes(:database)
-               .includes(:gases)
-               .includes({ isotherms: [:batch,
-                                       :adsorbate_forcefield,
-                                       :molecule_forcefield,
-                                       :adsorption_units,
-                                       :pressure_units,
-                                       :composition_type] })
+    if convert_loading == nil && convert_pressure == nil
+      mofs = mofs.select(:id,:pregen_json,:cif,:name, :batch_id, :database_id)
+    else
+      mofs = mofs.convertable
+                 .includes(:batch)
+                 .includes(:database)
+                 .includes(:gases)
+                 .includes({ isotherms: [:batch,
+                                         :adsorbate_forcefield,
+                                         :molecule_forcefield,
+                                         :adsorption_units,
+                                         :pressure_units,
+                                         :composition_type] })
 
+    end
     begin
       ZipTricks::Streamer.open(writer) do |zip|
         mofs.find_in_batches(batch_size: 100).each do |batch|
@@ -69,9 +71,12 @@ module MofsHelper
     rescue Exception => e
       if Rails.env.production?
         Sentry.capture_exception(e)
-      else
+        # /    #   else
         puts e.inspect
         puts e.backtrace.reverse.join("\n")
+      end
+      if Rails.env.development?
+        raise e
       end
     ensure
       response.stream.close
