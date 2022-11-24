@@ -38,7 +38,3 @@ if updates != 0:
     subprocess.run(["git", "commit", "-m", f"Updated {updates} mofs"])
     print(f"Running `git push`")
     subprocess.run(["git", "push"])
-
-# Healthcheck to alert if this process fails
-requests.get("https://hc-ping.com/a4f26cc8-5880-489d-a914-29800b0dcd30")
-
