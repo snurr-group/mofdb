@@ -154,6 +154,13 @@ class MofsController < ApplicationController
   def api
   end
 
+  # GET /version
+  def version
+    version = params[:version].strip
+    url = "https://github.com/snurr-group/mofdb-x-archive/tree/"
+    redirect_to url + version, allow_other_host: true
+  end
+
   private
 
   def get_mofs

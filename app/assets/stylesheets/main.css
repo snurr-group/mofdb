@@ -86,6 +86,20 @@
     grid-area: footer;
     background-color: rgba(255, 255, 255, 0.05);
     padding: 30px;
+    display: flex;
+    justify-content: space-between;
+}
+#footer_grid #footer_left {
+    margin-bottom: 1rem;
+    margin-right: 1rem;
+}
+#footer_grid #footer_right {
+    max-width: 400px;
+}
+
+#footer_grid a {
+    color: #e7e791;
+    text-decoration: underline;
 }
 
 #search {
@@ -169,6 +183,14 @@
         grid-template-columns: 20px 100% 20px;
         grid-template-rows: auto;
         grid-template-areas: ". footer .";
+    }
+
+    #footer_grid {
+        flex-direction: column;
+    }
+    #footer_grid #footer_right {
+        border-top: 1px solid white;
+        padding-top: 2rem;
     }
 
     #index_content {

@@ -6,6 +6,7 @@ Rails.application.routes.draw do
     collection do
       get '/count' => 'mofs#count', as: "count"
       post '/upload' => 'mofs#upload', as: 'upload'
+      get '/version' => "mofs#version", as: "version"
     end
     member do
       get '/cif' => 'mofs#cif', as: "cif"
