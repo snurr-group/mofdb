@@ -21,7 +21,7 @@ count = 1
 updates = 0
 for mof in mofdb_client.fetch():
     if count % 25 == 0:
-        print(f"{count} out of ~170,000. {updates} updates thus far.")
+        print(f"{count} out of ~170,000. {updates} updates thus far.", flush=True)
     count += 1
     mof_path = os.path.join(mofs_dir, f"{mof.name}.json")
     if write_if_changed(str(mof.json_repr), mof_path):
