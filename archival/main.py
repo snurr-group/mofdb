@@ -24,7 +24,10 @@ for mof in mofdb_client.fetch():
         print(f"{count} out of ~170,000. {updates} updates thus far.", flush=True)
     count += 1
     mof_path = os.path.join(mofs_dir, f"{mof.name}.json")
-    if write_if_changed(str(mof.json_repr), mof_path):
+
+    mof_repr = mof.json_repr
+    mof_repr.pop("mofdb_version")
+    if write_if_changed(str(mof_repr), mof_path):
         updates += 1
 
 print("f{updates} mof(s) where updated")
