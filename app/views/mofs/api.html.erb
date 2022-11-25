@@ -8,22 +8,28 @@
   <pre>
 $ python3 -m pip install mofdb_client
 <code class="hljs language-python">from mofdb_client import fetch
-for mof in fetch(vf_min=0.5, vf_max=0.99):
+# Fetch all mofs with void fraction >= 0.5 and <= 0.99
+# Convert all isotherm loading units to mmol/g and all pressures to atmospheres
+for mof in fetch(vf_min=0.5, vf_max=0.99, loading_unit="mmol/g", pressure_unit="atm"):
     print(f"Mof {mof.name} has {len(mof.isotherms)} isotherms and elements {[str(e) for e in mof.elements]}")
     print(f"This mof's cif file starts with: '{mof.cif.splitlines()[1]}'")
 </code></pre>
-  <pre><code>Mof UTEWUM_clean has 2 isotherms and elements ['Cu', 'H', 'C', 'N']
-This mof's cif file starts with: '_audit_creation_date              2014-07-02'
-Mof ZECKID_clean has 1 isotherms and elements ['Cu', 'H', 'C', 'N', 'O']
-This mof's cif file starts with: '_audit_creation_date              2014-07-02'
-Mof AQOMAW_clean has 2 isotherms and elements ['N', 'C', 'H', 'Co', 'Cl', 'O']
-This mof's cif file starts with: '_cell_length_a       18.8345'
-Mof AQOLOJ_clean has 2 isotherms and elements ['N', 'C', 'H', 'Co', 'Cl']
-This mof's cif file starts with: '_cell_length_a       18.794'
-Mof SENWOZ_clean has 2 isotherms and elements ['Zn', 'H', 'C', 'O']
-This mof's cif file starts with: '_audit_creation_date              2014-07-02'
-Mof IYUCIQ_clean has 2 isotherms and elements ['Dy', 'O', 'N', 'C', 'H']
+  <pre><code>Mof hMOF-6 has 6 isotherms and elements ['Zn', 'O', 'C', 'H', 'F']
+This mof's cif file starts with: '_audit_creation_method	'MofGen! by Chris Wilmer''
+Mof hMOF-0 has 6 isotherms and elements ['Zn', 'O', 'C', 'H']
+This mof's cif file starts with: '_audit_creation_method	'MofGen! by Chris Wilmer''
+Mof hMOF-3 has 6 isotherms and elements ['Zn', 'O', 'C', 'H', 'F']
+This mof's cif file starts with: '_audit_creation_method	'MofGen! by Chris Wilmer''
+Mof hMOF-9 has 6 isotherms and elements ['Zn', 'O', 'C', 'H', 'F']
+This mof's cif file starts with: '_audit_creation_method	'MofGen! by Chris Wilmer''
+Mof hMOF-12 has 6 isotherms and elements ['Zn', 'O', 'C', 'H', 'F']
+This mof's cif file starts with: '_audit_creation_method	'MofGen! by Chris Wilmer''
+Mof hMOF-15 has 6 isotherms and elements ['Zn', 'O', 'C', 'H', 'F']
+This mof's cif file starts with: '_audit_creation_method	'MofGen! by Chris Wilmer''
+...
   </code></pre>
+  <strong>This python package is at least 3x faster than using the paginated API and we HIGHLY recommend you use it. If the package doesn't fit your needs for some reason </strong>
+  <br/>
   <h1>API Routes & Supported URL Parameters</h1>
   <ul>
     <li><h3>Units</h3>
