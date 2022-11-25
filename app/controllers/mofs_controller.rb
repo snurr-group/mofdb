@@ -48,7 +48,7 @@ class MofsController < ApplicationController
       unless @convert_pressure == nil && @convert_loading == nil
         @mofs = preload_everything(@mofs)
       end
-      send_zip_file(@mofs, @convert_pressure, @convert_loading, @version, cifs = true, json = bulk)
+      send_zip_file(@mofs, @convert_pressure, @convert_loading, @version, cifs = cifs, json = bulk)
       return
     end
 

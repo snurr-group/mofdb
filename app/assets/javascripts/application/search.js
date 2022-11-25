@@ -263,6 +263,7 @@ function set_link(url, count) {
     delete copy['cifs']
     delete copy['html']
     copy['bulk'] = true
+    copy['cifs'] = true
     const link = document.getElementById('download_cifs');
     const countSpan = document.getElementById('mofdb-count');
     countSpan.innerText = count
