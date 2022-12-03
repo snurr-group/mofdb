@@ -6,8 +6,11 @@ namespace :pregen do
     size = Mof.all.size
 
     Mof.all.includes(:gases, :isodata, :isotherms, :elements).find_each do |mof|
+      if i % 500 == 0
+        puts i.to_f / size.to_f
+      end
       i = i + 1
-      puts i.to_f/size.to_f
+
       mof.regen_json
     end
   end
