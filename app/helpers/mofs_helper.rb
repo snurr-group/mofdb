@@ -49,7 +49,9 @@ module MofsHelper
     end
     begin
       ZipTricks::Streamer.open(writer) do |zip|
+        any_mofs_sent = false
         mofs.find_in_batches(batch_size: 100).each do |batch|
+          any_mofs_sent = true
           batch.each do |mof|
             content = mof.get_json(convert_pressure, convert_loading, version)
             cif = mof.cif
@@ -63,6 +65,11 @@ module MofsHelper
                 file_writer << cif
               end
             end
+          end
+        end
+        if not any_mofs_sent
+          zip.write_deflated_file("204.response") do |file_writer|
+            file_writer << "No results for this query\n"
           end
         end
       end
