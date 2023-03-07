@@ -32,28 +32,34 @@
 
 <body data-rails_env="<%= Rails.env.to_s %>">
 
-<div id="nav">
-  <h1><a href="/"><span id="mof">MOFX</span><span id="db">DB</span></a>
-    <span id="nav_api"><a href="/api">API</a></span>
-    <span id="nav_database"><a href="/databases">Databases</a></span>
-  </h1>
+<nav id="nav">
+  <div id="nav_txt">
+    <h1>
+      <a href="/"><span id="mof">MOFX</span><span id="db">DB</span></a>
+      <span id="nav_api"><a href="/api">API</a></span>
+      <span id="nav_database"><a href="/databases">Databases</a></span>
+    </h1>
+    <div id="nav_cite">If you find MOFX-DB useful to your project, please cite our
+      work<br/><a href="https://pubs.acs.org/doi/10.1021/acs.jced.2c00583" target="_blank">
+      pubs.acs.org/doi/10.1021/acs.jced.2c00583
+    </a>
+    </div>
+  </div>
   <span id="nav_units">
     <% if !@maintenance %>
       <%= render partial: 'mofs/loading_selector' %>
       <%= render partial: 'mofs/pressure_selector' %>
     <% end %>
   </span>
+</nav>
 </div>
 <div id="page">
   <%= yield %>
 
-  <div id="footer_grid">
+  <footer id="footer_grid">
     <div id="footer_left">
-      <p>If you find MOFX-DB useful to your project, please cite our work<br/><a href="https://pubs.acs.org/doi/10.1021/acs.jced.2c00583" target="_blank">
-        pubs.acs.org/doi/10.1021/acs.jced.2c00583
-      </a>
-      </p>
-      <p>Built for the Snurr Research lab by<br/><a target="_blank" href="https://n8ta.com">Nathaniel Tracy-Amoroso</a> in collaboration with<br/>Benjamin Bucior,<br/>Daniel Siderius,<br/> and Scotty Bobbitt</p>
+      <p>Built for the Snurr Research lab by<br/><a target="_blank" href="https://n8ta.com">Nathaniel Tracy-Amoroso</a>
+        in collaboration with<br/>Benjamin Bucior,<br/>Daniel Siderius,<br/>Kaihang Shi,<br/> and Scotty Bobbitt</p>
       <br/>
       <p>Image attribution</p>
       <small>Open graph image tag from CSIRO, CC BY 3.0<br/>
@@ -65,14 +71,15 @@
         <code><%= @version %></code>
       <% end %>
 
-      <p>To view a previous version of MofDB data enter your version here. Versions can be found in the name of bulk download files and in the mofdb_version property of mof json files.</p>
+      <p>To view a previous version of MofDB data enter your version here. Versions can be found in the name of bulk
+        download files and in the mofdb_version property of mof json files.</p>
       <%= form_with url: "/mofs/version", method: :get do |form| %>
         <%= form.text_field :version, minlength: 7, placeholder: @version, required: true %>
         <%= form.button "View", type: "submit" %>
       <% end %>
       <p>Read more <a href="/api#versioning">here</a></p>
     </div>
-  </div>
+  </footer>
 </div>
 
 </body>

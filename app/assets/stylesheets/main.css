@@ -154,8 +154,9 @@
     grid-area: header;
     display: grid;
     grid-template-columns: 1fr minmax(500px, 800px) 300px 1fr;
+    grid-template-rows: 1fr min-content;
     grid-column-gap: 20px;
-    grid-template-areas: ". nav_txt nav_units .";
+    grid-template-areas: ". nav_txt nav_units ."
 }
 
 #nav_units {
@@ -166,8 +167,8 @@
 }
 
 #nav_api a, #nav_database a {
-    margin-left: 5px;
-    color: rgba(195,196,194,.5);
+    margin-right: 5px;
+    color: rgba(195,196,194,.7);
     font-size: .9em;
 }
 
@@ -477,18 +478,25 @@ body {
 
 #nav {
     background-color: #4e2a84;
-    z-index: 10;
-    transition: height 1s;
-    transition: font-size 2s;
+    padding-bottom: .5rem;
+    padding-top: .7rem;
 }
 
-#nav h1 {
+#nav #nav_cite {
+    opacity: 0.75;
+}
+#nav #nav_cite a {
+    color: white;
+    text-decoration-color: red;
+    text-decoration: underline;
+}
+#nav #nav_txt {
     grid-area: nav_txt;
+}
+#nav h1 {
     margin: 0;
     padding-bottom: 0.3em;
-    padding-left: .3em;
     line-height: .9em;
-    padding-top: 16px;
     transition: padding 0.3s;
 }
 
