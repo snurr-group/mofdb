@@ -16,7 +16,10 @@ class MofsController < ApplicationController
     # Finding the count of MOFs is the slowest part of the search
     # to speedup the frontend we decouple this from main search query
     # into a separate request to /mofs/count?normal_query_params
-    @mofs = get_mofs
+    success, @mofs = get_mofs
+    unless success
+      return render status: 400, :json => @mofs
+    end
     @status = "success"
     @error_message = ""
     begin
@@ -38,7 +41,10 @@ class MofsController < ApplicationController
   # GET /mofs
   # GET /mofs.json
   def index
-    @mofs = get_mofs
+    success, @mofs = get_mofs
+    unless success
+      return render status: 400, :json => @mofs
+    end
 
     bulk = params[:bulk] && params[:bulk] == "true"
     cifs = params[:cifs] && params[:cifs] == "true"
@@ -166,6 +172,8 @@ class MofsController < ApplicationController
 
   private
 
+  # Returns Tuple(bool, List<mof>)
+  # If success bool is false an error has already been rendered and caller
   def get_mofs
     mofs = Mof.all.distinct.visible
     ## GASES
@@ -175,12 +183,13 @@ class MofsController < ApplicationController
       gases.each do |gas_name|
         gas = Gas.find_gas(gas_name)
         if gas.nil?
-          return render status: 400, json: { status: RESULTS[:error], error: "Gas '#{gas_name}' not found" }.to_json
+          return false, { status: RESULTS[:error], error: "Gas '#{gas_name}' not found" }.to_json
         end
         gas_ids << gas.id
       end
       gas_ids = gases.map { |gas_name| Gas.find_gas(gas_name).id }.uniq
       mofs = mofs.joins(:gases).where("gases_mofs.gas_id in (?)", gas_ids)
+      return true, mofs
     end
 
     ## Elements in MOF
@@ -243,6 +252,9 @@ class MofsController < ApplicationController
     # DB
     if params[:database] && params[:database] != "Any" && !params[:database].empty?
       database = Database.find_by(name: params[:database])
+      if database.nil?
+        return false, { status: RESULTS[:error], error: "Database '#{params[:database]}' not found" }.to_json
+      end
       mofs = mofs.where(database: database)
     end
 
