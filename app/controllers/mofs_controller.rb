@@ -41,9 +41,7 @@ class MofsController < ApplicationController
   # GET /mofs
   # GET /mofs.json
   def index
-    puts "Getting mofs"
     success, @mofs = get_mofs
-    puts "Success is #{success}"
     unless success
       return render status: 400, :json => @mofs
     end
