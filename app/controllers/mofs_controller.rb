@@ -41,7 +41,9 @@ class MofsController < ApplicationController
   # GET /mofs
   # GET /mofs.json
   def index
+    puts "Getting mofs"
     success, @mofs = get_mofs
+    puts "Success is #{success}"
     unless success
       return render status: 400, :json => @mofs
     end
@@ -283,7 +285,7 @@ class MofsController < ApplicationController
                  .where("isotherms.doi_id = ?", doi.id).distinct
     end
 
-    mofs
+    return true, mofs
   end
 
   def set_mof
