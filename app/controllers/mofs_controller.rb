@@ -165,6 +165,9 @@ class MofsController < ApplicationController
 
   # GET /version
   def version
+    unless params.has_key?(:version)
+      return render json: { status: RESULTS[:error], error: "You must supply a version/git-hash parameter for this api. Eg. /mofs/version?version=xyz" }, status: 500
+    end
     version = params[:version].strip
     url = "https://github.com/snurr-group/mofdb-x-archive/tree/"
     redirect_to url + version, allow_other_host: true
