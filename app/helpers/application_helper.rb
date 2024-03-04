@@ -2,6 +2,9 @@ require 'set'
 
 module ApplicationHelper
 
+  class ElementException < Exception
+  end
+
   RESULTS = {
     :success => 'success',
     :error => 'error',

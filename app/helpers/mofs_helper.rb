@@ -1,6 +1,12 @@
 module MofsHelper
   def symbol_to_id(elems)
-    elems.map { |symbol| Element.find_by(symbol: symbol).id }
+    elems.map do |symbol|
+      begin
+        Element.find_by(symbol: symbol).id
+      rescue
+        raise ElementException.new("`#{symbol}` could not parsed as an element. It should be something like C or Hg or Ti")
+      end
+    end
   end
 
   def parse_element_ids(elements)
@@ -14,7 +20,7 @@ module MofsHelper
     elsif elements.is_a?(String)
       symbol_to_id([elements])
     else
-      raise Exception("#{elements} could not parsed")
+      raise ElementException("#{elements} could not parsed")
     end
   end
 

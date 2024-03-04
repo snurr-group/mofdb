@@ -197,7 +197,13 @@ class MofsController < ApplicationController
 
     ## Elements in MOF
     if params[:elements] && params[:elements] != ""
-      el_ids = parse_element_ids(params[:elements]) # [12, 73, ...]
+      begin
+        el_ids = parse_element_ids(params[:elements]) # [12, 73, ...]
+      rescue ElementException => e
+        return false, { status: RESULTS[:error], error: e.message }.to_json
+      rescue Exception => e
+        return false, { status: RESULTS[:error], error: "Unable to parse elements provided." }.to_json
+      end
       list = Mof.sanitize_sql(el_ids.join(","))
       mofs = mofs.joins("INNER JOIN elements_mofs as el_mof on el_mof.mof_id = mofs.id and el_mof.element_id in (#{list})")
     end
